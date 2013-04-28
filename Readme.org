@@ -9,13 +9,13 @@
 
 * Reveal.js and Org-Reveal
 
-  - *Reveal.js* is a tool for creating good look HTML presentations,
-    authored by Hakim El Hattab. \\
+  - *Reveal.js* is a tool for creating good-looking HTML presentations,
+    authored by [[hakim.se][Hakim El Hattab]]. \\
     For an example of reveal.js presentation, click [[http://lab.hakim.se/reveal-js/#/][here]].
-  - *Org-Reveal* exports your Org documents to reveal.js
+  - *Org-Reveal* exports your [[orgmode.org][Org]] documents to reveal.js
     presentations.\\
-    So you can create beautiful presentations with 3D effects from
-    simple but powerful org contents.
+    With Org-reveal, you can create beautiful presentations with 3D
+    effects from simple but powerful Org contents.
 
 * Requirements and Installation
 
@@ -28,11 +28,11 @@
 
    Download Reveal.js packages from [[https://github.com/hakimel/reveal.js/][here]].
 
-   Extract reveal.js folders from the downloaded zip file.
+   Extract Reveal.js folders from the downloaded zip file.
 
 ** Obtain org-mode
 
-   *Note*: Org-reveal relies on the LATEST org-mode export frame work.
+   *Note*: Org-reveal relies on the Org-mode 8.0 export frame work.
    Pre-packaged org-mode may be out-of-date.
 
    If not sure, use the freshest development codes from git repository.
@@ -42,11 +42,16 @@ $ git clone git://orgmode.org/org-mode.git
 
     Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] to build and install Org-mode.
 
-** TODO Obtain Org-reveal
+** Obtain Org-reveal
 
-   Obtain latest Org-reveal from github.
+   Download latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal GitHub page]].
 
-   Copy =ox-reveal.el= to the Org-mode install directory.
+   Or clone the GitHub repository:
+#+BEGIN_SRC sh
+$ git clone https://github.com/yjwen/org-reveal.git
+#+END_SRC
+
+   Copy =ox-reveal.el= to the Org-mode installation directory.
 
    Add the following statement to your =.emacs= file.
 #+BEGIN_SRC lisp 
@@ -57,10 +62,10 @@ $ git clone git://orgmode.org/org-mode.git
 
 ** Set the location of Reveal.js
 
-   Org-reveal must know where reveal.js is before exporting Org
-   contents.
+   Org-reveal must know where Reveal.js is on your computer before
+   exporting Org contents.
 
-   Default location is =./reveal.js=, relative to the Org file.
+   The default location is =./reveal.js=, relative to the Org file.
 
    Change variable =org-reveal-root= 's value will change the location
    globally. For example, add the following statement to your .emacs
@@ -78,9 +83,6 @@ $ git clone git://orgmode.org/org-mode.git
 
 ** First Try
 
-   Modifications to =.emacs= will take effect at next time Emacs
-   starts up.
-
    To wake-up Org-reveal now, type "M-x load-library", then type
    "ox-reveal".
 
@@ -93,8 +95,8 @@ $ git clone git://orgmode.org/org-mode.git
 ** The HLevel
 
    Org-reveal maps each heading and its contents to one Reveal.js
-   slides. Since Reveal.js arrange slides into a 2-dimentional matrix,
-   Org-reveal use *HLevel* value to decide map headings to hozirontal
+   slides. Since Reveal.js arranges slides into a 2-dimentional matrix,
+   Org-reveal use a *HLevel* value to decide map headings to hozirontal
    or vertical slides.
 
    * Headings of level less or equal to HLevel are mapped to hozirontal
@@ -142,18 +144,18 @@ $ git clone git://orgmode.org/org-mode.git
 
 ** Select Theme and Transition
 
-    Themes and transitions are set globally throughout the whole file by
-    setting options =REVEAL_THEME= and =REVEAL_TRANS=.
+    Themes and transition styles are set globally throughout the whole
+    file by setting options =REVEAL_THEME= and =REVEAL_TRANS=.
 
-    For example, check the heading parting of this documents. 
+    For an example, please check the heading part of this document.
 
-    Available themes can be find in "css/theme/" in the reveal.js directory.
+    Available themes can be found in "css/theme/" in the reveal.js directory.
 
     Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
 ** Fragmented Contents
 
-    Make contents fragmented, show up one-by-one, by setting option =ATTR_REVEAL= with
+    Make contents fragmented (show up one-by-one) by setting option =ATTR_REVEAL= with
     property ":frag frag-style", as illustrated below.
     
 #+ATTR_REVEAL: :frag roll-in
@@ -184,13 +186,15 @@ $ git clone git://orgmode.org/org-mode.git
    :END:
 
    Set property =reveal_data_state= to headings to change this slide's
-   style, as illustrated above.
+   display style, as illustrated above.
+
+   Availabe data states are: alert|blackout|soothe.
 
 ** Plug-ins
 
    Reveal.js provides several plug-in functions.
 
-   - reveal-control : Show/hide browse control pad.
+   - reveal-control : Show/hide browsing control pad.
    - reveal-progress : Show/hide progress bar.
    - reveal-history : Enable/disable slide history track.
    - reveal-center : Enable/disable slide centering.
@@ -207,6 +211,8 @@ $ git clone git://orgmode.org/org-mode.git
       =org-reveal-control=, =org-reveal-progress=,
       =org-reveal-history=, =org-reveal-center=
 
+    For an example, please refer to the heading part of this document.
+
 ** Source Codes
 
    Org-reveal use Org-Babel to highlight source codes.
@@ -219,14 +225,14 @@ $ git clone git://orgmode.org/org-mode.git
 #+END_SRC
 
    If you saw odd indentation, please set variable =org-html-indent=
-   to nil and export again.
+   to =nil= and export again.
 
 * Thanks
 
   Courtesy to:
 
 #+ATTR_REVEAL: :frag roll-in
-  the powerfull Org-mode, 
+  the powerful Org-mode, 
 #+ATTR_REVEAL: :frag roll-in
   and the impressive Reveal.js
 

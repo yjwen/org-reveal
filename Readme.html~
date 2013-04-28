@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Introduction to Org-Reveal</title>
+<!-- 2013-04-28 Sun 15:31 -->
+<meta name="generator" content="Org-mode"/>
+<meta name="author" content="Yujie Wen"/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Introduction to Org-Reveal</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Reveal.js and Org-Reveal</a></li>
+<li><a href="#sec-2">2. Requirements and Installation</a>
+<ul>
+<li><a href="#sec-2-1">2.1. Obtain Reveal.js</a></li>
+<li><a href="#sec-2-2">2.2. Obtain org-mode</a></li>
+<li><a href="#sec-2-3">2.3. Obtain Org-reveal</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3. Configuration</a>
+<ul>
+<li><a href="#sec-3-1">3.1. Set the location of Reveal.js</a></li>
+<li><a href="#sec-3-2">3.2. First Try</a></li>
+<li><a href="#sec-3-3">3.3. The HLevel</a>
+<ul>
+<li><a href="#sec-3-3-1">3.3.1. HLevel's Affects on Slides Layout</a></li>
+<li><a href="#sec-3-3-2">3.3.2. Configure HLevel's Value</a></li>
+</ul>
+</li>
+<li><a href="#sec-3-4">3.4. Select Theme and Transition</a></li>
+<li><a href="#sec-3-5">3.5. Fragmented Contents</a></li>
+<li><a href="#sec-3-6">3.6. Data State</a></li>
+<li><a href="#sec-3-7">3.7. Plug-ins</a>
+<ul>
+<li><a href="#sec-3-7-1">3.7.1. Configure Plug-ins</a></li>
+</ul>
+</li>
+<li><a href="#sec-3-8">3.8. Source Codes</a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4. Thanks</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Reveal.js and Org-Reveal</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li><b>Reveal.js</b> is a tool for creating good look HTML presentations,
+authored by Hakim El Hattab. <br/>
+    For an example of reveal.js presentation, click <a href="http://lab.hakim.se/reveal-js/#/">here</a>.
+</li>
+<li><b>Org-Reveal</b> exports your Org documents to reveal.js
+presentations.<br/>
+    So you can create beautiful presentations with 3D effects from
+simple but powerful org contents.
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Requirements and Installation</h2>
+<div class="outline-text-2" id="text-2">
+<ul class="org-ul">
+<li>Reveal.js.
+</li>
+<li>Latest org-mode.
+</li>
+<li>ox-reveal.el.
+</li>
+<li>And, of course, emacs.
+</li>
+</ul>
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Obtain Reveal.js</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Download Reveal.js packages from <a href="https://github.com/hakimel/reveal.js/">here</a>.
+</p>
+
+<p>
+Extract reveal.js folders from the downloaded zip file.
+</p>
+</div>
+</div>
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Obtain org-mode</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+<b>Note</b>: Org-reveal relies on the LATEST org-mode export frame work.
+Pre-packaged org-mode may be out-of-date.
+</p>
+
+<p>
+If not sure, use the freshest development codes from git repository.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">$ git clone git://orgmode.org/org-mode.git
+</pre>
+</div>
+
+<p>
+Follow the <a href="http://orgmode.org/worg/dev/org-build-system.html">online instruction</a> to build and install Org-mode.
+</p>
+</div>
+</div>
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Obtain Org-reveal</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Download latest Org-reveal package from <a href="https://github.com/yjwen/org-reveal">the Org-reveal GitHub page</a>.
+</p>
+
+<p>
+Or clone the GitHub repository:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">$ git clone https://github.com/yjwen/org-reveal.git
+</pre>
+</div>
+
+<p>
+Copy <code>ox-reveal.el</code> to the Org-mode install directory.
+</p>
+
+<p>
+Add the following statement to your <code>.emacs</code> file.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-lisp">(<span style="color: #a020f0;">require</span> '<span style="color: #008b8b;">ox-reveal</span>)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Configuration</h2>
+<div class="outline-text-2" id="text-3">
+</div><div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Set the location of Reveal.js</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Org-reveal must know where reveal.js is before exporting Org
+contents.
+</p>
+
+<p>
+Default location is <code>./reveal.js</code>, relative to the Org file.
+</p>
+
+<p>
+Change variable <code>org-reveal-root</code> 's value will change the location
+globally. For example, add the following statement to your .emacs
+file:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-lisp">(setq org-reveal-root <span style="color: #8b2252;">"d:/reveal.js"</span>)
+</pre>
+</div>
+
+<p>
+By setting option <code>REVEAL_ROOT</code>, the location is only affected
+within the Org file.
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-org"><span style="color: #b22222;">#+REVEAL_ROOT: d:/reveal.js</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> First Try</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Modifications to <code>.emacs</code> will take effect at next time Emacs
+starts up.
+</p>
+
+<p>
+To wake-up Org-reveal now, type "M-x load-library", then type
+"ox-reveal".
+</p>
+
+<p>
+Now you can export this manual into Reveal.js presentation by
+typing "C-c C-e R R".
+</p>
+
+<p>
+Open the generated "Readme.html" in your browser and enjoy the
+cool slides.
+</p>
+</div>
+</div>
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> The HLevel</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Org-reveal maps each heading and its contents to one Reveal.js
+slides. Since Reveal.js arrange slides into a 2-dimentional matrix,
+Org-reveal use <b>HLevel</b> value to decide map headings to hozirontal
+or vertical slides.
+</p>
+
+<ul class="org-ul">
+<li>Headings of level less or equal to HLevel are mapped to hozirontal
+slides.
+</li>
+<li>Headings of deeper levels are mapped to vertical slides.
+</li>
+</ul>
+
+<p>
+HLevel's default value is 1, means only level 1 headings are arranged
+horizontally, deeper headings are mapped to vertical slides below its
+parent level 1 heading.
+</p>
+</div>
+
+<div id="outline-container-3-3-1" class="outline-4">
+<h4 id="sec-3-3-1"><span class="section-number-4">3.3.1</span> HLevel's Affects on Slides Layout</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+Assume we have a simple Org file as below:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-org"><span style="color: #0000ff;">* H1</span>
+<span style="color: #0000ff;">* H2</span>
+<span style="color: #a0522d;">** H2.1</span>
+<span style="color: #a020f0;">*** H2.1.1</span>
+<span style="color: #0000ff;">* H3</span>
+</pre>
+</div>
+
+<p>
+If HLevel is 1, the default value, headings H2.1 and H2.1.1 will
+be mapping to vertical slides below the slides of heading H2.
+</p>
+
+
+<div class="figure">
+<p><img src="./images/hlevel.png"  alt="hlevel.png"/></p>
+</div>
+
+<p>
+If HLevel is changed to 2, slide of heading H2.1 will be changed
+to the main hozirontal queue, and slide of heading H2.1.1 will be
+a vertical slide below it.
+</p>
+
+
+<div class="figure">
+<p><img src="./images/hlevel2.png"  alt="hlevel2.png"/></p>
+</div>
+</div>
+</div>
+<div id="outline-container-3-3-2" class="outline-4">
+<h4 id="sec-3-3-2"><span class="section-number-4">3.3.2</span> Configure HLevel's Value</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<ul class="org-ul">
+<li>Change variable <code>org-reveal-hlevel</code>'s value to set HLevel globally.<br/>
+      For example, add the following statement to your <code>.emacs</code> file.
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-lisp">(setq org-reveal-hlevel 2)
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Setting Org files local HLevel to option <code>REVEAL_HLEVEL</code>.
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre class="src src-org"><span style="color: #b22222;">#+REVEAL_HLEVEL 2</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Select Theme and Transition</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+Themes and transitions are set globally throughout the whole file by
+setting options <code>REVEAL_THEME</code> and <code>REVEAL_TRANS</code>.
+</p>
+
+<p>
+For example, check the heading parting of this documents. 
+</p>
+
+<p>
+Available themes can be find in "css/theme/" in the reveal.js directory.
+</p>
+
+<p>
+Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
+</p>
+</div>
+</div>
+<div id="outline-container-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> Fragmented Contents</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+Make contents fragmented, show up one-by-one, by setting option <code>ATTR_REVEAL</code> with
+property ":frag frag-style", as illustrated below.
+</p>
+
+<p>
+Paragraphs can be fragmented.
+</p>
+
+<p>
+Items can be fragmented, too.
+</p>
+
+<p>
+Availabe fragment styles are:
+</p>
+<ul class="org-ul">
+<li>grow
+</li>
+</ul>
+<ul class="org-ul">
+<li>shrink
+</li>
+</ul>
+<ul class="org-ul">
+<li>roll-in
+</li>
+</ul>
+<ul class="org-ul">
+<li>fade-out
+</li>
+</ul>
+<ul class="org-ul">
+<li>highlight-red
+</li>
+</ul>
+<ul class="org-ul">
+<li>highlight-green
+</li>
+</ul>
+<ul class="org-ul">
+<li>highlight-blue
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> Data State</h3>
+<div class="outline-text-3" id="text-3-6">
+
+<p>
+Set property <code>reveal_data_state</code> to headings to change this slide's
+style, as illustrated above.
+</p>
+</div>
+</div>
+<div id="outline-container-3-7" class="outline-3">
+<h3 id="sec-3-7"><span class="section-number-3">3.7</span> Plug-ins</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+Reveal.js provides several plug-in functions.
+</p>
+
+<ul class="org-ul">
+<li>reveal-control : Show/hide browse control pad.
+</li>
+<li>reveal-progress : Show/hide progress bar.
+</li>
+<li>reveal-history : Enable/disable slide history track.
+</li>
+<li>reveal-center : Enable/disable slide centering.
+</li>
+</ul>
+</div>
+
+<div id="outline-container-3-7-1" class="outline-4">
+<h4 id="sec-3-7-1"><span class="section-number-4">3.7.1</span> Configure Plug-ins</h4>
+<div class="outline-text-4" id="text-3-7-1">
+<p>
+Each plug-ins can be set on/off by adding <code>#+OPTIONS</code> tags or
+settinng custom variables.
+</p>
+
+<ul class="org-ul">
+<li><code>#+OPTIONS</code> tags:<br/>
+      <code>reveal_control</code>, <code>reveal_progress</code>, <code>reveal_history</code>,
+      <code>reveal_center</code>
+</li>
+<li>Custom variables:<br/>
+      <code>org-reveal-control</code>, <code>org-reveal-progress</code>,
+      <code>org-reveal-history</code>, <code>org-reveal-center</code>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-3-8" class="outline-3">
+<h3 id="sec-3-8"><span class="section-number-3">3.8</span> Source Codes</h3>
+<div class="outline-text-3" id="text-3-8">
+<p>
+Org-reveal use Org-Babel to highlight source codes.
+</p>
+
+<p>
+Codes copied from <a href="http://www.haskell.org/haskellwiki/The_Fibonacci_sequence">Haskell Wiki</a>.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-haskell"><span style="color: #0000ff;">fibs</span> <span style="color: #a0522d;">=</span> 0 <span style="color: #228b22;">:</span> 1 <span style="color: #228b22;">:</span> next fibs
+       <span style="color: #a020f0;">where</span> next (a <span style="color: #228b22;">:</span> t<span style="color: #a0522d;">@</span>(b<span style="color: #228b22;">:</span><span style="color: #a020f0;">_</span>)) <span style="color: #a0522d;">=</span> (a<span style="color: #a0522d;">+</span>b) <span style="color: #228b22;">:</span> next t
+</pre>
+</div>
+
+<p>
+If you saw odd indentation, please set variable <code>org-html-indent</code>
+to nil and export again.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Thanks</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Courtesy to:
+</p>
+
+<p>
+the powerfull Org-mode, 
+</p>
+<p>
+and the impressive Reveal.js
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Yujie Wen</p>
+<p class="date">Created: 2013-04-28 Sun 15:31</p>
+<p class="creator">Generated by <a href="http://orgmode.org">Org</a> mode 8.0-pre in <a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.2.1.</p>
+<p class="xhtml-validation"><a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a></p>
+</div>
+</body>
+</html>
