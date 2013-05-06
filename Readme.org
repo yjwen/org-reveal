@@ -2,7 +2,7 @@
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
 
-#+OPTIONS: reveal_center:nil
+#+OPTIONS: reveal_center:nil reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t
 #+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
@@ -198,7 +198,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    - reveal-progress : Show/hide progress bar.
    - reveal-history : Enable/disable slide history track.
    - reveal-center : Enable/disable slide centering.
-
+     
 *** Configure Plug-ins
 
     Each plug-ins can be set on/off by adding =#+OPTIONS= tags or
@@ -227,13 +227,30 @@ $ git clone https://github.com/yjwen/org-reveal.git
    If you saw odd indentation, please set variable =org-html-indent=
    to =nil= and export again.
 
+** MathJax
+
+   ${n! \over k!(n-k)!} = {n \choose k}$
+
+   LateX equation are renderred in native HTML5 contents.
+
+   *IMPORTANT*: Displaying equations requires internet connection to
+   [[mathjax.org]] or local MathJax installation.
+
+   *IMPORTANT 2*: MathJax is disabled by default to reduce internet
+   traffic. Set =#+OPTIONS= tag =reveal_mathjax= or variable
+   =org-reveal-mathjax= to true to enable it. For local MathJax
+   installation, set option =REVEAL_MATH_JAX_URL= to pointing to the
+   installation location.
+   
 * Thanks
 
   Courtesy to:
 
 #+ATTR_REVEAL: :frag roll-in
-  the powerful Org-mode, 
+  The powerful Org-mode, 
 #+ATTR_REVEAL: :frag roll-in
-  and the impressive Reveal.js
+  the impressive Reveal.js
+#+ATTR_REVEAL: :frag roll-in
+  and the precise MathJax
 
   

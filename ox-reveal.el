@@ -40,6 +40,8 @@
    (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
    (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
    (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
+   (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
+   (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
    )
 
   :translate-alist
@@ -97,19 +99,30 @@ can be include."
   :type 'string)
 
 (defcustom org-reveal-progress t
-  "Reveal progress applit."
+  "Reveal progress applet."
   :group 'org-export-reveal
   :type 'boolean)
 
 (defcustom org-reveal-history t
-  "Reveal history applit."
+  "Reveal history applet."
   :group 'org-export-reveal
   :type 'boolean)
 
 (defcustom org-reveal-center t
-  "Reveal center applit."
+  "Reveal center applet."
   :group 'org-export-reveal
   :type 'boolean)
+
+(defcustom org-reveal-mathjax nil
+  "Enable MathJax script."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-mathjax-url
+  "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  "Default MathJax URL."
+  :group 'org-export-reveal
+  :type 'string)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -229,7 +242,7 @@ to form a legal path name."
 
   
 (defun org-reveal-stylesheets (info)
-  "Return the HTML contents for decalaring reveal stylesheets
+  "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
   (let* ((root-path (plist-get info :reveal-root))
          (css-dir-name (org-reveal--append-path root-path "css"))
@@ -238,9 +251,15 @@ using custom variable `org-reveal-root'."
          (theme-path (org-reveal--append-path css-dir-name "theme"))
          (theme-full (org-reveal--append-path theme-path theme-file)))
     (format "<link rel=\"stylesheet\" href=\"%s\">
-    <link rel=\"stylesheet\" href=\"%s\" id=\"theme\">"
+    <link rel=\"stylesheet\" href=\"%s\" id=\"theme\">\n"
                 min-css-file-name theme-full)))
 
+(defun org-reveal-mathjax-scripts (info)
+  "Return the HTML contents for declaring MathJax scripts"
+  (if (plist-get info :reveal-mathjax)
+      ;; MathJax enabled.
+      (format "<script type=\"text/javascript\" src=\"%s\"></script>\n"
+              (plist-get info :reveal-mathjax-url))))
 
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
@@ -404,6 +423,7 @@ info is a plist holding export options."
    (if-format "<meta name=\"description\" content=\"%s\"/>\n" (plist-get info :description))
    (if-format "<meta name=\"keywords\" content=\"%s\"/>\n" (plist-get info :keywords))
    (org-reveal-stylesheets info)
+   (org-reveal-mathjax-scripts info)
    "</head>
 <body>
 <div class=\"reveal\">
