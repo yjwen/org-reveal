@@ -25,31 +25,31 @@
 (require 'ox-html)
 (eval-when-compile (require 'cl))
 
-(org-export-define-derived-backend reveal html
+(org-export-define-derived-backend 'reveal 'html
 
   :menu-entry
-  (?R "Export to reveal.js HTML Presentation"
-      ((?R "To file" org-reveal-export-to-html)))
+  '(?R "Export to reveal.js HTML Presentation"
+       ((?R "To file" org-reveal-export-to-html)))
 
   :options-alist
-  ((:reveal-control nil "reveal_control" org-reveal-control t)
-   (:reveal-progress nil "reveal_progress" org-reveal-progress t)
-   (:reveal-history nil  "reveal_history" org-reveal-history t)
-   (:reveal-center nil "reveal_center" org-reveal-center t)
-   (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
-   (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
-   (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
-   (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
-   (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
-   (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
-   )
+  '((:reveal-control nil "reveal_control" org-reveal-control t)
+    (:reveal-progress nil "reveal_progress" org-reveal-progress t)
+    (:reveal-history nil  "reveal_history" org-reveal-history t)
+    (:reveal-center nil "reveal_center" org-reveal-center t)
+    (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
+    (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
+    (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
+    (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
+    (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
+    (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
+    )
 
   :translate-alist
-  ((headline . org-reveal-headline)
-   (inner-template . org-reveal-inner-template)
-   (item . org-reveal-item)
-   (paragraph . org-reveal-paragraph)
-   (template . org-reveal-template)))
+  '((headline . org-reveal-headline)
+    (inner-template . org-reveal-inner-template)
+    (item . org-reveal-item)
+    (paragraph . org-reveal-paragraph)
+    (template . org-reveal-template)))
 
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
