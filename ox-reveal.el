@@ -22,8 +22,8 @@
 
 ;; Please see "Readme.org" for detail introductions.
 
-(require 'ox-html)
 (eval-when-compile (require 'cl))
+(require 'ox-html)
 
 (org-export-define-derived-backend 'reveal 'html
 
@@ -67,7 +67,7 @@ vertical slides."
 If option \"REVEAL_HLEVEL\" is set, retrieve integer value from it,
 else get value from custom variable `org-reveal-hlevel'."
   (let ((hlevel-str (plist-get info :reveal-hlevel)))
-    (if hlevel-str (string-to-int hlevel-str)
+    (if hlevel-str (string-to-number hlevel-str)
       org-reveal-hlevel)))
 
 (defcustom org-reveal-title-slide-template
@@ -225,7 +225,8 @@ holding contextual information."
   
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
-  :tag "Org Export reveal")
+  :tag "Org Export reveal"
+  :group 'org-export)
 
 (defun org-reveal--append-path (dir-name path-name)
   "Append `path-name' to the end of `dir-name' to form a legal path name."
@@ -333,7 +334,7 @@ holding export options."
    contents))
 
 (defun org-reveal-format-list-item
-  (content type checkbox &optional term-counter-id frag headline)
+  (contents type checkbox &optional term-counter-id frag headline)
   "Format a list item into Reveal.js HTML."
   (let ((checkbox (concat (org-html-checkbox checkbox) (and checkbox " "))))
     (concat
@@ -341,7 +342,7 @@ holding export options."
        (ordered
         (concat
          "<li"
-         (if-format " value=\"%s\"" counter)
+         (if-format " value=\"%s\"" term-counter-id)
          (if-format " class=\"fragment %s\"" frag)
          ">"
          (if headline (concat headline "<br/>"))))
