@@ -1,11 +1,16 @@
-;; ox-reveal --- reveal.js Presentation Back-End for Org Export Engine
+;;; ox-reveal.el --- reveal.js Presentation Back-End for Org Export Engine
 
 ;; Copyright (C) 2013 Yujie Wen
 
 ;; Author: Yujie Wen <yjwen.ty at gmail dot com>
+;; Created: 2013-04-27
+;; Version: 1.0
+;; Package-Requires: ((org "8.0"))
 ;; Keywords: outlines, hypermedia, slideshow, presentation
 
 ;; This file is not part of GNU Emacs.
+
+;;; Copyright Notice:
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,8 +27,10 @@
 
 ;; Please see "Readme.org" for detail introductions.
 
-(eval-when-compile (require 'cl))
+;;; Code:
+
 (require 'ox-html)
+(eval-when-compile (require 'cl))
 
 (org-export-define-derived-backend 'reveal 'html
 
@@ -452,3 +459,5 @@ info is a plist holding export options."
      'reveal file subtreep visible-only body-only ext-plist)))
 
 (provide 'ox-reveal)
+
+;;; ox-reveal.el ends here
