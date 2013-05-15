@@ -71,14 +71,16 @@ $ git clone https://github.com/yjwen/org-reveal.git
    globally. For example, add the following statement to your .emacs
    file:
 #+BEGIN_SRC lisp 
-(setq org-reveal-root "d:/reveal.js")
+(setq org-reveal-root "file:///d:/reveal.js")
 #+END_SRC
+   *IMPORTANT*: the absolute path to Reveal.js should be in URL form,
+   "file:///path_to_reveal.js", as illustrated above.
 
    By setting option =REVEAL_ROOT=, the location is only affected
    within the Org file.
 
 #+BEGIN_SRC org 
-,#+REVEAL_ROOT: d:/reveal.js
+ #+REVEAL_ROOT: file:///d:/reveal.js
 #+END_SRC
 
 ** First Try
@@ -239,8 +241,8 @@ $ git clone https://github.com/yjwen/org-reveal.git
    *IMPORTANT 2*: MathJax is disabled by default to reduce internet
    traffic. Set =#+OPTIONS= tag =reveal_mathjax= or variable
    =org-reveal-mathjax= to true to enable it. For local MathJax
-   installation, set option =REVEAL_MATH_JAX_URL= to pointing to the
-   installation location.
+   installation, set option =REVEAL_MATH_JAX_URL= to the URL pointing
+   to the local MathJax location.
    
 * Thanks
 
