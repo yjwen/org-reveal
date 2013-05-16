@@ -424,7 +424,8 @@ the plist used as a communication channel."
 contents is the transcoded contents string.
 info is a plist holding export options."
   (concat
-   (format "<!doctype html>\n<html%s>\n<head>\n"
+   (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+<!doctype html>\n<html%s>\n<head>\n"
            (if-format " lang=\"%s\"" (plist-get info :language)))
    (if-format "<title>%s</title>\n" (plist-get info :title))
    (if-format "<meta name=\"author\" content=\"%s\"/>\n" (plist-get info :author))
