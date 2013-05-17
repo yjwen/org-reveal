@@ -427,6 +427,7 @@ info is a plist holding export options."
    (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>
 <!doctype html>\n<html%s>\n<head>\n"
            (if-format " lang=\"%s\"" (plist-get info :language)))
+   "<meta charset=\"utf-8\">"
    (if-format "<title>%s</title>\n" (plist-get info :title))
    (if-format "<meta name=\"author\" content=\"%s\"/>\n" (plist-get info :author))
    (if-format "<meta name=\"description\" content=\"%s\"/>\n" (plist-get info :description))
