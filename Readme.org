@@ -2,7 +2,7 @@
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
 
-#+OPTIONS: reveal_center:nil reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t
+#+OPTIONS: reveal_center:nil reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t num:nil
 #+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
@@ -244,6 +244,13 @@ $ git clone https://github.com/yjwen/org-reveal.git
    installation, set option =REVEAL_MATH_JAX_URL= to the URL pointing
    to the local MathJax location.
    
+* Tips
+** Disable Heading Numbers
+
+   Add =num:nil= to =#+OPTIONS=
+#+BEGIN_SRC org
+ #+OPTIONS: num:nil
+#+END_SRC
 * Thanks
 
   Courtesy to:
