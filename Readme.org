@@ -144,6 +144,19 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ,#+REVEAL_HLEVEL 2
 #+END_SRC
 
+** Force Split
+
+   If one headings has too many things to fit into one slide, you can
+   split the contents into multiple vertical slides manually, by inserting
+
+#+BEGIN_SRC org
+ #+REVEAL: split
+#+END_SRC
+
+#+REVEAL: split
+
+   Now  a new slide begin after =#+REVEAL= keyword.
+
 ** Select Theme and Transition
 
     Themes and transition styles are set globally throughout the whole

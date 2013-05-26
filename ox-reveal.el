@@ -55,8 +55,13 @@
   '((headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
+    (keyword . org-reveal-keyword)
     (paragraph . org-reveal-paragraph)
-    (template . org-reveal-template)))
+    (section . org-reveal-section)
+    (template . org-reveal-template))
+
+  :export-block "REVEAL"
+  )
 
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
@@ -134,8 +139,16 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
+(defun org-reveal-export-block (export-block contents info)
+  "Transcode an EXPORT-BLOCK  element from Org to Reveal.
+CONTENTS is nil. INFO is a plist holding contextual information."
+  (format "export-block\ntype: %s, value: %s, contents: %s"
+          (org-element-property :type export-block)
+          (org-element-property :value export-block)
+          contents))
+
 (defun org-reveal-headline (headline contents info)
-  "Transcode a HEADLINE element from Org to HTML.
+  "Transcode a HEADLINE element from Org to Reveal.
 CONTENTS holds the contents of the headline. INFO is a plist
 holding contextual information."
   ;; First call org-html-headline to get the formatted HTML contents.
@@ -218,7 +231,7 @@ holding contextual information."
          ;; one to get the correct <div class="outline- ...>
          ;; which is needed by `org-info.js'.
          (if (not (eq (org-element-type first-content) 'section))
-             (concat (org-html-section first-content "" info)
+             (concat (org-reveal-section first-content "" info)
                      contents)
            contents)
          (if (= level hlevel)
@@ -373,13 +386,6 @@ holding export options."
        (unordered "</li>")
        (descriptive "</dd>")))))
 
-(defun org-reveal--headline-property (property blob)
-  "Get property from BLOB's parent headline and return."
-  (let ((headline (if (eq (org-element-type blob) 'headline) blob
-                    (org-export-get-parent-headline blob))))
-    (org-element-property property headline)))
-                  
-
 (defun org-reveal--get-frag (info)
   "Get Reveal fragment settings from context."
   (let ((frag (plist-get info :reveal-frag)))
@@ -398,6 +404,32 @@ contextual information."
          (frag (org-export-read-attribute :attr_reveal plain-list :frag)))
     (org-reveal-format-list-item
      contents type checkbox (or tag counter) frag)))
+
+(defun org-reveal-parse-token (key &optional value)
+  "Return HTML tags or perform SIDE EFFECT according to key"
+  (case (intern key)
+    (split "</section>\n<section>")
+    (t (format "key: %s, value: %s" key value))))
+
+(defun org-reveal-parse-keyword-value (value)
+  "According to the value content, return HTML tags to split slides."
+  (let ((tokens (mapcar
+                 (lambda (x) (split-string x ":"))
+                 (split-string value))))
+    (mapconcat
+     (lambda (x) (apply 'org-reveal-parse-token x))
+     tokens
+     "")))
+    
+
+(defun org-reveal-keyword (keyword contents info)
+  "Transcode a KEYWORD element from Org to HTML,
+and may change custom variables as SIDE EFFECT.
+CONTENTS is nil. INFO is a plist holding contextual information."
+  (let ((key (org-element-property :key keyword))
+        (value (org-element-property :value keyword)))
+    (when (string= key "REVEAL")
+      (org-reveal-parse-keyword-value value))))
 
 (defun org-reveal-paragraph (paragraph contents info)
   "Transcode a PARAGRAPH element from Org to Reveal HTML.
@@ -418,6 +450,12 @@ the plist used as a communication channel."
                            (org-export-read-attribute :attr_reveal paragraph :frag))
                 contents)))))
 
+(defun org-reveal-section (section contents info)
+  "Transcode a SECTION element from Org to HTML.
+CONTENTS holds the contents of the section. INFO is a plist
+holding contextual information."
+  ;; Just return the contents. No "<div>" tags.
+  contents)
 
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
