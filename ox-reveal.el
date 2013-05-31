@@ -165,10 +165,6 @@ holding contextual information."
 		    (org-export-get-tags headline info)))
 	 (priority (and (plist-get info :with-priority)
 			(org-element-property :priority headline)))
-	 (section-number (and (org-export-numbered-headline-p headline info)
-			      (mapconcat 'number-to-string
-					 (org-export-get-headline-number
-					  headline info) ".")))
 	 ;; Create the headline text.
 	 (full-text (org-html-format-headline--wrap headline info)))
     (cond
@@ -190,15 +186,7 @@ holding contextual information."
 	      (org-html-end-plain-list type)))))
      ;; Case 3. Standard headline.  Export it as a section.
      (t
-      (let* ((section-number (mapconcat 'number-to-string
-					(org-export-get-headline-number
-					 headline info) "-"))
-	     (ids (remove 'nil
-			  (list (org-element-property :CUSTOM_ID headline)
-				(concat "sec-" section-number)
-				(org-element-property :ID headline))))
-	     (extra-ids (cdr ids))
-	     (level1 (+ level (1- org-html-toplevel-hlevel)))
+      (let* ((level1 (+ level (1- org-html-toplevel-hlevel)))
              (hlevel (org-reveal--get-hlevel info))
 	     (first-content (car (org-element-contents headline))))
         (concat
@@ -211,20 +199,17 @@ holding contextual information."
              ;; into vertical ones.
              "<section>\n")
          ;; Start a new slide.
-         (format "<section%s>\n"
+         (format "<section id=\"%s\" %s>\n"
+                 (or (org-element-property :CUSTOM_ID headline)
+                     (concat "sec-" (mapconcat 'number-to-string
+                                               (org-export-get-headline-number headline info)
+                                               "-")))
                  (if-format " data-state=\"%s\"" (org-element-property :REVEAL_DATA_STATE headline)))
          ;; The HTML content of this headline.
-         (format "\n<h%d%s>%s%s</h%d>\n"
+         (format "\n<h%d%s>%s</h%d>\n"
                  level1
                  (if-format " class=\"fragment %s\""
                             (org-element-property :REVEAL-FRAG headline))
-                 (mapconcat
-                  (lambda (x)
-                    (let ((id (org-export-solidify-link-text
-                               (if (org-uuidgen-p x) (concat "ID-" x)
-                                 x))))
-                      (org-html--anchor id)))
-                  extra-ids "")
                  full-text
                  level1)
          ;; When there is no section, pretend there is an empty
@@ -272,7 +257,7 @@ using custom variable `org-reveal-root'."
          (theme-path (org-reveal--append-path css-dir-name "theme"))
          (theme-full (org-reveal--append-path theme-path theme-file)))
     (format "<link rel=\"stylesheet\" href=\"%s\">
-    <link rel=\"stylesheet\" href=\"%s\" id=\"theme\">\n"
+<link rel=\"stylesheet\" href=\"%s\" id=\"theme\">\n"
                 min-css-file-name theme-full)))
 
 (defun org-reveal-mathjax-scripts (info)
@@ -335,12 +320,56 @@ custom variable `org-reveal-root'."
                (org-reveal--append-pathes plugin-dir-name '("remotes" "remotes.js")))
                 "</script>\n")))
 
+(defun org-reveal-toc-headlines-r (headlines info prev_level hlevel prev_x prev_y)
+  "Generate toc headline text recursively."
+  (let* ((headline (car headlines))
+         (text (org-export-data (org-element-property :title headline) info))
+         (level (org-export-get-relative-level headline info))
+         (x (if (<= level hlevel) (+ prev_x 1) prev_x))
+         (y (if (<= level hlevel) 0 (+ prev_y 1)))
+         (remains (cdr headlines))
+         (remain-text
+          (if remains
+              ;; Generate text for remain headlines
+              (org-reveal-toc-headlines-r remains info level hlevel x y)
+            "")))
+    (concat
+     (cond
+      ((> level prev_level)
+       ;; Need to start a new level of unordered list
+       "<ul>\n")
+      ((< level prev_level)
+       ;; Need to end previous list item and the whole list.
+       "</li>\n</ul>\n")
+      (t
+       ;; level == prev_level, Need to end previous list item.
+       "</li>\n"))
+     (format "<li>\n<a href=\"#%s\">%s</a>\n%s"
+             (or (org-element-property :CUSTOM_ID headline)
+                 (concat "sec-" (mapconcat 'number-to-string
+                                           (org-export-get-headline-number headline info)
+                                           "-")))
+             text remain-text))))
+
+(defun org-reveal-toc-headlines (headlines info)
+  "Generate the Reveal.js contents for headlines in table of contents.
+Add proper internal link to each headline."
+  (let ((level (org-export-get-relative-level (car headlines) info))
+        (hlevel (org-reveal--get-hlevel info)))
+    (concat
+     (format "<h2>%s</h2>"
+             (org-export-translate "Table of Contents" :html info))
+     (org-reveal-toc-headlines-r headlines info 0 hlevel 1 1)
+     (if headlines "</li>\n</ul>\n" ""))))
+
+
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (concat
-   "<section>\n"
-   (org-html-toc depth info)
-   "</section>\n"))
+  (format 
+   "<section>\n%s</section>\n"
+   (org-reveal-toc-headlines
+    (org-export-collect-headlines info depth)
+    info)))
 
 (defun org-reveal-inner-template (contents info)
   "Return body of document string after HTML conversion.
@@ -408,8 +437,7 @@ contextual information."
 (defun org-reveal-parse-token (key &optional value)
   "Return HTML tags or perform SIDE EFFECT according to key"
   (case (intern key)
-    (split "</section>\n<section>")
-    (t (format "key: %s, value: %s" key value))))
+    (split "</section>\n<section>")))
 
 (defun org-reveal-parse-keyword-value (value)
   "According to the value content, return HTML tags to split slides."

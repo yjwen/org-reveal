@@ -2,7 +2,7 @@
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
 
-#+OPTIONS: reveal_center:nil reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t num:nil
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t num:nil
 #+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
@@ -153,7 +153,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
  #+REVEAL: split
 #+END_SRC
 
-#+REVEAL: split
+#+REVEAL: split:force-split
 
    Now  a new slide begin after =#+REVEAL= keyword.
 
@@ -243,6 +243,10 @@ $ git clone https://github.com/yjwen/org-reveal.git
    to =nil= and export again.
 
 ** MathJax
+  :PROPERTIES:
+  :CUSTOM_ID: my-heading
+  :END:
+
 
    ${n! \over k!(n-k)!} = {n \choose k}$
 
@@ -258,12 +262,26 @@ $ git clone https://github.com/yjwen/org-reveal.git
    to the local MathJax location.
    
 * Tips
+
 ** Disable Heading Numbers
 
    Add =num:nil= to =#+OPTIONS=
 #+BEGIN_SRC org
  #+OPTIONS: num:nil
 #+END_SRC
+
+** Internal Links
+
+   Reveal.js supports only jump between slides, but not between
+   elements on slides. Thus, we can only link to headlines in an Org
+   document.
+
+   You can create links pointings to a headline's text, or its
+   custom-id, as the examples below:
+
+   * [[Tips]].
+   * [[#my-heading][Heading]] with a =CUSTOM_ID= property.
+
 * Thanks
 
   Courtesy to:
@@ -276,3 +294,4 @@ $ git clone https://github.com/yjwen/org-reveal.git
   and the precise MathJax
 
   
+
