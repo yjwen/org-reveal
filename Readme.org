@@ -2,7 +2,7 @@
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
 
-#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t num:nil
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
 #+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
@@ -160,7 +160,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ** Select Theme and Transition
 
     Themes and transition styles are set globally throughout the whole
-    file by setting options =REVEAL_THEME= and =REVEAL_TRANS=.
+    file by setting options =REVEAL_THEME=, =REVEAL_TRANS=, and =REVEAL_SPEED=.
 
     For an example, please check the heading part of this document.
 
@@ -221,10 +221,10 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     - =#+OPTIONS= tags:\\
       =reveal_control=, =reveal_progress=, =reveal_history=,
-      =reveal_center=
+      =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=, =reveal_overview=
     - Custom variables:\\
       =org-reveal-control=, =org-reveal-progress=,
-      =org-reveal-history=, =org-reveal-center=
+      =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyaboard, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
 

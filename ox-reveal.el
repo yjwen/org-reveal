@@ -43,8 +43,12 @@
     (:reveal-progress nil "reveal_progress" org-reveal-progress t)
     (:reveal-history nil  "reveal_history" org-reveal-history t)
     (:reveal-center nil "reveal_center" org-reveal-center t)
+    (:reveal-rolling-links nil "reveal_rolling_links" org-reveal-rolling-links t)
+    (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
+    (:reveal-overview nil "reveal_overview" org-reveal-overview t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
+    (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
@@ -99,6 +103,12 @@ can be include."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-transition-speed
+  "default"
+  "Reveal transistion speed."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-theme
   "default"
   "Reveal theme."
@@ -122,6 +132,21 @@ can be include."
 
 (defcustom org-reveal-center t
   "Reveal center applet."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-rolling-links t
+  "Reveal use rolling links."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-keyboard t
+  "Reveal use keyboard navigation."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-overview t
+  "Reveal show overview."
   :group 'org-export-reveal
   :type 'boolean)
 
@@ -289,14 +314,22 @@ custom variable `org-reveal-root'."
         			progress: %s,
         			history: %s,
         			center: %s,
+        			rollingLinks: %s,
+        			keyboard: %s,
+        			overview: %s,
 
         			theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-        			transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none\n"
+        			transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
+        			transitionSpeed: '%s',\n"
              (if (plist-get info :reveal-control) "true" "false")
              (if (plist-get info :reveal-progress) "true" "false")
              (if (plist-get info :reveal-history) "true" "false")
              (if (plist-get info :reveal-center) "true" "false")
-             (plist-get info :reveal-trans))
+             (if (plist-get info :reveal-rolling-links) "true" "false")
+             (if (plist-get info :reveal-keyboard) "true" "false")
+             (if (plist-get info :reveal-overview) "true" "false")
+             (plist-get info :reveal-trans)
+             (plist-get info :reveal-speed))
      (format "
         			// Optional libraries used to extend on reveal.js
         			dependencies: [
