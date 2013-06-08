@@ -168,6 +168,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
+** Extra Stylesheets
+
+    Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom
+    styles after loading a theme.
+
+#+BEGIN_SRC org
+ #+REVEAL_EXTRA_CSS: my-custom-stylesheet.css
+#+END_SRC
+
 ** Fragmented Contents
 
     Make contents fragmented (show up one-by-one) by setting option =ATTR_REVEAL= with

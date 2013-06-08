@@ -50,6 +50,7 @@
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
+    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
@@ -271,7 +272,7 @@ to form a legal path name."
        (cdr pathes))
     dir-name))
 
-  
+
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
@@ -280,10 +281,15 @@ using custom variable `org-reveal-root'."
          (min-css-file-name (org-reveal--append-path css-dir-name "reveal.min.css"))
          (theme-file (format "%s.css" (plist-get info :reveal-theme)))
          (theme-path (org-reveal--append-path css-dir-name "theme"))
-         (theme-full (org-reveal--append-path theme-path theme-file)))
+         (theme-full (org-reveal--append-path theme-path theme-file))
+         (extra-css (plist-get info :reveal-extra-css))
+         (extra-css-link-tag (if extra-css
+                                 (format "<link rel=\"stylesheet\" href=\"./%s\">" extra-css)
+                               "")))
     (format "<link rel=\"stylesheet\" href=\"%s\">
-<link rel=\"stylesheet\" href=\"%s\" id=\"theme\">\n"
-                min-css-file-name theme-full)))
+<link rel=\"stylesheet\" href=\"%s\" id=\"theme\">
+%s\n"
+                min-css-file-name theme-full extra-css-link-tag)))
 
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
