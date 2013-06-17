@@ -54,6 +54,8 @@
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
+    (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
+    (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
     )
 
   :translate-alist
@@ -161,6 +163,17 @@ can be include."
   "Default MathJax URL."
   :group 'org-export-reveal
   :type 'string)
+
+(defcustom org-reveal-preamble nil
+  "Preamble contents."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-postamble nil
+  "Postamble contents."
+  :group 'org-export-reveal
+  :type 'string)
+
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -517,6 +530,19 @@ the plist used as a communication channel."
                            (org-export-read-attribute :attr_reveal paragraph :frag))
                 contents)))))
 
+(defun org-reveal--build-pre/postamble (type info)
+  "Return document preamble or postamble as a string, or nil."
+  (let ((section (plist-get info (intern (format ":reveal-%s" type))))
+        (spec (org-html-format-spec info)))
+    (when section
+      (let ((section-contents
+             (if (functionp (intern section)) (funcall (intern section) info)
+               ;; else section is a string.
+               (format-spec section spec))))
+        (when (org-string-nw-p section-contents)
+           (org-element-normalize-string section-contents))))))
+        
+
 (defun org-reveal-section (section contents info)
   "Transcode a SECTION element from Org to HTML.
 CONTENTS holds the contents of the section. INFO is a plist
@@ -540,8 +566,9 @@ info is a plist holding export options."
    (org-reveal-stylesheets info)
    (org-reveal-mathjax-scripts info)
    "</head>
-<body>
-<div class=\"reveal\">
+<body>\n"
+   (org-reveal--build-pre/postamble 'preamble info)
+"<div class=\"reveal\">
 <div class=\"slides\">
 <section>
 "
@@ -550,6 +577,7 @@ info is a plist holding export options."
    contents
    "</div>
 </div>\n"
+   (org-reveal--build-pre/postamble 'postamble info)
    (org-reveal-scripts info)
    "</body>
 </html>\n"))

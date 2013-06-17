@@ -7,6 +7,9 @@
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
 
+#+REVEAL_PREAMBLE: my-preamble
+#+REVEAL_POSTAMBLE: <p> This is the postamble. </p>
+
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
@@ -270,6 +273,48 @@ $ git clone https://github.com/yjwen/org-reveal.git
    installation, set option =REVEAL_MATH_JAX_URL= to the URL pointing
    to the local MathJax location.
    
+** Preamble and Postamble
+
+   You can define preamble and postamble contents which will not be
+   shown as slides, but will be exported into the body part of the
+   generated HTML file, at just before and after the slide contents.
+
+   Change preamble and postamble contents globally by setting variable
+   =org-reveal-preamble= and =org-reveal-postamble=.
+
+   Change preamble and postamble contents locally by setting options
+   =REVEAL_PREAMBLE= and =REVEAL_POSTAMBLE=, as illustrated at the
+   heading part of this document.
+
+*** Generating Pre/Postamble by Emacs-Lisp Functions
+
+    If the contents of pre/postamble is the name of an evaluated
+    Emacs-Lisp funtion, which must accept an argument of Org-mode
+    info and return a string, the returned string will be taken
+    as pre/postamble contents.
+
+    So you can embed the Emacs-Lisp function as an Org-Babel source
+    block and mark it to be evaluated at exporting the document.
+
+    In this document, the =REVEAL_PREAMBLE= option is set to
+    =my-preamble=, now we will define =my-preamble= in an Org-Bable
+    source block, as illustrated below (invisible in the slides).
+
+#+BEGIN_SRC emacs-lisp :exports results :results silent
+  (defun my-preamble (info)
+    ""
+    "<p>
+  Thanks to Org-Babel, now we can embed preambles into Org document!
+  </p>")
+  
+#+END_SRC
+
+    The =:exports results :result silent= options mark the source
+    block to be evaluated at exporting and the evaluation result
+    is omitted, so it won't disturb slide contents.
+
+    Check the generated HTML to see how it works.
+
 * Tips
 
 ** Disable Heading Numbers
