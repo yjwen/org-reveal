@@ -6,7 +6,7 @@
 #+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
-
+#+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_PREAMBLE: my-preamble
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
 
@@ -285,6 +285,10 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Change preamble and postamble contents locally by setting options
    =REVEAL_PREAMBLE= and =REVEAL_POSTAMBLE=, as illustrated at the
    heading part of this document.
+
+   To add custom contents into HTML =<head>= parts, set contents to
+   variable =org-reveal-head-preamble= or option
+   =REVEAL_HEAD_PREAMBLE=.
 
 *** Generating Pre/Postamble by Emacs-Lisp Functions
 

@@ -55,6 +55,7 @@
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
+    (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
     )
 
@@ -166,6 +167,11 @@ can be include."
 
 (defcustom org-reveal-preamble nil
   "Preamble contents."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-head-preamble nil
+  "Preamble contents for head part."
   :group 'org-export-reveal
   :type 'string)
 
@@ -566,6 +572,7 @@ info is a plist holding export options."
    (if-format "<meta name=\"keywords\" content=\"%s\"/>\n" (plist-get info :keywords))
    (org-reveal-stylesheets info)
    (org-reveal-mathjax-scripts info)
+   (org-reveal--build-pre/postamble 'head-preamble info)
    "</head>
 <body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
