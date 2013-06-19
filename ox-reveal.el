@@ -508,8 +508,9 @@ and may change custom variables as SIDE EFFECT.
 CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((key (org-element-property :key keyword))
         (value (org-element-property :value keyword)))
-    (when (string= key "REVEAL")
-      (org-reveal-parse-keyword-value value))))
+    (case (intern key)
+      (REVEAL (org-reveal-parse-keyword-value value))
+      (REVEAL_HTML value))))
 
 (defun org-reveal-paragraph (paragraph contents info)
   "Transcode a PARAGRAPH element from Org to Reveal HTML.

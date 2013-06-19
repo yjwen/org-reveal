@@ -8,7 +8,7 @@
 #+REVEAL_HLEVEL: 2
 
 #+REVEAL_PREAMBLE: my-preamble
-#+REVEAL_POSTAMBLE: <p> This is the postamble. </p>
+#+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
 
 * Reveal.js and Org-Reveal
 
@@ -153,12 +153,12 @@ $ git clone https://github.com/yjwen/org-reveal.git
    split the contents into multiple vertical slides manually, by inserting
 
 #+BEGIN_SRC org
- #+REVEAL: split
+,#+REVEAL: split
 #+END_SRC
 
 #+REVEAL: split:force-split
 
-   Now  a new slide begin after =#+REVEAL= keyword.
+   Now a new slide begins after =#+REVEAL= keyword.
 
 ** Select Theme and Transition
 
@@ -314,6 +314,16 @@ $ git clone https://github.com/yjwen/org-reveal.git
     is omitted, so it won't disturb slide contents.
 
     Check the generated HTML to see how it works.
+
+** Raw HTML in Slides
+
+   Besides the Org contents, you can embed raw HTML contents
+   into slides by placing a =#+REVEAL_HTML= keyword.
+
+   Now break time, listen to a girl's song.
+
+#+REVEAL_HTML: <video  src="http://naga-eda.org/home/yujie/lengwanwan_youthtime.mp4"></video>
+   Leng WanWan - Youth times (冷碗碗 青春)
 
 * Tips
 
