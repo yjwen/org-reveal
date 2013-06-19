@@ -2,7 +2,12 @@
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
 
-#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
+#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_width:1200 reveal_height:800
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
 #+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
@@ -156,7 +161,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ,#+REVEAL: split
 #+END_SRC
 
-#+REVEAL: split:force-split
+#+REVEAL: split
 
    Now a new slide begins after =#+REVEAL= keyword.
 
@@ -171,6 +176,20 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
+** Slide Size
+
+   Reveal.js scales slides to best fit the display resolution. But in case
+   the auto-sizes are not satisfiable, you can specify the desired size by
+   option tag =width= and =height=.
+
+   The scaling behavior can also be contrainted by setting following
+   options:
+   * =#+REVEAL_MARGIN:= :: a float number, the factor of empty area
+        surrounding slide contents.
+   * =#+REVEAL_MIN_SCALE:= :: a float number, the minimun scaling down
+        ratio.
+   * =#+REVEAL_MAX_SCALE:= :: a float number, the maximum scaling up
+        ratio.
 ** Extra Stylesheets
 
     Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom

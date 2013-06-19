@@ -46,6 +46,11 @@
     (:reveal-rolling-links nil "reveal_rolling_links" org-reveal-rolling-links t)
     (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
     (:reveal-overview nil "reveal_overview" org-reveal-overview t)
+    (:reveal-width nil "reveal_width" org-reveal-width t)
+    (:reveal-height nil "reveal_height" org-reveal-height)
+    (:reveal-margin"REVEAL_MARGIN" nil org-reveal-margin t)
+    (:reveal-min-scale "REVEAL_MIN_SCALE" nil org-reveal-min-scale t)
+    (:reveal-max-scale "REVEAL_MAX_SCALE" nil org-reveal-max-scale t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
@@ -153,6 +158,31 @@ can be include."
   "Reveal show overview."
   :group 'org-export-reveal
   :type 'boolean)
+
+(defcustom org-reveal-width -1
+  "Slide width"
+  :group 'org-export-reveal
+  :type 'integer)
+
+(defcustom org-reveal-height -1
+  "Slide height"
+  :group 'org-export-reveal
+  :type 'integer)
+
+(defcustom org-reveal-margin -1
+  "Slide margin"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-min-scale -1
+  "Minimum bound for scaling slide."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-max-scale -1
+  "Maximum bound for scaling slide."
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-mathjax nil
   "Enable MathJax script."
@@ -342,6 +372,12 @@ custom variable `org-reveal-root'."
         			rollingLinks: %s,
         			keyboard: %s,
         			overview: %s,
+        			%s // slide width
+        			%s // slide height
+        			%s // slide margin
+        			%s // slide minimum scaling factor
+        			%s // slide maximum scaling factor
+
 
         			theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
         			transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
@@ -353,6 +389,22 @@ custom variable `org-reveal-root'."
              (if (plist-get info :reveal-rolling-links) "true" "false")
              (if (plist-get info :reveal-keyboard) "true" "false")
              (if (plist-get info :reveal-overview) "true" "false")
+             (let ((width (plist-get info :reveal-width)))
+               (if (> width 0) (format "width: %d," width)
+                 ""))
+             (let ((height (plist-get info :reveal-height)))
+               (if (> height 0) (format "height: %d," height)
+                 ""))
+             (let ((margin (string-to-number (plist-get info :reveal-margin))))
+               (if (>= margin 0) (format "margin: %.2f," margin)
+                 ""))
+             (let ((min-scale (string-to-number (plist-get info :reveal-min-scale))))
+               (if (> min-scale 0) (format "minScale: %.2f," min-scale)
+                 ""))
+             (let ((max-scale (string-to-number (plist-get info :reveal-max-scale))))
+               (if (> max-scale 0) (format "maxScale: %.2f," max-scale)
+                 ""))
+             
              (plist-get info :reveal-trans)
              (plist-get info :reveal-speed))
      (format "
