@@ -48,7 +48,7 @@
     (:reveal-overview nil "reveal_overview" org-reveal-overview t)
     (:reveal-width nil "reveal_width" org-reveal-width t)
     (:reveal-height nil "reveal_height" org-reveal-height)
-    (:reveal-margin"REVEAL_MARGIN" nil org-reveal-margin t)
+    (:reveal-margin "REVEAL_MARGIN" nil org-reveal-margin t)
     (:reveal-min-scale "REVEAL_MIN_SCALE" nil org-reveal-min-scale t)
     (:reveal-max-scale "REVEAL_MAX_SCALE" nil org-reveal-max-scale t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
@@ -169,17 +169,17 @@ can be include."
   :group 'org-export-reveal
   :type 'integer)
 
-(defcustom org-reveal-margin -1
+(defcustom org-reveal-margin "-1"
   "Slide margin"
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-min-scale -1
+(defcustom org-reveal-min-scale "-1"
   "Minimum bound for scaling slide."
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-max-scale -1
+(defcustom org-reveal-max-scale "-1"
   "Maximum bound for scaling slide."
   :group 'org-export-reveal
   :type 'string)
