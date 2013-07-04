@@ -519,9 +519,9 @@ holding export options."
         (concat
          "<dt"
          (if-format " class=\"fragment %s\"" frag)
-         ">"
+         "><b>"
          (concat checkbox (or term-counter-id "(no term)"))
-         "</dt><dd>")))
+         "</b></dt><dd>")))
      (unless (eq type 'descriptive) checkbox)
      contents
      (case type
