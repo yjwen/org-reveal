@@ -334,11 +334,15 @@ using custom variable `org-reveal-root'."
          (extra-css (plist-get info :reveal-extra-css))
          (extra-css-link-tag (if extra-css
                                  (format "<link rel=\"stylesheet\" href=\"./%s\">" extra-css)
-                               "")))
+                               ""))
+         (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css"))))
     (format "<link rel=\"stylesheet\" href=\"%s\">
 <link rel=\"stylesheet\" href=\"%s\" id=\"theme\">
-%s\n"
-                min-css-file-name theme-full extra-css-link-tag)))
+%s
+<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"print\">
+"
+                min-css-file-name theme-full extra-css-link-tag
+                pdf-css)))
 
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
