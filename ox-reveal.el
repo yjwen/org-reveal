@@ -65,7 +65,8 @@
     )
 
   :translate-alist
-  '((headline . org-reveal-headline)
+  '((export-block . org-reveal-export-block)
+    (headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
@@ -73,7 +74,7 @@
     (section . org-reveal-section)
     (template . org-reveal-template))
 
-  :export-block "REVEAL"
+  :export-block '("REVEAL" "NOTES")
   )
 
 (defcustom org-reveal-root "./reveal.js"
@@ -215,13 +216,14 @@ can be include."
   (if val (format fmt val) ""))
 
 (defun org-reveal-export-block (export-block contents info)
-  "Transcode an EXPORT-BLOCK  element from Org to Reveal.
-CONTENTS is nil. INFO is a plist holding contextual information."
-  (format "export-block\ntype: %s, value: %s, contents: %s"
-          (org-element-property :type export-block)
-          (org-element-property :value export-block)
-          contents))
-
+  "Transocde a EXPORT-BLOCK element from Org to Reveal.
+CONTENTS is nil. NFO is a plist holding contextual information."
+  (when (string= (org-element-property :type export-block) "NOTES")
+    (concat
+     "<aside class=\"notes\">\n"
+     (org-element-property :value export-block)
+     "</aside>")))
+                 
 (defun org-reveal-headline (headline contents info)
   "Transcode a HEADLINE element from Org to Reveal.
 CONTENTS holds the contents of the headline. INFO is a plist

@@ -71,7 +71,9 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ** Set the location of Reveal.js
 
    Org-reveal must know where Reveal.js is on your computer before
-   exporting Org contents.
+   exporting Org contents. The location of Reveal.js is the path to
+   the top directory of Reveal.js packages, the one which contains
+   file *README.md*, but *not* the one contains file reveal.js.
 
    The default location is =./reveal.js=, relative to the Org file.
 
@@ -347,6 +349,33 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 #+REVEAL_HTML: <video  src="http://naga-eda.org/home/yujie/lengwanwan_youthtime.mp4"></video>
    Leng WanWan - Youth times (冷碗碗 青春)
+
+** Speaker Notes
+   Reveal.js supports speaker notes, which are displayed in a seperate
+   browser window. Press 's' on slide windows will pop up an window
+   displaying current slide, next slide and the speak notes on current
+   slide.
+
+   Org-reveal recognize texts between =#+BEGIN_NOTES= and =#+END_NOTES=
+   as speaker notes. See the example below.
+
+#+BEGIN_SRC org
+,* Heading 1
+   Some contents.
+,#+BEGIN_NOTES
+  Enter speaker notes here.
+,#+END_NOTES
+#+END_SRC
+
+*** Notes on Speaker Notes
+
+    Due to a bug in Reveal.js, speaker notes can only be displayed
+    correctly when current Reveal.js slides are in the reveal.js root
+    directory.
+
+    In order to display speaker notes, =org-reveal-root= should be set
+    to ="."=, and the generated HTML file should be copied to the
+    reveal.js top directory.
 
 * Tips
 
