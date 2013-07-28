@@ -367,16 +367,6 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ,#+END_NOTES
 #+END_SRC
 
-*** Notes on Speaker Notes
-
-    Due to a bug in Reveal.js, speaker notes can only be displayed
-    correctly when current Reveal.js slides are in the reveal.js root
-    directory.
-
-    In order to display speaker notes, =org-reveal-root= should be set
-    to ="."=, and the generated HTML file should be copied to the
-    reveal.js top directory.
-
 * Tips
 
 ** Disable Heading Numbers
