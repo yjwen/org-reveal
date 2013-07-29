@@ -219,13 +219,10 @@ can be include."
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
 CONTENTS is nil. NFO is a plist holding contextual information."
   (when (string= (org-element-property :type export-block) "NOTES")
-    (let* ((block-string (org-element-property :value export-block))
-           (parsed-tree (org-element-parse-secondary-string
-                         block-string
-                         org-element-all-successors)))
+    (let ((block-string (org-element-property :value export-block)))
       (concat
        "<aside class=\"notes\">\n"
-       (org-export-data-with-backend parsed-tree 'html info)
+       (org-export-string-as block-string 'html 'body-only)
        "</aside>"))))
                  
 (defun org-reveal-headline (headline contents info)
