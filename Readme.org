@@ -178,6 +178,64 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
+** Set Slide Background
+
+   Slide background can be set to a color, an image or a repeating image
+   array by setting heading properties.
+
+*** Single Colored Background
+   :PROPERTIES:
+   :reveal_background: #543210
+   :END:
+
+    Set property =reveal_background= to either an RGB color value, or any
+    supported CSS color format.
+
+#+BEGIN_SRC org
+,*** Single Colored Background
+   :PROPERTIES:
+   :reveal_background: #123456
+   :END:
+#+END_SRC
+
+*** Single Image Background
+    :PROPERTIES:
+    :reveal_background: ./images/whale.jpg
+    :reveal_background_trans: slide
+    :END:
+
+    Set property =reveal_background= to an URL of background image.
+    Set property =reveal_background_trans= to =slide= to make background image
+    sliding rather than fading.
+#+BEGIN_SRC org
+,*** Single Image Background
+    :PROPERTIES:
+    :reveal_background: ./images/whale.jpg
+    :reveal_background_trans: slide
+    :END:
+#+END_SRC
+
+*** Repeating Image Background
+    :PROPERTIES:
+    :reveal_background: ./images/whale.jpg
+    :reveal_background_size: 200px
+    :reveal_background_repeat: repeat
+    :END:
+
+    Resize background image by setting property
+    =reveal_background_size= to a number.
+
+    Set property =reveal_background_repeat= to =repeat= to repeat
+    image on the background.
+#+BEGIN_SRC org
+,*** Repeating Image Background
+    :PROPERTIES:
+    :reveal_background: ./images/whale.jpg
+    :reveal_background_size: 200px
+    :reveal_background_repeat: repeat
+    :END:
+#+END_SRC
+
 ** Slide Size
 
    Reveal.js scales slides to best fit the display resolution. But in case

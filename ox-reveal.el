@@ -277,12 +277,16 @@ holding contextual information."
              ;; into vertical ones.
              "<section>\n")
          ;; Start a new slide.
-         (format "<section id=\"%s\" %s>\n"
+         (format "<section id=\"%s\" %s%s%s%s%s>\n"
                  (or (org-element-property :CUSTOM_ID headline)
                      (concat "sec-" (mapconcat 'number-to-string
                                                (org-export-get-headline-number headline info)
                                                "-")))
-                 (if-format " data-state=\"%s\"" (org-element-property :REVEAL_DATA_STATE headline)))
+                 (if-format " data-state=\"%s\"" (org-element-property :REVEAL_DATA_STATE headline))
+                 (if-format " data-background=\"%s\"" (org-element-property :REVEAL_BACKGROUND headline))
+                 (if-format " data-background-size=\"%s\"" (org-element-property :REVEAL_BACKGROUND_SIZE headline))
+                 (if-format " data-background-repeat=\"%s\"" (org-element-property :REVEAL_BACKGROUND_REPEAT headline))
+                 (if-format " data-background-transition=\"%s\"" (org-element-property :REVEAL_BACKGROUND_TRANS headline)))
          ;; The HTML content of this headline.
          (format "\n<h%d%s>%s</h%d>\n"
                  level1
