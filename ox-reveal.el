@@ -218,12 +218,15 @@ can be include."
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
 CONTENTS is nil. NFO is a plist holding contextual information."
-  (when (string= (org-element-property :type export-block) "NOTES")
-    (let ((block-string (org-element-property :value export-block)))
-      (concat
-       "<aside class=\"notes\">\n"
-       (org-export-string-as block-string 'html 'body-only)
-       "</aside>"))))
+  (let ((block-type (org-element-property :type export-block))
+        (block-string (org-element-property :value export-block)))
+    (cond ((string= block-type "NOTES")
+           (concat
+            "<aside class=\"notes\">\n"
+            (org-export-string-as block-string 'html 'body-only)
+            "</aside>"))
+          ((string= block-type "HTML")
+           (org-remove-indentation block-string)))))
                  
 (defun org-reveal-headline (headline contents info)
   "Transcode a HEADLINE element from Org to Reveal.
