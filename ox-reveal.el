@@ -343,13 +343,13 @@ using custom variable `org-reveal-root'."
          (theme-full (org-reveal--append-path theme-path theme-file))
          (extra-css (plist-get info :reveal-extra-css))
          (extra-css-link-tag (if extra-css
-                                 (format "<link rel=\"stylesheet\" href=\"./%s\">" extra-css)
+                                 (format "<link rel=\"stylesheet\" href=\"./%s\"/>" extra-css)
                                ""))
          (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css"))))
-    (format "<link rel=\"stylesheet\" href=\"%s\">
-<link rel=\"stylesheet\" href=\"%s\" id=\"theme\">
+    (format "<link rel=\"stylesheet\" href=\"%s\"/>
+<link rel=\"stylesheet\" href=\"%s\" id=\"theme\"/>
 %s
-<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"print\">
+<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"print\"/>
 "
                 min-css-file-name theme-full extra-css-link-tag
                 pdf-css)))
@@ -629,9 +629,9 @@ contents is the transcoded contents string.
 info is a plist holding export options."
   (concat
    (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<!doctype html>\n<html%s>\n<head>\n"
+<!DOCTYPE html>\n<html%s>\n<head>\n"
            (if-format " lang=\"%s\"" (plist-get info :language)))
-   "<meta charset=\"utf-8\">"
+   "<meta charset=\"utf-8\"/>\n"
    (if-format "<title>%s</title>\n" (plist-get info :title))
    (if-format "<meta name=\"author\" content=\"%s\"/>\n" (plist-get info :author))
    (if-format "<meta name=\"description\" content=\"%s\"/>\n" (plist-get info :description))
