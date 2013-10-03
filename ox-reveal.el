@@ -597,7 +597,15 @@ the plist used as a communication channel."
       contents)
      ((org-html-standalone-image-p paragraph info)
       ;; standalone image
-      contents)
+      (let ((frag (org-export-read-attribute :attr_reveal paragraph :frag)))
+        (if frag
+            (progn
+              ;; This is ugly; need to update if the output from
+              ;; org-html-format-inline-image changes.
+              (unless (string-match "class=\"figure\"" contents)
+                (error "Unexpected HTML output for image!"))
+              (replace-match (concat "class=\"figure fragment " frag " \"") t t contents))
+          contents)))
      (t (format "<p%s>\n%s</p>"
                 (if-format " class=\"fragment %s\""
                            (org-export-read-attribute :attr_reveal paragraph :frag))
