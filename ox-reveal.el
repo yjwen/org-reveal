@@ -56,6 +56,7 @@
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
+    (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
@@ -280,7 +281,7 @@ holding contextual information."
              ;; into vertical ones.
              "<section>\n")
          ;; Start a new slide.
-         (format "<section id=\"%s\" %s%s%s%s%s>\n"
+         (format "<section id=\"%s\" %s%s%s%s%s%s>\n"
                  (or (org-element-property :CUSTOM_ID headline)
                      (concat "sec-" (mapconcat 'number-to-string
                                                (org-export-get-headline-number headline info)
@@ -289,7 +290,8 @@ holding contextual information."
                  (if-format " data-background=\"%s\"" (org-element-property :REVEAL_BACKGROUND headline))
                  (if-format " data-background-size=\"%s\"" (org-element-property :REVEAL_BACKGROUND_SIZE headline))
                  (if-format " data-background-repeat=\"%s\"" (org-element-property :REVEAL_BACKGROUND_REPEAT headline))
-                 (if-format " data-background-transition=\"%s\"" (org-element-property :REVEAL_BACKGROUND_TRANS headline)))
+                 (if-format " data-background-transition=\"%s\"" (org-element-property :REVEAL_BACKGROUND_TRANS headline))
+                 (org-element-property :REVEAL_EXTRA_ATTR headline))
          ;; The HTML content of this headline.
          (format "\n<h%d%s>%s</h%d>\n"
                  level1
@@ -343,7 +345,7 @@ using custom variable `org-reveal-root'."
          (theme-full (org-reveal--append-path theme-path theme-file))
          (extra-css (plist-get info :reveal-extra-css))
          (extra-css-link-tag (if extra-css
-                                 (format "<link rel=\"stylesheet\" href=\"./%s\"/>" extra-css)
+                                 (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css)
                                ""))
          (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css"))))
     (format "<link rel=\"stylesheet\" href=\"%s\"/>
@@ -369,7 +371,8 @@ custom variable `org-reveal-root'."
          (lib-dir-name (org-reveal--append-path root-path "lib"))
          (lib-js-dir-name (org-reveal--append-path lib-dir-name "js"))
          (plugin-dir-name (org-reveal--append-path root-path "plugin"))
-         (markdown-dir-name (org-reveal--append-path plugin-dir-name "markdown")))
+         (markdown-dir-name (org-reveal--append-path plugin-dir-name "markdown"))
+         (extra-js (plist-get info :reveal-extra-js)))
     (concat
      (format "<script src=\"%s\"></script>\n<script src=\"%s\"></script>\n"
              (org-reveal--append-path lib-js-dir-name "head.min.js")
@@ -424,14 +427,15 @@ custom variable `org-reveal-root'."
      (format "
         			// Optional libraries used to extend on reveal.js
         			dependencies: [
-        				{ src: '%s', condition: function() { return !document.body.classList; } },
-        				{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-        				{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-        				{ src: '%s', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-        				{ src: '%s', async: true, condition: function() { return !!document.body.classList; } },
-        				{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+        				{ src: '%s', condition: function() { return !document.body.classList; } }
+        				,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+        				,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+        				,{ src: '%s', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+        				,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+        				,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
         				// { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
         				// { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
+         				%s
         			]
         		});\n"
                (org-reveal--append-path lib-js-dir-name "classList.js")
@@ -441,7 +445,8 @@ custom variable `org-reveal-root'."
                (org-reveal--append-pathes plugin-dir-name '("zoom-js" "zoom.js"))
                (org-reveal--append-pathes plugin-dir-name '("notes" "notes.js"))
                (org-reveal--append-pathes plugin-dir-name '("search" "search.js"))
-               (org-reveal--append-pathes plugin-dir-name '("remotes" "remotes.js")))
+               (org-reveal--append-pathes plugin-dir-name '("remotes" "remotes.js"))
+               (if extra-js (concat "," extra-js) ""))
                 "</script>\n")))
 
 (defun org-reveal-toc-headlines-r (headlines info prev_level hlevel prev_x prev_y)

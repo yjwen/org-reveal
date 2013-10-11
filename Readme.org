@@ -251,15 +251,6 @@ $ git clone https://github.com/yjwen/org-reveal.git
         ratio.
    * =#+REVEAL_MAX_SCALE:= :: a float number, the maximum scaling up
         ratio.
-** Extra Stylesheets
-
-    Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom
-    styles after loading a theme.
-
-#+BEGIN_SRC org
- #+REVEAL_EXTRA_CSS: my-custom-stylesheet.css
-#+END_SRC
-
 ** Fragmented Contents
 
     Make contents fragmented (show up one-by-one) by setting option =ATTR_REVEAL= with
@@ -319,7 +310,6 @@ $ git clone https://github.com/yjwen/org-reveal.git
       =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyaboard, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
-
 ** Source Codes
 
    Org-reveal use Org-Babel to highlight source codes.
@@ -398,7 +388,6 @@ $ git clone https://github.com/yjwen/org-reveal.git
     is omitted, so it won't disturb slide contents.
 
     Check the generated HTML to see how it works.
-
 ** Raw HTML in Slides
 
    Besides the Org contents, you can embed raw HTML contents
@@ -425,6 +414,27 @@ $ git clone https://github.com/yjwen/org-reveal.git
   Enter speaker notes here.
 ,#+END_NOTES
 #+END_SRC
+** Extra Stylesheets
+
+   Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom
+   styles after loading a theme.
+
+#+BEGIN_SRC org
+ #+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
+#+END_SRC
+
+** Extra Dependent Script
+
+   Set =REVEAL_EXTRA_JS= to the url of extra reveal.js dependent
+   script if necessary.
+#+BEGIN_SRC org
+ #+REVEAL_EXTRA_JS: url-to-custom-script.js
+#+END_SRC
+
+** Extra Slide attribute
+
+   Set property =reveal_extra_attr= to headings to add any necessary attributes
+   to slides.
 
 * Tips
 
