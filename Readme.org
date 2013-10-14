@@ -371,7 +371,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
     block and mark it to be evaluated at exporting the document.
 
     In this document, the =REVEAL_PREAMBLE= option is set to
-    =my-preamble=, now we will define =my-preamble= in an Org-Bable
+    =my-preamble=, now we will define =my-preamble= in an Org-Babel
     source block, as illustrated below (invisible in the slides).
 
 #+BEGIN_SRC emacs-lisp :exports results :results silent
