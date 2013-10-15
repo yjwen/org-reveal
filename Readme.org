@@ -414,6 +414,14 @@ $ git clone https://github.com/yjwen/org-reveal.git
   Enter speaker notes here.
 ,#+END_NOTES
 #+END_SRC
+
+#+REVEAL: split
+
+   Due to a bug in Reveal.js, sometimes the speaker notes window
+   shows only blank screens. A workaround to this issue is to put
+   the presentation HTML file into the Reveal.js root directory and
+   reopen it in the brower.
+
 ** Extra Stylesheets
 
    Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom
