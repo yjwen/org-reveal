@@ -73,6 +73,7 @@
     (keyword . org-reveal-keyword)
     (paragraph . org-reveal-paragraph)
     (section . org-reveal-section)
+    (src-block . org-reveal-src-block)
     (template . org-reveal-template))
 
   :export-block '("REVEAL" "NOTES")
@@ -545,11 +546,6 @@ holding export options."
        (unordered "</li>")
        (descriptive "</dd>")))))
 
-(defun org-reveal--get-frag (info)
-  "Get Reveal fragment settings from context."
-  (let ((frag (plist-get info :reveal-frag)))
-    (if (eq frag "none") nil frag)))
-
 (defun org-reveal-item (item contents info)
   "Transcode an ITEM element from Org to Reveal.
 CONTENTS holds the contents of the item. INFO is aplist holding
@@ -631,11 +627,39 @@ the plist used as a communication channel."
         
 
 (defun org-reveal-section (section contents info)
-  "Transcode a SECTION element from Org to HTML.
+  "Transcode a SECTION element from Org to Reveal.
 CONTENTS holds the contents of the section. INFO is a plist
 holding contextual information."
   ;; Just return the contents. No "<div>" tags.
   contents)
+
+(defun org-reveal-src-block (src-block contents info)
+  "Transcode a SRC-BLOCK element from Org to Reveal.
+CONTENTS holds the contents of the item.  INFO is a plist holding
+contextual information."
+  (if (org-export-read-attribute :attr_html src-block :textarea)
+      (org-html--textarea-block src-block)
+    (let ((lang (org-element-property :language src-block))
+	  (caption (org-export-get-caption src-block))
+	  (code (org-html-format-code src-block info))
+          (frag (org-export-read-attribute :attr_reveal src-block :frag))
+	  (label (let ((lbl (org-element-property :name src-block)))
+		   (if (not lbl) ""
+		     (format " id=\"%s\""
+			     (org-export-solidify-link-text lbl))))))
+      (if (not lang) (format "<pre class=\"%s\"%s>\n%s</pre>"
+                             (if frag (format "fragment %s" frag) "example")
+                             label code)
+	(format
+	 "<div class=\"org-src-container\">\n%s%s\n</div>"
+	 (if (not caption) ""
+	   (format "<label class=\"org-src-name\">%s</label>"
+		   (org-export-data caption info)))
+	 (format "\n<pre class=\"%s\"%s>%s</pre>"
+                 (if frag
+                     (format "fragment %s" frag)
+                   (format "src src-%s" lang))
+                 label code))))))
 
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
