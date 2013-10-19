@@ -137,7 +137,7 @@ can be include."
   :group 'org-export-reveal
   :type 'boolean)
 
-(defcustom org-reveal-history t
+(defcustom org-reveal-history nil
   "Reveal history applet."
   :group 'org-export-reveal
   :type 'boolean)
@@ -147,7 +147,7 @@ can be include."
   :group 'org-export-reveal
   :type 'boolean)
 
-(defcustom org-reveal-rolling-links t
+(defcustom org-reveal-rolling-links nil
   "Reveal use rolling links."
   :group 'org-export-reveal
   :type 'boolean)
