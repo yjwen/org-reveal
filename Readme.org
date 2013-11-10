@@ -39,6 +39,9 @@
 
    Extract Reveal.js folders from the downloaded zip file.
 
+   If you do not wish you download reveal.js and want to use a CDN
+   version, see the section /Set the location of Reveal.js/
+
 ** Obtain org-mode
 
    *Note*: Org-reveal relies on the Org-mode 8.0 export frame work.
@@ -93,6 +96,14 @@ $ git clone https://github.com/yjwen/org-reveal.git
 #+BEGIN_SRC org 
  #+REVEAL_ROOT: file:///d:/reveal.js
 #+END_SRC
+
+   Set your =REVEAL_ROOT= to the following URL, to use reveal.js from
+   a CDN, instead of downloading your local copy.
+
+   #+BEGIN_SRC org
+     ,#+REVEAL_ROOT: //cdn.jsdelivr.net/reveal.js/2.5.0/
+   #+END_SRC
+
 
 ** First Try
 
