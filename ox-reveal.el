@@ -36,7 +36,8 @@
 
   :menu-entry
   '(?R "Export to reveal.js HTML Presentation"
-       ((?R "To file" org-reveal-export-to-html)))
+       ((?R "To file" org-reveal-export-to-html)
+        (?B "To file and Browse" org-reveal-export-to-html-and-browse)))
 
   :options-alist
   '((:reveal-control nil "reveal_control" org-reveal-control t)
@@ -704,6 +705,12 @@ info is a plist holding export options."
          (file (org-export-output-file-name extension subtreep)))
     (org-export-to-file
      'reveal file subtreep visible-only body-only ext-plist)))
+
+(defun org-reveal-export-to-html-and-browse
+  (&optional async subtreep visible-only body-only ext-plist)
+  "Export current buffer to a reveal.js and browse HTML file."
+  (interactive)
+  (browse-url-of-file (org-reveal-export-to-html async subtreep visible-only body-only ext-plist)))
 
 (provide 'ox-reveal)
 
