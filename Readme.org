@@ -101,7 +101,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    a CDN, instead of downloading your local copy.
 
    #+BEGIN_SRC org
-     ,#+REVEAL_ROOT: //cdn.jsdelivr.net/reveal.js/2.5.0/
+     ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
    #+END_SRC
 
 
