@@ -230,7 +230,7 @@ CONTENTS is nil. NFO is a plist holding contextual information."
             "</aside>"))
           ((string= block-type "HTML")
            (org-remove-indentation block-string)))))
-                 
+
 (defun org-reveal-headline (headline contents info)
   "Transcode a HEADLINE element from Org to Reveal.
 CONTENTS holds the contents of the headline. INFO is a plist
@@ -317,7 +317,7 @@ holding contextual information."
                   (org-export-last-sibling-p headline info))
              ;; Last head 1. Stop all slides.
              "</section>")))))))
-  
+
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
   :tag "Org Export reveal"
@@ -342,6 +342,7 @@ to form a legal path name."
 using custom variable `org-reveal-root'."
   (let* ((root-path (plist-get info :reveal-root))
          (css-dir-name (org-reveal--append-path root-path "css"))
+         (lib-dir-name (org-reveal--append-path root-path "lib"))
          (min-css-file-name (org-reveal--append-path css-dir-name "reveal.min.css"))
          (theme-file (format "%s.css" (plist-get info :reveal-theme)))
          (theme-path (org-reveal--append-path css-dir-name "theme"))
@@ -350,14 +351,15 @@ using custom variable `org-reveal-root'."
          (extra-css-link-tag (if extra-css
                                  (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css)
                                ""))
-         (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css"))))
+         (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css")))
+         (zenburn-css (org-reveal--append-pathes lib-dir-name '("css" "zenburn.css")))))
     (format "<link rel=\"stylesheet\" href=\"%s\"/>
 <link rel=\"stylesheet\" href=\"%s\" id=\"theme\"/>
 %s
 <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"print\"/>
-"
+<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\"/>"
                 min-css-file-name theme-full extra-css-link-tag
-                pdf-css)))
+                pdf-css zenburn-css)))
 
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
@@ -424,7 +426,7 @@ custom variable `org-reveal-root'."
              (let ((max-scale (string-to-number (plist-get info :reveal-max-scale))))
                (if (> max-scale 0) (format "maxScale: %.2f," max-scale)
                  ""))
-             
+
              (plist-get info :reveal-trans)
              (plist-get info :reveal-speed))
      (format "
@@ -497,7 +499,7 @@ Add proper internal link to each headline."
 
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (format 
+  (format
    "<section>\n%s</section>\n"
    (org-reveal-toc-headlines
     (org-export-collect-headlines info depth)
@@ -575,7 +577,7 @@ contextual information."
      (lambda (x) (apply 'org-reveal-parse-token x))
      tokens
      "")))
-    
+
 
 (defun org-reveal-keyword (keyword contents info)
   "Transcode a KEYWORD element from Org to HTML,
@@ -625,7 +627,7 @@ the plist used as a communication channel."
                (format-spec section spec))))
         (when (org-string-nw-p section-contents)
            (org-element-normalize-string section-contents))))))
-        
+
 
 (defun org-reveal-section (section contents info)
   "Transcode a SECTION element from Org to Reveal.
@@ -656,7 +658,7 @@ contextual information."
 	 (if (not caption) ""
 	   (format "<label class=\"org-src-name\">%s</label>"
 		   (org-export-data caption info)))
-	 (format "\n<pre class=\"%s\"%s>%s</pre>"
+	 (format "\n<pre class=\"%s\"%s><code data-trim>%s</code></pre>"
                  (if frag
                      (format "fragment %s" frag)
                    (format "src src-%s" lang))
