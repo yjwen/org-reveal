@@ -59,6 +59,7 @@
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
+    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
@@ -685,7 +686,7 @@ info is a plist holding export options."
 <div class=\"slides\">
 <section>
 "
-   (format-spec org-reveal-title-slide-template (org-html-format-spec info))
+   (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
    "</section>\n"
    contents
    "</div>
