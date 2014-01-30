@@ -262,7 +262,7 @@ holding contextual information."
       ;; Build the real contents of the sub-tree.
       (let* ((type (if numberedp 'ordered 'unordered))
 	     (itemized-body (org-reveal-format-list-item
-			     contents type nil info nil 'none full-text)))
+			     contents type nil nil 'none full-text)))
 	(concat
 	 (and (org-export-first-sibling-p headline info)
 	      (org-html-begin-plain-list type))
@@ -516,9 +516,9 @@ holding export options."
    contents))
 
 (defun org-reveal-format-list-item
-  (contents type checkbox info &optional term-counter-id frag headline)
+  (contents type checkbox &optional term-counter-id frag headline)
   "Format a list item into Reveal.js HTML."
-  (let ((checkbox (concat (org-html-checkbox checkbox info) (and checkbox " "))))
+  (let ((checkbox (concat (org-html-checkbox checkbox) (and checkbox " "))))
     (concat
      (case type
        (ordered
@@ -560,7 +560,7 @@ contextual information."
                 (and tag (org-export-data tag info))))
          (frag (org-export-read-attribute :attr_reveal plain-list :frag)))
     (org-reveal-format-list-item
-     contents type checkbox info (or tag counter) frag)))
+     contents type checkbox (or tag counter) frag)))
 
 (defun org-reveal-parse-token (key &optional value)
   "Return HTML tags or perform SIDE EFFECT according to key"
