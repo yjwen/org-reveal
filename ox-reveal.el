@@ -518,7 +518,7 @@ holding export options."
 (defun org-reveal-format-list-item
   (contents type checkbox info &optional term-counter-id frag headline)
   "Format a list item into Reveal.js HTML."
-  (let ((checkbox (concat (org-html-checkbox checkbox info) (and checkbox " "))))
+  (let ((checkbox (concat (org-html-checkbox checkbox) (and checkbox " "))))
     (concat
      (case type
        (ordered
