@@ -126,7 +126,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    * Headings of level less or equal to HLevel are mapped to hozirontal
      slides.
    * Headings of deeper levels are mapped to vertical slides.
-     
+
    HLevel's default value is 1, means only level 1 headings are arranged
    horizontally, deeper headings are mapped to vertical slides below its
    parent level 1 heading.
@@ -262,11 +262,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
         ratio.
    * =#+REVEAL_MAX_SCALE:= :: a float number, the maximum scaling up
         ratio.
+
+** Slide Numbering
+   Activate slide numbers by setting =#+REVEAL-SLIDE-NUMBER:= to =t= (true).
+
 ** Fragmented Contents
 
     Make contents fragmented (show up one-by-one) by setting option =ATTR_REVEAL= with
     property ":frag frag-style", as illustrated below.
-    
+
 #+ATTR_REVEAL: :frag roll-in
     Paragraphs can be fragmented.
 
@@ -307,7 +311,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    - reveal-progress : Show/hide progress bar.
    - reveal-history : Enable/disable slide history track.
    - reveal-center : Enable/disable slide centering.
-     
+
 *** Configure Plug-ins
 
     Each plug-ins can be set on/off by adding =#+OPTIONS= tags or
@@ -353,7 +357,7 @@ fibs = 0 : 1 : next fibs
    =org-reveal-mathjax= to true to enable it. For local MathJax
    installation, set option =REVEAL_MATH_JAX_URL= to the URL pointing
    to the local MathJax location.
-   
+
 ** Preamble and Postamble
 
    You can define preamble and postamble contents which will not be
@@ -472,11 +476,8 @@ fibs = 0 : 1 : next fibs
   Courtesy to:
 
 #+ATTR_REVEAL: :frag roll-in
-  The powerful Org-mode, 
+  The powerful Org-mode,
 #+ATTR_REVEAL: :frag roll-in
   the impressive Reveal.js
 #+ATTR_REVEAL: :frag roll-in
   and the precise MathJax
-
-  
-
