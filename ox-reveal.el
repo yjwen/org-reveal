@@ -518,7 +518,14 @@ holding export options."
 (defun org-reveal-format-list-item
   (contents type checkbox info &optional term-counter-id frag headline)
   "Format a list item into Reveal.js HTML."
-  (let ((checkbox (concat (org-html-checkbox checkbox info) (and checkbox " "))))
+  (let* (;; The argument definition of `org-html-checkbox' differs
+         ;; between Org-mode master and 8.2.5h. To deal both cases,
+         ;; both argument definitions are tried here.
+         (org-checkbox (condition-case nil
+                           (org-html-checkbox checkbox info)
+                         ;; In case of wrong number of arguments, try another one
+                         ((debug wrong-number-of-arguments) (org-html-checkbox checkbox))))
+         (checkbox (concat org-checkbox (and checkbox " "))))
     (concat
      (case type
        (ordered
