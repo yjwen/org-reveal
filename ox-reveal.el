@@ -60,6 +60,7 @@
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
+    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
@@ -267,7 +268,7 @@ holding contextual information."
       ;; Build the real contents of the sub-tree.
       (let* ((type (if numberedp 'ordered 'unordered))
 	     (itemized-body (org-reveal-format-list-item
-			     contents type nil nil 'none full-text)))
+			     contents type nil info nil 'none full-text)))
 	(concat
 	 (and (org-export-first-sibling-p headline info)
 	      (org-html-begin-plain-list type))
@@ -523,9 +524,16 @@ holding export options."
    contents))
 
 (defun org-reveal-format-list-item
-  (contents type checkbox &optional term-counter-id frag headline)
+  (contents type checkbox info &optional term-counter-id frag headline)
   "Format a list item into Reveal.js HTML."
-  (let ((checkbox (concat (org-html-checkbox checkbox) (and checkbox " "))))
+  (let* (;; The argument definition of `org-html-checkbox' differs
+         ;; between Org-mode master and 8.2.5h. To deal both cases,
+         ;; both argument definitions are tried here.
+         (org-checkbox (condition-case nil
+                           (org-html-checkbox checkbox info)
+                         ;; In case of wrong number of arguments, try another one
+                         ((debug wrong-number-of-arguments) (org-html-checkbox checkbox))))
+         (checkbox (concat org-checkbox (and checkbox " "))))
     (concat
      (case type
        (ordered
@@ -567,7 +575,7 @@ contextual information."
                 (and tag (org-export-data tag info))))
          (frag (org-export-read-attribute :attr_reveal plain-list :frag)))
     (org-reveal-format-list-item
-     contents type checkbox (or tag counter) frag)))
+     contents type checkbox info (or tag counter) frag)))
 
 (defun org-reveal-parse-token (key &optional value)
   "Return HTML tags or perform SIDE EFFECT according to key"
@@ -693,7 +701,7 @@ info is a plist holding export options."
 <div class=\"slides\">
 <section>
 "
-   (format-spec org-reveal-title-slide-template (org-html-format-spec info))
+   (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
    "</section>\n"
    contents
    "</div>

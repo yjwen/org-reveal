@@ -48,7 +48,7 @@
    Pre-packaged org-mode may be out-of-date.
 
    If not sure, use the freshest development codes from git repository.
-#+BEGIN_SRC sh 
+#+BEGIN_SRC sh
 $ git clone git://orgmode.org/org-mode.git
 #+END_SRC
 
@@ -66,7 +66,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Copy =ox-reveal.el= to the Org-mode installation directory.
 
    Add the following statement to your =.emacs= file.
-#+BEGIN_SRC lisp 
+#+BEGIN_SRC lisp
 (require 'ox-reveal)
 #+END_SRC
 
@@ -84,7 +84,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Change variable =org-reveal-root= 's value will change the location
    globally. For example, add the following statement to your .emacs
    file:
-#+BEGIN_SRC lisp 
+#+BEGIN_SRC lisp
 (setq org-reveal-root "file:///d:/reveal.js")
 #+END_SRC
    *IMPORTANT*: the absolute path to Reveal.js should be in URL form,
@@ -93,15 +93,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
    By setting option =REVEAL_ROOT=, the location is only affected
    within the Org file.
 
-#+BEGIN_SRC org 
- #+REVEAL_ROOT: file:///d:/reveal.js
+#+BEGIN_SRC org
+,#+REVEAL_ROOT: file:///d:/reveal.js
 #+END_SRC
 
    Set your =REVEAL_ROOT= to the following URL, to use reveal.js from
    a CDN, instead of downloading your local copy.
 
    #+BEGIN_SRC org
-     ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
+   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
    #+END_SRC
 
 
@@ -134,7 +134,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 *** HLevel's Affects on Slides Layout
 
     Assume we have a simple Org file as below:
-#+BEGIN_SRC org 
+#+BEGIN_SRC org
 ,* H1
 ,* H2
 ,** H2.1
@@ -157,12 +157,12 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     * Change variable =org-reveal-hlevel='s value to set HLevel globally.\\
       For example, add the following statement to your =.emacs= file.
-#+BEGIN_SRC lisp 
+#+BEGIN_SRC lisp
 (setq org-reveal-hlevel 2)
 #+END_SRC
 
     * Setting Org files local HLevel to option =REVEAL_HLEVEL=.
-#+BEGIN_SRC org 
+#+BEGIN_SRC org
 ,#+REVEAL_HLEVEL 2
 #+END_SRC
 
@@ -328,8 +328,8 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Codes copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
 #+BEGIN_SRC haskell
 
-  fibs = 0 : 1 : next fibs
-         where next (a : t@(b:_)) = (a+b) : next t
+fibs = 0 : 1 : next fibs
+       where next (a : t@(b:_)) = (a+b) : next t
 #+END_SRC
 
    If you saw odd indentation, please set variable =org-html-indent=
@@ -385,15 +385,6 @@ $ git clone https://github.com/yjwen/org-reveal.git
     =my-preamble=, now we will define =my-preamble= in an Org-Babel
     source block, as illustrated below (invisible in the slides).
 
-#+BEGIN_SRC emacs-lisp :exports results :results silent
-  (defun my-preamble (info)
-    ""
-    "<p>
-  Thanks to Org-Babel, now we can embed preambles into Org document!
-  </p>")
-  
-#+END_SRC
-
     The =:exports results :result silent= options mark the source
     block to be evaluated at exporting and the evaluation result
     is omitted, so it won't disturb slide contents.
@@ -439,7 +430,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    styles after loading a theme.
 
 #+BEGIN_SRC org
- #+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
+,#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
 #+END_SRC
 
 ** Extra Dependent Script
@@ -447,7 +438,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Set =REVEAL_EXTRA_JS= to the url of extra reveal.js dependent
    script if necessary.
 #+BEGIN_SRC org
- #+REVEAL_EXTRA_JS: url-to-custom-script.js
+,#+REVEAL_EXTRA_JS: url-to-custom-script.js
 #+END_SRC
 
 ** Extra Slide attribute
@@ -461,7 +452,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
    Add =num:nil= to =#+OPTIONS=
 #+BEGIN_SRC org
- #+OPTIONS: num:nil
+,#+OPTIONS: num:nil
 #+END_SRC
 
 ** Internal Links
