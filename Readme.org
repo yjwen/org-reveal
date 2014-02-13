@@ -13,7 +13,6 @@
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
-#+REVEAL_PREAMBLE: my-preamble
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
 
 * Reveal.js and Org-Reveal
@@ -381,15 +380,6 @@ fibs = 0 : 1 : next fibs
     So you can embed the Emacs-Lisp function as an Org-Babel source
     block and mark it to be evaluated at exporting the document.
 
-    In this document, the =REVEAL_PREAMBLE= option is set to
-    =my-preamble=, now we will define =my-preamble= in an Org-Babel
-    source block, as illustrated below (invisible in the slides).
-
-    The =:exports results :result silent= options mark the source
-    block to be evaluated at exporting and the evaluation result
-    is omitted, so it won't disturb slide contents.
-
-    Check the generated HTML to see how it works.
 ** Raw HTML in Slides
 
    Besides the Org contents, you can embed raw HTML contents
