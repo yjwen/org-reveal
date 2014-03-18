@@ -61,7 +61,7 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
-    (:reveal-title-bg "REVEAL_TITLE_BG" nil org-reveal-title-bg t)
+    (:reveal-title-attr "REVEAL_TITLE_ATTR" nil nil space)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
@@ -81,10 +81,6 @@
 
   :export-block '("REVEAL" "NOTES"))
 
-(defcustom org-reveal-title-bg nil
-  "The background image for the title slide."
-  :group 'org-export-reveal
-  :type 'string)
 
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
@@ -700,7 +696,7 @@ info is a plist holding export options."
    "</head>\n<body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
    "<div class=\"reveal\">\n<div class=\"slides\">\n<section"
-   (if-format " data-background=%s " (plist-get info :reveal-title-bg))
+   (if-format " %s " (plist-get info :reveal-title-attr))
    ">\n"
    (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
    "</section>\n"
