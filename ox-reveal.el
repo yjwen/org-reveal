@@ -61,12 +61,12 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
+    (:reveal-title-bg "REVEAL_TITLE_BG" nil org-reveal-title-bg t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
-    (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
-    )
+    (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t))
 
   :translate-alist
   '((export-block . org-reveal-export-block)
@@ -79,8 +79,12 @@
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
 
-  :export-block '("REVEAL" "NOTES")
-  )
+  :export-block '("REVEAL" "NOTES"))
+
+(defcustom org-reveal-title-bg nil
+  "The background image for the title slide."
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
@@ -683,8 +687,7 @@ contextual information."
 contents is the transcoded contents string.
 info is a plist holding export options."
   (concat
-   (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<!DOCTYPE html>\n<html%s>\n<head>\n"
+   (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html>\n<html%s>\n<head>\n"
            (if-format " lang=\"%s\"" (plist-get info :language)))
    "<meta charset=\"utf-8\"/>\n"
    (if-format "<title>%s</title>\n" (plist-get info :title))
@@ -694,22 +697,18 @@ info is a plist holding export options."
    (org-reveal-stylesheets info)
    (org-reveal-mathjax-scripts info)
    (org-reveal--build-pre/postamble 'head-preamble info)
-   "</head>
-<body>\n"
+   "</head>\n<body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
-"<div class=\"reveal\">
-<div class=\"slides\">
-<section>
-"
+   "<div class=\"reveal\">\n<div class=\"slides\">\n<section"
+   (if-format " data-background=%s " (plist-get info :reveal-title-bg))
+   ">\n"
    (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
    "</section>\n"
    contents
-   "</div>
-</div>\n"
+   "</div>\n</div>\n"
    (org-reveal--build-pre/postamble 'postamble info)
    (org-reveal-scripts info)
-   "</body>
-</html>\n"))
+   "</body>\n</html>\n"))
 
 
 
