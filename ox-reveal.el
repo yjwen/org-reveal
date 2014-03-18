@@ -361,7 +361,7 @@ using custom variable `org-reveal-root'."
     (format "<link rel=\"stylesheet\" href=\"%s\"/>
 <link rel=\"stylesheet\" href=\"%s\" id=\"theme\"/>
 %s
-<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"print\"/>
+<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\"/>
 "
                 min-css-file-name theme-full extra-css-link-tag
                 pdf-css)))
