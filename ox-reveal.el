@@ -59,7 +59,7 @@
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
-    (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
+    (:reveal-hlevel "REVEAL_HLEVEL" nil org-reveal-hlevel t)
     (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
     (:reveal-title-attr "REVEAL_TITLE_ATTR" nil nil space)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
@@ -67,7 +67,7 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
-    (:reveal-autoslide nil "REVEAL_AUTOSLIDE" org-reveal-autoslide t))
+    (:reveal-autoslide "REVEAL_AUTOSLIDE" nil org-reveal-autoslide t))
 
   :translate-alist
   '((export-block . org-reveal-export-block)
@@ -83,10 +83,11 @@
   :export-block '("REVEAL" "NOTES"))
 
 
-(defcustom org-reveal-root "./reveal.js"
+(defcustom org-reveal-root ""
   "The root directory of reveal.js packages. It is the directory
   within which js/reveal.min.js is."
-  :group 'org-export-reveal)
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-hlevel 1
   "The minimum level of headings that should be grouped into
@@ -134,7 +135,7 @@ can be include."
 (defcustom org-reveal-control t
   "Reveal control applet."
   :group 'org-export-reveal
-  :type 'string)
+  :type 'boolean)
 
 (defcustom org-reveal-progress t
   "Reveal progress applet."
@@ -223,7 +224,7 @@ can be include."
   :type 'string)
 
 (defcustom org-reveal-autoslide 0
-  "Postamble contents."
+  "Auto slide."
   :group 'org-export-reveal
   :type 'integer)
 
@@ -335,41 +336,30 @@ holding contextual information."
   :tag "Org Export reveal"
   :group 'org-export)
 
-(defun org-reveal--append-path (dir-name path-name)
-  "Append `path-name' to the end of `dir-name' to form a legal path name."
-  (concat (file-name-as-directory dir-name) path-name))
-
-(defun org-reveal--append-pathes (dir-name pathes)
-  "Append all the path names in `pathes' to the end of `dir-name'
-to form a legal path name."
-  (if pathes
-      (org-reveal--append-pathes
-       (org-reveal--append-path dir-name (car pathes))
-       (cdr pathes))
-    dir-name))
-
 
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
-  (let* ((root-path (plist-get info :reveal-root))
-         (css-dir-name (org-reveal--append-path root-path "css"))
-         (min-css-file-name (org-reveal--append-path css-dir-name "reveal.min.css"))
-         (theme-file (format "%s.css" (plist-get info :reveal-theme)))
-         (theme-path (org-reveal--append-path css-dir-name "theme"))
-         (theme-full (org-reveal--append-path theme-path theme-file))
-         (extra-css (plist-get info :reveal-extra-css))
-         (extra-css-link-tag (if extra-css
-                                 (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css)
-                               ""))
-         (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css"))))
-    (format "<link rel=\"stylesheet\" href=\"%s\"/>
+  (let* ((root-dir (plist-get info :reveal-root))
+         (css-dir (concat (file-name-as-directory root-dir) "css"))
+         (min-css-file (concat (file-name-as-directory css-dir) "reveal.min.css"))
+         (theme-dir (concat (file-name-as-directory css-dir) "theme"))
+         (theme-file (concat (file-name-as-directory theme-dir)
+			     (format "%s.css" (plist-get info :reveal-theme))))
+         (extra-css-file (plist-get info :reveal-extra-css))
+         (pdf-css-dir (concat (file-name-as-directory css-dir) "print")))
+    (format "
+<link rel=\"stylesheet\" href=\"%s\"/>
 <link rel=\"stylesheet\" href=\"%s\" id=\"theme\"/>
-%s
-<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\"/>
+<link rel=\"stylesheet\" href=\"%s\" id=\"extra\"/>
+<script>
+     document.write('<link rel=\"stylesheet\" href=\"%s' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css\"  media=\"print\">' );
+</script>
 "
-	    min-css-file-name theme-full extra-css-link-tag
-	    pdf-css)))
+	    min-css-file
+	    theme-file
+	    extra-css-file
+	    pdf-css-dir)))
 
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
@@ -381,17 +371,16 @@ using custom variable `org-reveal-root'."
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
-  (let* ((root-path (plist-get info :reveal-root))
-         (root-dir-name (file-name-as-directory root-path))
-         (lib-dir-name (org-reveal--append-path root-path "lib"))
-         (lib-js-dir-name (org-reveal--append-path lib-dir-name "js"))
-         (plugin-dir-name (org-reveal--append-path root-path "plugin"))
-         (markdown-dir-name (org-reveal--append-path plugin-dir-name "markdown"))
+  (let* ((root-dir (plist-get info :reveal-root))
+         (js-path (mapconcat 'file-name-as-directory `(,root-dir "js") ""))
+         (lib-js-path (mapconcat 'file-name-as-directory `(,root-dir "lib" "js") ""))
+         (plugin-path (mapconcat 'file-name-as-directory `(,root-dir "plugin") ""))
+         (markdown-path (mapconcat 'file-name-as-directory `(,plugin-path "markdown") ""))
          (extra-js (plist-get info :reveal-extra-js)))
     (concat
      (format "<script src=\"%s\"></script>\n<script src=\"%s\"></script>\n"
-             (org-reveal--append-path lib-js-dir-name "head.min.js")
-             (org-reveal--append-pathes root-path '("js" "reveal.min.js")))
+             (concat lib-js-path "head.min.js")
+             (concat js-path "reveal.min.js"))
      "<script>\n"
      (format "
            // Full list of configuration options available here:
@@ -407,7 +396,7 @@ custom variable `org-reveal-root'."
                   overview: %s,
                   %s
 
-                  autoSlide: %d, // Number of milliseconds between automatically proceeding to the next slide
+                  autoSlide: %s, // Number of milliseconds between automatically proceeding to the next slide
                   theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
                   transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
                   transitionSpeed: '%s',\n"
@@ -449,15 +438,25 @@ custom variable `org-reveal-root'."
                      %s
                   ]
            });\n"
-	     (org-reveal--append-path lib-js-dir-name "classList.js")
-	     (org-reveal--append-path markdown-dir-name "showdown.js")
-	     (org-reveal--append-path markdown-dir-name "markdown.js")
-	     (org-reveal--append-pathes plugin-dir-name '("highlight" "highlight.js"))
-	     (org-reveal--append-pathes plugin-dir-name '("zoom-js" "zoom.js"))
-	     (org-reveal--append-pathes plugin-dir-name '("notes" "notes.js"))
-	     (org-reveal--append-pathes plugin-dir-name '("search" "search.js"))
-	     (org-reveal--append-pathes plugin-dir-name '("remotes" "remotes.js"))
-	     (if extra-js (concat "," extra-js) ""))
+	     (concat lib-js-path "classList.js")
+	     (concat markdown-path "showdown.js")
+	     (concat markdown-path "markdown.js")
+	     (concat plugin-path
+		     (file-name-as-directory "highlight")
+		     "highlight.js")
+	     (concat plugin-path
+		     (file-name-as-directory "zoom-js")
+		     "zoom.js")
+	     (concat plugin-path
+		     (file-name-as-directory "notes")
+		     "notes.js")
+	     (concat plugin-path
+		     (file-name-as-directory "search")
+		     "search.js")
+	     (concat plugin-path
+		     (file-name-as-directory "remotes")
+		     "remotes.js")
+	     (if extra-js (concat ", " extra-js) ""))
 
      "</script>\n")))
 
