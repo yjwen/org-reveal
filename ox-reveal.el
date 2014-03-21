@@ -40,34 +40,45 @@
         (?B "To file and Browse" org-reveal-export-to-html-and-browse)))
 
   :options-alist
-  '((:reveal-control nil "reveal_control" org-reveal-control t)
-    (:reveal-progress nil "reveal_progress" org-reveal-progress t)
-    (:reveal-history nil  "reveal_history" org-reveal-history t)
-    (:reveal-center nil "reveal_center" org-reveal-center t)
-    (:reveal-rolling-links nil "reveal_rolling_links" org-reveal-rolling-links t)
-    (:reveal-slide-number nil "reveal_slide_number" org-reveal-slide-number t)
-    (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
-    (:reveal-overview nil "reveal_overview" org-reveal-overview t)
-    (:reveal-width nil "reveal_width" org-reveal-width t)
-    (:reveal-height nil "reveal_height" org-reveal-height)
-    (:reveal-margin "REVEAL_MARGIN" nil org-reveal-margin t)
-    (:reveal-min-scale "REVEAL_MIN_SCALE" nil org-reveal-min-scale t)
-    (:reveal-max-scale "REVEAL_MAX_SCALE" nil org-reveal-max-scale t)
+  '(;; Display controls in the bottom right corner
+    (:reveal-control nil "reveal_control" t t)
+    ;; Display a presentation progress bar
+    (:reveal-progress nil "reveal_progress" t t) 
+    ;; Push each slide change to the browser history
+    (:reveal-history nil  "reveal_history" nil t)
+    ;; Vertical centering of slides
+    (:reveal-center nil "reveal_center" t t)
+    ;; Enables touch navigation on devices with touch input
+    (:reveal-touch nil "reveal_touch" t t)
+    ;; Enable keyboard navigation
+    (:reveal-keyboard nil "reveal_keyboard" t t)
+    ;; Display the page number of the current slide
+    (:reveal-slide-number nil "reveal_slide_number" t t)
+    ;; Enable slide thumbnail overview
+    (:reveal-overview nil "reveal_overview" t t)
+    ;; Number of milliseconds between automatically proceeding to the next slide
+    (:reveal-autoslide nil "reveal_autoslide" 0 t)
+    ;; the headline levels used for nested slides
+    (:reveal-hlevel nil "reveal_hlevel" 1 t)
+    (:reveal-width nil "reveal_width" -1 t) ; slide width
+    (:reveal-height nil "reveal_height" -1 t) ; slide height
+    (:reveal-margin nil "reveal_margin" -1 t) ; slide margin
+    (:reveal-min-scale nil "reveal_min_scale" -1 t)
+    (:reveal-max-scale nil "reveal_max_scale" -1 t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
-    (:reveal-hlevel "REVEAL_HLEVEL" nil org-reveal-hlevel t)
-    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
-    (:reveal-title-attr "REVEAL_TITLE_ATTR" nil nil space)
+    (:reveal-title-slide-temp "REVEAL_TITLE_SLIDE_TEMP" nil org-reveal-title-slide-temp t)
+    (:reveal-title-slide-attr "REVEAL_TITLE_SLIDE_ATTR" nil nil space)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
-    (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
-    (:reveal-autoslide "REVEAL_AUTOSLIDE" nil org-reveal-autoslide t))
+    (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t))
+
 
   :translate-alist
   '((export-block . org-reveal-export-block)
@@ -89,113 +100,29 @@
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-hlevel 1
-  "The minimum level of headings that should be grouped into
-vertical slides."
-  :group 'org-export-reveal
-  :type 'integer)
 
-(defun org-reveal--get-hlevel (info)
-  "Get HLevel value safely.
-If option \"REVEAL_HLEVEL\" is set, retrieve integer value from it,
-else get value from custom variable `org-reveal-hlevel'."
-  (let ((hlevel-str (plist-get info :reveal-hlevel)))
-    (if hlevel-str (string-to-number hlevel-str)
-      org-reveal-hlevel)))
-
-(defcustom org-reveal-title-slide-template
-  "<h1>%t</h1>
-<h2>%a</h2>
-<h2>%e</h2>
-<h3>%d</h3>"
+(defcustom org-reveal-title-slide-temp
+  "<h1>%t</h1>\n<h2>%a</h2>\n<h2>%e</h2>\n<h3>%d</h3>"
   "Format template to specify title page slide.
 See `org-html-postamble-format' for the valid elements which
 can be include."
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-transition
-  "default"
+(defcustom org-reveal-transition "default"
   "Reveal transistion style."
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-transition-speed
-  "default"
+(defcustom org-reveal-transition-speed "default"
   "Reveal transistion speed."
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-theme
-  "default"
+(defcustom org-reveal-theme "default"
   "Reveal theme."
   :group 'org-export-reveal
   :type 'string)
-
-(defcustom org-reveal-control t
-  "Reveal control applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-progress t
-  "Reveal progress applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-history nil
-  "Reveal history applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-center t
-  "Reveal center applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-rolling-links nil
-  "Reveal use rolling links."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-slide-number t
-  "Reveal showing slide numbers."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-keyboard t
-  "Reveal use keyboard navigation."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-overview t
-  "Reveal show overview."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-width -1
-  "Slide width"
-  :group 'org-export-reveal
-  :type 'integer)
-
-(defcustom org-reveal-height -1
-  "Slide height"
-  :group 'org-export-reveal
-  :type 'integer)
-
-(defcustom org-reveal-margin -1
-  "Slide margin"
-  :group 'org-export-reveal
-  :type 'integer)
-
-(defcustom org-reveal-min-scale -1
-  "Minimum bound for scaling slide."
-  :group 'org-export-reveal
-  :type 'integer)
-
-(defcustom org-reveal-max-scale -1
-  "Maximum bound for scaling slide."
-  :group 'org-export-reveal
-  :type 'integer)
 
 (defcustom org-reveal-mathjax nil
   "Enable MathJax script."
@@ -222,11 +149,6 @@ can be include."
   "Postamble contents."
   :group 'org-export-reveal
   :type 'string)
-
-(defcustom org-reveal-autoslide 0
-  "Auto slide."
-  :group 'org-export-reveal
-  :type 'integer)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -284,7 +206,7 @@ holding contextual information."
      ;; Case 3. Standard headline.  Export it as a section.
      (t
       (let* ((level1 (+ level (1- org-html-toplevel-hlevel)))
-             (hlevel (org-reveal--get-hlevel info))
+             (hlevel (plist-get info :reveal-hlevel))
              (first-content (car (org-element-contents headline))))
         (concat
          (if (or (/= level 1)
@@ -298,15 +220,22 @@ holding contextual information."
          ;; Start a new slide.
          (format "<section id=\"%s\" %s%s%s%s%s%s%s>\n"
                  (or (org-element-property :CUSTOM_ID headline)
-                     (concat "sec-" (mapconcat 'number-to-string
-                                               (org-export-get-headline-number headline info)
-                                               "-")))
-                 (if-format " data-state=\"%s\"" (org-element-property :REVEAL_DATA_STATE headline))
-                 (if-format " data-transition=\"%s\"" (org-element-property :REVEAL_DATA_TRANSITION headline))
-                 (if-format " data-background=\"%s\"" (org-element-property :REVEAL_BACKGROUND headline))
-                 (if-format " data-background-size=\"%s\"" (org-element-property :REVEAL_BACKGROUND_SIZE headline))
-                 (if-format " data-background-repeat=\"%s\"" (org-element-property :REVEAL_BACKGROUND_REPEAT headline))
-                 (if-format " data-background-transition=\"%s\"" (org-element-property :REVEAL_BACKGROUND_TRANS headline))
+                     (concat "sec-"
+			     (mapconcat 'number-to-string
+					(org-export-get-headline-number headline info)
+					"-")))
+                 (if-format " data-state=\"%s\""
+			    (org-element-property :REVEAL_DATA_STATE headline))
+                 (if-format " data-transition=\"%s\""
+			    (org-element-property :REVEAL_DATA_TRANSITION headline))
+                 (if-format " data-background=\"%s\""
+			    (org-element-property :REVEAL_BACKGROUND headline))
+                 (if-format " data-background-size=\"%s\""
+			    (org-element-property :REVEAL_BACKGROUND_SIZE headline))
+                 (if-format " data-background-repeat=\"%s\""
+			    (org-element-property :REVEAL_BACKGROUND_REPEAT headline))
+                 (if-format " data-background-transition=\"%s\""
+			    (org-element-property :REVEAL_BACKGROUND_TRANS headline))
                  (if-format " %s" (org-element-property :REVEAL_EXTRA_ATTR headline)))
          ;; The HTML content of this headline.
          (format "\n<h%d%s>%s</h%d>\n"
@@ -332,7 +261,7 @@ holding contextual information."
              "</section>")))))))
 
 (defgroup org-export-reveal nil
-  "Options for exporting Orgmode files to reveal.js HTML pressentations."
+  "Options for exporting Org-mode files to reveal.js HTML pressentations."
   :tag "Org Export reveal"
   :group 'org-export)
 
@@ -391,12 +320,13 @@ custom variable `org-reveal-root'."
                   history: %s,
                   center: %s,
                   slideNumber: %s,
-                  rollingLinks: %s,
+
                   keyboard: %s,
+                  touch: %s,
                   overview: %s,
                   %s
 
-                  autoSlide: %s, // Number of milliseconds between automatically proceeding to the next slide
+                  autoSlide: %d, // Number of milliseconds between automatically proceeding to the next slide
                   theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
                   transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
                   transitionSpeed: '%s',\n"
@@ -405,8 +335,8 @@ custom variable `org-reveal-root'."
              (if (plist-get info :reveal-history) "true" "false")
              (if (plist-get info :reveal-center) "true" "false")
              (if (plist-get info :reveal-slide-number) "true" "false")
-             (if (plist-get info :reveal-rolling-links) "true" "false")
              (if (plist-get info :reveal-keyboard) "true" "false")
+	     (if (plist-get info :reveal-touch) "true" "false")
              (if (plist-get info :reveal-overview) "true" "false")
              (let ((width (plist-get info :reveal-width))
 		   (height (plist-get info :reveal-height))
@@ -474,16 +404,12 @@ custom variable `org-reveal-root'."
               (org-reveal-toc-headlines-r remains info level hlevel x y)
             "")))
     (concat
-     (cond
-      ((> level prev_level)
-       ;; Need to start a new level of unordered list
-       "<ul>\n")
-      ((< level prev_level)
-       ;; Need to end previous list item and the whole list.
-       "</li>\n</ul>\n")
-      (t
-       ;; level == prev_level, Need to end previous list item.
-       "</li>\n"))
+	   ;; Need to start a new level of unordered list
+     (cond ((> level prev_level) "<ul>\n")
+	   ;; Need to end previous list item and the whole list.
+	   ((< level prev_level) "</li>\n</ul>\n")
+	   ;; level == prev_level, Need to end previous list item.
+	   (t "</li>\n"))
      (format "<li>\n<a href=\"#%s\">%s</a>\n%s"
              (or (org-element-property :CUSTOM_ID headline)
                  (concat "sec-" (mapconcat 'number-to-string
@@ -495,7 +421,7 @@ custom variable `org-reveal-root'."
   "Generate the Reveal.js contents for headlines in table of contents.
 Add proper internal link to each headline."
   (let ((level (org-export-get-relative-level (car headlines) info))
-        (hlevel (org-reveal--get-hlevel info)))
+        (hlevel (plist-get info :reveal-hlevel)))
     (concat
      (format "<h2>%s</h2>"
              (org-export-translate "Table of Contents" :html info))
@@ -695,9 +621,9 @@ info is a plist holding export options."
    "</head>\n<body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
    "<div class=\"reveal\">\n<div class=\"slides\">\n<section"
-   (if-format " %s " (plist-get info :reveal-title-attr))
+   (if-format " %s " (plist-get info :reveal-title-slide-attr))
    ">\n"
-   (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
+   (format-spec (plist-get info :reveal-title-slide-temp) (org-html-format-spec info))
    "</section>\n"
    contents
    "</div>\n</div>\n"
