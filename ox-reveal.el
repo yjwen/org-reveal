@@ -65,6 +65,8 @@
     (:reveal-margin nil "reveal_margin" -1 t) ; slide margin
     (:reveal-min-scale nil "reveal_min_scale" -1 t)
     (:reveal-max-scale nil "reveal_max_scale" -1 t)
+    (:reveal-mathjax nil "reveal_mathjax" t t)
+    (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
@@ -73,8 +75,6 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
     (:reveal-title-slide-temp "REVEAL_TITLE_SLIDE_TEMP" nil org-reveal-title-slide-temp t)
     (:reveal-title-slide-attr "REVEAL_TITLE_SLIDE_ATTR" nil nil space)
-    (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
-    (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t))
@@ -123,11 +123,6 @@ can be include."
   "Reveal theme."
   :group 'org-export-reveal
   :type 'string)
-
-(defcustom org-reveal-mathjax nil
-  "Enable MathJax script."
-  :group 'org-export-reveal
-  :type 'boolean)
 
 (defcustom org-reveal-mathjax-url
   "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
