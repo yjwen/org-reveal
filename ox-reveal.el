@@ -225,6 +225,13 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
+(defun frag-class (frag) 
+  (if (stringp frag) 
+      (if (string-match "t" frag) 
+	  "class=\"fragment\""
+	    (format " class=\"fragment %s\"" frag)) ""))
+
+
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
 CONTENTS is nil. NFO is a plist holding contextual information."
@@ -549,19 +556,20 @@ holding export options."
         (concat
          "<li"
          (if-format " value=\"%s\"" term-counter-id)
-         (if-format " class=\"fragment %s\"" frag)
+	 " class=\"fragment\""
+	 (frag-class frag)
          ">"
          (if headline (concat headline "<br/>"))))
        (unordered
         (concat
          "<li"
-         (if-format " class=\"fragment %s\"" frag)
+	 (frag-class frag)
          ">"
          (if headline (concat headline "<br/>"))))
        (descriptive
         (concat
          "<dt"
-         (if-format " class=\"fragment %s\"" frag)
+	 (frag-class frag)
          "><b>"
          (concat checkbox (or term-counter-id "(no term)"))
          "</b></dt><dd>")))
