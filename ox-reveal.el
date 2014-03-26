@@ -361,7 +361,16 @@ using custom variable `org-reveal-root'."
     (format "<link rel=\"stylesheet\" href=\"%s\"/>
 <link rel=\"stylesheet\" href=\"%s\" id=\"theme\"/>
 %s
-<link rel=\"stylesheet\" href=\"%s\" type=\"text/css\" media=\"print\"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = '%s';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
 "
                 min-css-file-name theme-full extra-css-link-tag
                 pdf-css)))
