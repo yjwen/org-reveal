@@ -522,11 +522,10 @@ Add proper internal link to each headline."
 
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (format
-   "<section>\n%s</section>\n"
-   (org-reveal-toc-headlines
-    (org-export-collect-headlines info depth)
-    info)))
+  (let ((headlines (org-export-collect-headlines info depth)))
+    (and headlines
+         (format "<section>\n%s</section>\n"
+                 (org-reveal-toc-headlines headlines info)))))
 
 (defun org-reveal-inner-template (contents info)
   "Return body of document string after HTML conversion.
@@ -736,8 +735,8 @@ info is a plist holding export options."
   (interactive)
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep)))
-    (org-export-to-file
-     'reveal file subtreep visible-only body-only ext-plist)))
+    (org-export-to-file 'reveal file
+      async subtreep visible-only body-only ext-plist)))
 
 (defun org-reveal-export-to-html-and-browse
   (&optional async subtreep visible-only body-only ext-plist)
