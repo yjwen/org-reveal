@@ -291,6 +291,8 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * highlight-green
 #+ATTR_REVEAL: :frag highlight-blue
     * highlight-blue
+      
+    Use default fragment style by setting ":frag t".
 
 ** Data State
    :PROPERTIES:

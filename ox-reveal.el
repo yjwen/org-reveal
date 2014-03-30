@@ -225,6 +225,13 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
+(defun frag-class (frag)
+  ;; Return proper HTML string description of fragment style.
+  (cond
+   ((string= frag t) " class=\"fragment\"")
+   (frag (format " class=\"fragment %s\"" frag))))
+  
+
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
 CONTENTS is nil. NFO is a plist holding contextual information."
@@ -549,19 +556,19 @@ holding export options."
         (concat
          "<li"
          (if-format " value=\"%s\"" term-counter-id)
-         (if-format " class=\"fragment %s\"" frag)
+         (frag-class frag)
          ">"
          (if headline (concat headline "<br/>"))))
        (unordered
         (concat
          "<li"
-         (if-format " class=\"fragment %s\"" frag)
+         (frag-class frag)
          ">"
          (if headline (concat headline "<br/>"))))
        (descriptive
         (concat
          "<dt"
-         (if-format " class=\"fragment %s\"" frag)
+         (frag-class frag)
          "><b>"
          (concat checkbox (or term-counter-id "(no term)"))
          "</b></dt><dd>")))
@@ -635,8 +642,8 @@ the plist used as a communication channel."
               (replace-match (concat "class=\"figure fragment " frag " \"") t t contents))
           contents)))
      (t (format "<p%s>\n%s</p>"
-                (if-format " class=\"fragment %s\""
-                           (org-export-read-attribute :attr_reveal paragraph :frag))
+                (or (frag-class (org-export-read-attribute :attr_reveal paragraph :frag))
+                    "")
                 contents)))))
 
 (defun org-reveal--build-pre/postamble (type info)
@@ -673,18 +680,19 @@ contextual information."
 		   (if (not lbl) ""
 		     (format " id=\"%s\""
 			     (org-export-solidify-link-text lbl))))))
-      (if (not lang) (format "<pre class=\"%s\"%s>\n%s</pre>"
-                             (if frag (format "fragment %s" frag) "example")
-                             label code)
+      (if (not lang)
+          (format "<pre %s%s>\n%s</pre>"
+                  (or (frag-class frag) " class=\"example\"")
+                  label
+                  code)
 	(format
 	 "<div class=\"org-src-container\">\n%s%s\n</div>"
 	 (if (not caption) ""
 	   (format "<label class=\"org-src-name\">%s</label>"
 		   (org-export-data caption info)))
-	 (format "\n<pre class=\"%s\"%s>%s</pre>"
-                 (if frag
-                     (format "fragment %s" frag)
-                   (format "src src-%s" lang))
+	 (format "\n<pre %s%s>%s</pre>"
+                 (or (frag-class frag)
+                     (format " class=\"src src-%s" lang))
                  label code))))))
 
 (defun org-reveal-template (contents info)
