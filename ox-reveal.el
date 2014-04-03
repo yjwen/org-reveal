@@ -291,6 +291,15 @@ using custom variable `org-reveal-root'."
 <!-- For syntax highlighting -->
 <link rel=\"stylesheet\" href=\"%s\">
 
+<!-- For footnote -->
+<style>
+    .reveal section div.footdef {
+       font-size: 0.6em;
+       text-align: left;
+    }
+</style>
+
+<!-- For PDF export: URL?print-pdf#/ -->
 <script>
     if( window.location.search.match( /print-pdf/gi ) ) {
 	var link = document.createElement( 'link' );
@@ -586,44 +595,51 @@ the plist used as a communication channel."
 	  (org-element-normalize-string section-contents))))))
 
 
+(defun org-reveal-format-footnote-definition (n def)
+  "Format the footnote definition numbered as N and defined as DEF.
+
+This function is borrowed from `org-html-format-footnote-definition'."
+    (format
+     "<div class=\"footdef\">%s %s</div>\n"
+     (format org-html-footnote-format
+	     (let* ((id (format "fn.%s" n))
+		    (href (format " href=\"#fnr.%s\"" n))
+		    (attributes (concat " class=\"footnum\"" href)))
+	       (org-html--anchor id n attributes)))
+     def))
+
 (defun org-reveal--footnotes-definitions (element info)
   "Return footnotes definitions in ELEMENT as a string.
 
+This function is borrowed from `org-latex--delayed-footnotes-definition'.
+
 INFO is a plist used as a communication channel.
 
-Footnotes definitions are returned within \"\\footnotetxt{}\"
-commands.
-
-This function is used within constructs that don't support
-\"\\footnote{}\" command (i.e. an item's tag).  In that case,
-\"\\footnotemark\" is used within the construct and the function
-just outside of it."
-  (mapconcat
-   (lambda (ref)
-     (format
-      "<div class=\"footdef\"> [%s] %s <div>"
-      (org-export-get-footnote-number ref info)
-      (org-trim
-       (org-export-data
-	(org-export-get-footnote-definition ref info) info))))
+Footnotes definitions are returned in the div of class footdef."
+  (mapconcat (lambda (ref)
+	       (org-reveal-format-footnote-definition
+		(org-export-get-footnote-number ref info)
+		(org-trim (org-export-data (org-export-get-footnote-definition
+					    ref info)
+					   info))))
    ;; Find every footnote reference in ELEMENT.
    (let* (all-refs
-	  search-refs			; For byte-compiler.
-	  (search-refs
-	   (function
-	    (lambda (data)
-	      ;; Return a list of all footnote references never seen
-	      ;; before in DATA.
-	      (org-element-map data 'footnote-reference
-		(lambda (ref)
-		  (when (org-export-footnote-first-reference-p ref info)
-		    (push ref all-refs)
-		    (when (eq (org-element-property :type ref) 'standard)
-		      (funcall search-refs
-			       (org-export-get-footnote-definition ref info)))))
-		info)
-	      (reverse all-refs)))))
+	  search-refs	 ; For byte-compiler.
+	  (search-refs (function
+			(lambda (data)
+			  ;; Return a list of all footnote references never seen
+			  ;; before in DATA.
+			  (org-element-map data 'footnote-reference
+			    (lambda (ref)
+			      (when (org-export-footnote-first-reference-p ref info)
+				(push ref all-refs)
+				(when (eq (org-element-property :type ref) 'standard)
+				  (funcall search-refs
+					   (org-export-get-footnote-definition ref info)))))
+			    info)
+			  (reverse all-refs)))))
      (funcall search-refs element))
+   ;; return empty string if no footnote is found.
    ""))
 
 (defun org-reveal-section (section contents info)
@@ -632,6 +648,7 @@ CONTENTS holds the contents of the section. INFO is a plist
 holding contextual information."
   ;; Just return the contents. No "<div>" tags.
   (concat contents
+	  ;; get all the footnote definitions of current section
 	  (org-reveal--footnotes-definitions section info)))
 
 
