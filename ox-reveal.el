@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2013 Yujie Wen
 
-;; Author: Yujie Wen <yjwen.ty at gmail dot com>
+;; Author: Yujie Wen <yjwen.ty at gmail dot com>, Zech Xu <zhenjiang.xu colorado edu>
 ;; Created: 2013-04-27
 ;; Version: 1.0
 ;; Package-Requires: ((org "8.0"))
@@ -60,8 +60,8 @@
     ;; no autoslide by setting to 0.
     (:reveal-autoslide nil "reveal_autoslide" 0 t)
     ;; the headline levels used for nested slides
-    (:reveal-hlevel nil "reveal_hlevel" 1 t)
-    (:reveal-width nil "reveal_width" -1 t) ; slide width
+    (:reveal-hlevel nil "reveal_hlevel"  1 t)
+    (:reveal-width  nil "reveal_width"  -1 t) ; slide width
     (:reveal-height nil "reveal_height" -1 t) ; slide height
     (:reveal-margin nil "reveal_margin" -1 t) ; slide margin
     (:reveal-min-scale nil "reveal_min_scale" -1 t)
@@ -83,7 +83,6 @@
   ;; TODO: add reveal-img (for layout)
   ;; TODO: add video for html5 export
   ;; TODO: slide footnote
-  ;; TODO: uninterupted list
   :translate-alist
   '((export-block . org-reveal-export-block)
     (headline . org-reveal-headline)
@@ -93,11 +92,15 @@
     (paragraph . org-reveal-paragraph)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
+    ;; (footnote-reference . org-html-footnote-reference)
+    ;; (footnote-definition . org-reveal-footnote-definition)
     (template . org-reveal-template))
 
   :export-block '("REVEAL" "NOTES"))
 
+;; add shortcut for notes
 (add-to-list 'org-structure-template-alist '("n" "#+BEGIN_NOTES\n?\n#+END_NOTES" "<notes>\n?\n</notes>"))
+
 
 (defcustom org-reveal-root ""
   "The root directory of reveal.js packages. It is the directory
@@ -583,12 +586,54 @@ the plist used as a communication channel."
 	  (org-element-normalize-string section-contents))))))
 
 
+(defun org-reveal--footnotes-definitions (element info)
+  "Return footnotes definitions in ELEMENT as a string.
+
+INFO is a plist used as a communication channel.
+
+Footnotes definitions are returned within \"\\footnotetxt{}\"
+commands.
+
+This function is used within constructs that don't support
+\"\\footnote{}\" command (i.e. an item's tag).  In that case,
+\"\\footnotemark\" is used within the construct and the function
+just outside of it."
+  (mapconcat
+   (lambda (ref)
+     (format
+      "<div class=\"footdef\"> [%s] %s <div>"
+      (org-export-get-footnote-number ref info)
+      (org-trim
+       (org-export-data
+	(org-export-get-footnote-definition ref info) info))))
+   ;; Find every footnote reference in ELEMENT.
+   (let* (all-refs
+	  search-refs			; For byte-compiler.
+	  (search-refs
+	   (function
+	    (lambda (data)
+	      ;; Return a list of all footnote references never seen
+	      ;; before in DATA.
+	      (org-element-map data 'footnote-reference
+		(lambda (ref)
+		  (when (org-export-footnote-first-reference-p ref info)
+		    (push ref all-refs)
+		    (when (eq (org-element-property :type ref) 'standard)
+		      (funcall search-refs
+			       (org-export-get-footnote-definition ref info)))))
+		info)
+	      (reverse all-refs)))))
+     (funcall search-refs element))
+   ""))
+
 (defun org-reveal-section (section contents info)
   "Transcode a SECTION element from Org to Reveal.
 CONTENTS holds the contents of the section. INFO is a plist
 holding contextual information."
   ;; Just return the contents. No "<div>" tags.
-  contents)
+  (concat contents
+	  (org-reveal--footnotes-definitions section info)))
+
 
 (defun org-reveal-src-block (src-block contents info)
   "Transcode a SRC-BLOCK element from Org to Reveal.
