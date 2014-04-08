@@ -742,7 +742,7 @@ info is a plist holding export options."
   (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a reveal.js and browse HTML file."
   (interactive)
-  (browse-url-of-file (org-reveal-export-to-html async subtreep visible-only body-only ext-plist)))
+  (browse-url-of-file (expand-file-name (org-reveal-export-to-html async subtreep visible-only body-only ext-plist))))
 
 (provide 'ox-reveal)
 
