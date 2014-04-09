@@ -691,7 +691,7 @@ contextual information."
 		   (org-export-data caption info)))
 	 (format "\n<pre %s%s>%s</pre>"
                  (or (frag-class frag)
-                     (format " class=\"src src-%s" lang))
+                     (format " class=\"src src-%s\"" lang))
                  label code))))))
 
 (defun org-reveal-template (contents info)
