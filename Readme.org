@@ -30,6 +30,7 @@
   - Reveal.js.
   - Latest org-mode.
   - ox-reveal.el.
+  - htmlize.el (optional, for syntax highlighting).
   - And, of course, emacs.
 
 ** Obtain Reveal.js
