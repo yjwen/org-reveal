@@ -14,6 +14,7 @@
 #+REVEAL_HLEVEL: 2
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
+#+REVEAL_PLUGINS: (highlight markdown)
 
 * Reveal.js and Org-Reveal
 
@@ -341,6 +342,9 @@ fibs = 0 : 1 : next fibs
    If you saw odd indentation, please set variable =org-html-indent=
    to =nil= and export again.
 
+   If codes are not highlighted, please mark sure =htmlize.el= is
+   installed.
+
 ** MathJax
   :PROPERTIES:
   :CUSTOM_ID: my-heading
@@ -430,6 +434,21 @@ fibs = 0 : 1 : next fibs
 ,#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
 #+END_SRC
 
+** Select Built-In Scripts
+
+   Set option =REVEAL_PLUGINS= or variable =org-reveal-plugins= to a
+   lisp list to select built-in scripts.
+
+   Available built-in scripts are:
+   classList/markdown/highlight/zoom/notes/search/remotes.
+   
+   Default built-ins are: classList/markdown/highlight/zoom/notes.
+
+   The following examples select /markdown/ and /highlight/ only.
+#+BEGIN_SRC org
+,#+REVEAL_PLUGINS: (markdown highlight)
+#+END_SRC
+   
 ** Extra Dependent Script
 
    Set =REVEAL_EXTRA_JS= to the url of extra reveal.js dependent

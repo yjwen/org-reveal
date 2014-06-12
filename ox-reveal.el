@@ -66,6 +66,7 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
+    (:reveal-plugins "REVEAL_PLUGINS" nil org-reveal-plugins t)
     )
 
   :translate-alist
@@ -221,6 +222,11 @@ can be include."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-plugins
+  "(classList markdown highlight zoom notes)"
+  "Default builtin plugins"
+  :group 'org-export-reveal
+  :type 'string)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -337,50 +343,35 @@ holding contextual information."
   :tag "Org Export reveal"
   :group 'org-export)
 
-(defun org-reveal--append-path (dir-name path-name)
-  "Append `path-name' to the end of `dir-name' to form a legal path name."
-  (concat (file-name-as-directory dir-name) path-name))
-
-(defun org-reveal--append-pathes (dir-name pathes)
-  "Append all the path names in `pathes' to the end of `dir-name'
-to form a legal path name."
-  (if pathes
-      (org-reveal--append-pathes
-       (org-reveal--append-path dir-name (car pathes))
-       (cdr pathes))
-    dir-name))
-
-
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
-  (let* ((root-path (plist-get info :reveal-root))
-         (css-dir-name (org-reveal--append-path root-path "css"))
-         (min-css-file-name (org-reveal--append-path css-dir-name "reveal.min.css"))
-         (theme-file (format "%s.css" (plist-get info :reveal-theme)))
-         (theme-path (org-reveal--append-path css-dir-name "theme"))
-         (theme-full (org-reveal--append-path theme-path theme-file))
-         (extra-css (plist-get info :reveal-extra-css))
-         (extra-css-link-tag (if extra-css
-                                 (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css)
-                               ""))
-         (pdf-css (org-reveal--append-pathes css-dir-name '("print" "pdf.css"))))
-    (format "<link rel=\"stylesheet\" href=\"%s\"/>
-<link rel=\"stylesheet\" href=\"%s\" id=\"theme\"/>
-%s
+  (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
+    (concat
+     ;; stylesheets
+     (format "
+<link rel=\"stylesheet\" href=\"%scss/reveal.min.css\"/>
+<link rel=\"stylesheet\" href=\"%scss/theme/%s.css\" id=\"theme\"/>
+"
+             root-path root-path
+             (plist-get info :reveal-theme))
+     ;; extra css
+     (let ((extra-css (plist-get info :reveal-extra-css)))
+       (if extra-css (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css) ""))
+     ;; print-pdf
+     (format "
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
     if( window.location.search.match( /print-pdf/gi ) ) {
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = '%s';
+        link.href = '%scss/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
 "
-                min-css-file-name theme-full extra-css-link-tag
-                pdf-css)))
+             root-path))))
 
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
@@ -392,90 +383,107 @@ using custom variable `org-reveal-root'."
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
-  (let* ((root-path (plist-get info :reveal-root))
-         (root-dir-name (file-name-as-directory root-path))
-         (lib-dir-name (org-reveal--append-path root-path "lib"))
-         (lib-js-dir-name (org-reveal--append-path lib-dir-name "js"))
-         (plugin-dir-name (org-reveal--append-path root-path "plugin"))
-         (markdown-dir-name (org-reveal--append-path plugin-dir-name "markdown"))
-         (extra-js (plist-get info :reveal-extra-js)))
+  (let* ((root-path (file-name-as-directory (plist-get info :reveal-root))))
     (concat
-     (format "<script src=\"%s\"></script>\n<script src=\"%s\"></script>\n"
-             (org-reveal--append-path lib-js-dir-name "head.min.js")
-             (org-reveal--append-pathes root-path '("js" "reveal.min.js")))
-     "<script>\n"
+     ;; reveal.js/lib/js/head.min.js
+     ;; reveal.js/js/reveal.min.js
      (format "
-        		// Full list of configuration options available here:
-        		// https://github.com/hakimel/reveal.js#configuration
-        		Reveal.initialize({
-        			controls: %s,
-        			progress: %s,
-        			history: %s,
-        			center: %s,
-                                slideNumber: %s,
-        			rollingLinks: %s,
-        			keyboard: %s,
-        			overview: %s,
-        			%s // slide width
-        			%s // slide height
-        			%s // slide margin
-        			%s // slide minimum scaling factor
-        			%s // slide maximum scaling factor
+<script src=\"%slib/js/head.min.js\"></script>
+<script src=\"%sjs/reveal.min.js\"></script>
+"
+             root-path root-path)
+     ;; plugin headings
+     "
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+"
+     (format "
+controls: %s,
+progress: %s,
+history: %s,
+center: %s,
+slideNumber: %s,
+rollingLinks: %s,
+keyboard: %s,
+overview: %s,
+"
+            (if (plist-get info :reveal-control) "true" "false")
+            (if (plist-get info :reveal-progress) "true" "false")
+            (if (plist-get info :reveal-history) "true" "false")
+            (if (plist-get info :reveal-center) "true" "false")
+            (if (plist-get info :reveal-slide-number) "true" "false")
+            (if (plist-get info :reveal-rolling-links) "true" "false")
+            (if (plist-get info :reveal-keyboard) "true" "false")
+            (if (plist-get info :reveal-overview) "true" "false"))
 
+     ;; slide width
+     (let ((width (plist-get info :reveal-width)))
+       (if (> width 0) (format "width: %d,\n" width) ""))
 
-        			theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-        			transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
-        			transitionSpeed: '%s',\n"
-             (if (plist-get info :reveal-control) "true" "false")
-             (if (plist-get info :reveal-progress) "true" "false")
-             (if (plist-get info :reveal-history) "true" "false")
-             (if (plist-get info :reveal-center) "true" "false")
-             (if (plist-get info :reveal-slide-number) "true" "false")
-             (if (plist-get info :reveal-rolling-links) "true" "false")
-             (if (plist-get info :reveal-keyboard) "true" "false")
-             (if (plist-get info :reveal-overview) "true" "false")
-             (let ((width (plist-get info :reveal-width)))
-               (if (> width 0) (format "width: %d," width)
-                 ""))
-             (let ((height (plist-get info :reveal-height)))
-               (if (> height 0) (format "height: %d," height)
-                 ""))
-             (let ((margin (string-to-number (plist-get info :reveal-margin))))
-               (if (>= margin 0) (format "margin: %.2f," margin)
-                 ""))
-             (let ((min-scale (string-to-number (plist-get info :reveal-min-scale))))
-               (if (> min-scale 0) (format "minScale: %.2f," min-scale)
-                 ""))
-             (let ((max-scale (string-to-number (plist-get info :reveal-max-scale))))
-               (if (> max-scale 0) (format "maxScale: %.2f," max-scale)
-                 ""))
+     ;; slide height
+     (let ((height (plist-get info :reveal-height)))
+       (if (> height 0) (format "height: %d,\n" height) ""))
 
+     ;; slide margin
+     (let ((margin (string-to-number (plist-get info :reveal-margin))))
+       (if (>= margin 0) (format "margin: %.2f,\n" margin) ""))
+
+     ;; slide minimum scaling factor
+     (let ((min-scale (string-to-number (plist-get info :reveal-min-scale))))
+       (if (> min-scale 0) (format "minScale: %.2f,\n" min-scale) ""))
+
+     ;; slide maximux scaling factor
+     (let ((max-scale (string-to-number (plist-get info :reveal-max-scale))))
+       (if (> max-scale 0) (format "maxScale: %.2f,\n" max-scale) ""))
+
+     ;; thems and transitions
+     (format "
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: '%s',\n"
              (plist-get info :reveal-trans)
              (plist-get info :reveal-speed))
-     (format "
-        			// Optional libraries used to extend on reveal.js
-        			dependencies: [
-        				{ src: '%s', condition: function() { return !document.body.classList; } }
-        				,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
-        				,{ src: '%s', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
-        				,{ src: '%s', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-        				,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-        				,{ src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-        				// { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-        				// { src: '%s', async: true, condition: function() { return !!document.body.classList; } }
-         				%s
-        			]
-        		});\n"
-               (org-reveal--append-path lib-js-dir-name "classList.js")
-               (org-reveal--append-path markdown-dir-name "showdown.js")
-               (org-reveal--append-path markdown-dir-name "markdown.js")
-               (org-reveal--append-pathes plugin-dir-name '("highlight" "highlight.js"))
-               (org-reveal--append-pathes plugin-dir-name '("zoom-js" "zoom.js"))
-               (org-reveal--append-pathes plugin-dir-name '("notes" "notes.js"))
-               (org-reveal--append-pathes plugin-dir-name '("search" "search.js"))
-               (org-reveal--append-pathes plugin-dir-name '("remotes" "remotes.js"))
-               (if extra-js (concat "," extra-js) ""))
-                "</script>\n")))
+     ;; optional JS library heading
+     "
+// Optional libraries used to extend on reveal.js
+dependencies: [
+"
+     ;; JS libraries
+     (let ((builtins-code
+            (let ((builtins
+                   '(classList 
+                     (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+                     markdown
+                     (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
+                     highlight
+                     (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
+                     zoom
+                     (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                     notes
+                     (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                     search
+                     (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                     remotes
+                     (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path))))
+              (mapconcat
+               (lambda (p)
+                 (eval (plist-get builtins p)))
+               (car (read-from-string (plist-get info :reveal-plugins)))
+               ",\n")))
+           (extra-js (plist-get info :reveal-extra-js)))
+       (or (and builtins-code extra-js
+                (concat builtins-code ", " extra-js))
+           builtins-code
+           extra-js))
+     
+     
+     "
+]
+});
+</script>\n")))
 
 (defun org-reveal-toc-headlines-r (headlines info prev_level hlevel prev_x prev_y)
   "Generate toc headline text recursively."
