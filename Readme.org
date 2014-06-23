@@ -21,7 +21,7 @@
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
     authored by [[hakim.se][Hakim El Hattab]]. \\
     For an example of reveal.js presentation, click [[http://lab.hakim.se/reveal-js/#/][here]].
-  - *Org-Reveal* exports your [[orgmode.org][Org]] documents to reveal.js
+  - *Org-Reveal* exports your [[http://orgmode.org/][Org]] documents to reveal.js
     presentations.\\
     With Org-reveal, you can create beautiful presentations with 3D
     effects from simple but powerful Org contents.
