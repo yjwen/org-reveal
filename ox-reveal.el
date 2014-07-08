@@ -66,7 +66,7 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
-    (:reveal-plugins "REVEAL_PLUGINS" nil org-reveal-plugins t)
+    (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     )
 
   :translate-alist
@@ -223,10 +223,17 @@ can be include."
   :type 'string)
 
 (defcustom org-reveal-plugins
-  "(classList markdown highlight zoom notes)"
+  '(classList markdown highlight zoom notes)
   "Default builtin plugins"
   :group 'org-export-reveal
-  :type 'string)
+  :type '(set
+          (const classList)
+          (const markdown)
+          (const highlight)
+          (const zoom)
+          (const notes)
+          (const search)
+          (const remotes)))
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -340,7 +347,7 @@ holding contextual information."
 
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
-  :tag "Org Export reveal"
+  :tag "Org Export Reveal"
   :group 'org-export)
 
 (defun org-reveal-stylesheets (info)
@@ -471,7 +478,9 @@ dependencies: [
               (mapconcat
                (lambda (p)
                  (eval (plist-get builtins p)))
-               (car (read-from-string (plist-get info :reveal-plugins)))
+               (let ((buffer-plugins (plist-get info :reveal-plugins)))
+                 (if buffer-plugins (car (read-from-string buffer-plugins))
+                   org-reveal-plugins))
                ",\n")))
            (extra-js (plist-get info :reveal-extra-js)))
        (or (and builtins-code extra-js
