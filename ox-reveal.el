@@ -58,7 +58,7 @@
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
-    (:reveal-extra-js "REVEAL_EXTRA_JS" nil nil nil)
+    (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
@@ -128,6 +128,12 @@ can be include."
 (defcustom org-reveal-theme
   "default"
   "Reveal theme."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-extra-js
+  ""
+  "URL to extra JS file."
   :group 'org-export-reveal
   :type 'string)
 
@@ -458,37 +464,27 @@ transitionSpeed: '%s',\n"
 dependencies: [
 "
      ;; JS libraries
-     (let ((builtins-code
-            (let ((builtins
-                   '(classList 
-                     (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
-                     markdown
-                     (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+     (let* ((builtins
+             '(classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+               markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
-                     highlight
-                     (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
-                     zoom
-                     (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                     notes
-                     (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                     search
-                     (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                     remotes
-                     (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path))))
-              (mapconcat
+               highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
+               zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)))
+            (builtin-codes
+             (mapcar
                (lambda (p)
                  (eval (plist-get builtins p)))
                (let ((buffer-plugins (plist-get info :reveal-plugins)))
                  (if buffer-plugins (car (read-from-string buffer-plugins))
-                   org-reveal-plugins))
-               ",\n")))
-           (extra-js (plist-get info :reveal-extra-js)))
-       (or (and builtins-code extra-js
-                (concat builtins-code ", " extra-js))
-           builtins-code
-           extra-js))
-     
-     
+                   org-reveal-plugins))))
+            (extra-codes (plist-get info :reveal-extra-js))
+            (total-codes
+             (if (string= "" extra-codes) builtin-codes
+               (append (list extra-codes) builtin-codes))))
+       (mapconcat 'identity total-codes ",\n"))
      "
 ]
 });
