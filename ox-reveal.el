@@ -283,7 +283,7 @@ holding contextual information."
 	 (priority (and (plist-get info :with-priority)
 			(org-element-property :priority headline)))
 	 ;; Create the headline text.
-	 (full-text (org-html-format-headline--wrap headline info)))
+	 (full-text (org-html-headline headline nil info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
