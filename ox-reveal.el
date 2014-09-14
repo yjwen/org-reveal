@@ -653,7 +653,7 @@ the plist used as a communication channel."
                 (error "Unexpected HTML output for image!"))
               (replace-match (concat "class=\"figure fragment " frag " \"") t t contents))
           contents)))
-     (t (format "<p%s>\n%s</p>"
+     (t (format "<div class='imagecontainer' %s>\n%s</div>"
                 (or (frag-class (org-export-read-attribute :attr_reveal paragraph :frag))
                     "")
                 contents)))))
