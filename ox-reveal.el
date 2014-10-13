@@ -283,7 +283,9 @@ holding contextual information."
 	 (priority (and (plist-get info :with-priority)
 			(org-element-property :priority headline)))
 	 ;; Create the headline text.
-	 (full-text (funcall (plist-get info :html-format-headline-function)
+	 (full-text (funcall (or (plist-get info :html-format-headline-function)
+                                 ;; nil function, return a suggestive error
+                                 (error "Export failed. It seems you are using a release version of Org-mode. Please try to use Org-reveal branch 8.2.7c."))
 			     todo todo-type priority text tags info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
