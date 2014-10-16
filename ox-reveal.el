@@ -285,7 +285,7 @@ holding contextual information."
 	 ;; Create the headline text.
 	 (full-text (funcall (or (plist-get info :html-format-headline-function)
                                  ;; nil function, return a suggestive error
-                                 (error "Export failed. It seems you are using a release version of Org-mode. Please try to use Org-reveal branch 8.2.7c."))
+                                 (error "Export failed. It seems you are using a stable release of Org-mode. Please use Org-reveal `stable' branch for Org-mode stable releases."))
 			     todo todo-type priority text tags info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
