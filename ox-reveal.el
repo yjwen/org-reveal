@@ -68,6 +68,10 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
+    (:reveal-multiplex-id "REVEAL_MULTIPLEX_ID" nil org-reveal-multiplex-id nil)
+    (:reveal-multiplex-secret "REVEAL_MULTIPLEX_SECRET" nil org-reveal-multiplex-secret nil)
+    (:reveal-multiplex-url "REVEAL_MULTIPLEX_URL" nil org-reveal-multiplex-url nil)
+    (:reveal-multiplex-socketio-url "REVEAL_MULTIPLEX_SOCKETIO_URL" nil org-reveal-multiplex-socketio-url nil)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     )
 
