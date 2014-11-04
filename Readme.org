@@ -436,8 +436,8 @@ fibs = 0 : 1 : next fibs
    You can enable multiplexing for your slide generation by including the
    following options:
 #+BEGIN_SRC org
-#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. Gives the master control of the presentation.]
-#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server]
+#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. ]
+#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server. Gives the master control of the presentation.]
 #+REVEAL_MULTIPLEX_URL: http://revealjs.jit.su:80 [Location of socket.io server]
 #+REVEAL_MULTIPLEX_SOCKETIO_URL: http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js
 #+REVEAL_PLUGINS: ([any other plugins you are using] multiplex)
