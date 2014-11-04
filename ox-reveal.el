@@ -27,6 +27,8 @@
 
 ;; Please see "Readme.org" for detail introductions.
 
+;; Pull request: Multiplex Support - Stephen Barrett <Stephen dot Barrewtt at scss dot tcd dot ie
+
 ;;; Code:
 
 (require 'ox-html)
