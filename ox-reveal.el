@@ -27,6 +27,8 @@
 
 ;; Please see "Readme.org" for detail introductions.
 
+;; Pull request: Multiplex Support - Stephen Barrett <Stephen dot Barrewtt at scss dot tcd dot ie
+
 ;;; Code:
 
 (require 'ox-html)
@@ -66,6 +68,10 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
+    (:reveal-multiplex-id "REVEAL_MULTIPLEX_ID" nil org-reveal-multiplex-id nil)
+    (:reveal-multiplex-secret "REVEAL_MULTIPLEX_SECRET" nil org-reveal-multiplex-secret nil)
+    (:reveal-multiplex-url "REVEAL_MULTIPLEX_URL" nil org-reveal-multiplex-url nil)
+    (:reveal-multiplex-socketio-url "REVEAL_MULTIPLEX_SOCKETIO_URL" nil org-reveal-multiplex-socketio-url nil)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     )
 
@@ -134,6 +140,28 @@ can be include."
 (defcustom org-reveal-extra-js
   ""
   "URL to extra JS file."
+  :group 'org-export-reveal
+  :type 'string)
+
+
+(defcustom org-reveal-multiplex-id ""
+  "The ID to use for multiplexing."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-multiplex-secret ""
+  "The secret to use for master slide."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-multiplex-url ""
+  "The url of the socketio server."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-multiplex-socketio-url
+  ""
+  "the url of the socketio.js library"
   :group 'org-export-reveal
   :type 'string)
 
@@ -239,7 +267,8 @@ can be include."
           (const zoom)
           (const notes)
           (const search)
-          (const remotes)))
+          (const remotes)
+          (const multiplex)))
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -249,7 +278,7 @@ can be include."
   (cond
    ((string= frag t) " class=\"fragment\"")
    (frag (format " class=\"fragment %s\"" frag))))
-  
+
 
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
@@ -272,21 +301,21 @@ holding contextual information."
   ;; Then add enclosing <section> tags to mark slides.
   (setq contents (or contents ""))
   (let* ((numberedp (org-export-numbered-headline-p headline info))
-	 (level (org-export-get-relative-level headline info))
-	 (text (org-export-data (org-element-property :title headline) info))
-	 (todo (and (plist-get info :with-todo-keywords)
-		    (let ((todo (org-element-property :todo-keyword headline)))
-		      (and todo (org-export-data todo info)))))
-	 (todo-type (and todo (org-element-property :todo-type headline)))
-	 (tags (and (plist-get info :with-tags)
-		    (org-export-get-tags headline info)))
-	 (priority (and (plist-get info :with-priority)
-			(org-element-property :priority headline)))
-	 ;; Create the headline text.
-	 (full-text (funcall (or (plist-get info :html-format-headline-function)
+         (level (org-export-get-relative-level headline info))
+         (text (org-export-data (org-element-property :title headline) info))
+         (todo (and (plist-get info :with-todo-keywords)
+                    (let ((todo (org-element-property :todo-keyword headline)))
+                      (and todo (org-export-data todo info)))))
+         (todo-type (and todo (org-element-property :todo-type headline)))
+         (tags (and (plist-get info :with-tags)
+                    (org-export-get-tags headline info)))
+         (priority (and (plist-get info :with-priority)
+                        (org-element-property :priority headline)))
+         ;; Create the headline text.
+         (full-text (funcall (or (plist-get info :html-format-headline-function)
                                  ;; nil function, return a suggestive error
                                  (error "Export failed. It seems you are using a stable release of Org-mode. Please use Org-reveal `stable' branch for Org-mode stable releases."))
-			     todo todo-type priority text tags info)))
+                             todo todo-type priority text tags info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
@@ -296,19 +325,19 @@ holding contextual information."
      ((org-export-low-level-p headline info)
       ;; Build the real contents of the sub-tree.
       (let* ((type (if numberedp 'ordered 'unordered))
-	     (itemized-body (org-reveal-format-list-item
-			     contents type nil info nil 'none full-text)))
-	(concat
-	 (and (org-export-first-sibling-p headline info)
-	      (org-html-begin-plain-list type))
-	 itemized-body
-	 (and (org-export-last-sibling-p headline info)
-	      (org-html-end-plain-list type)))))
+             (itemized-body (org-reveal-format-list-item
+                             contents type nil info nil 'none full-text)))
+        (concat
+         (and (org-export-first-sibling-p headline info)
+              (org-html-begin-plain-list type))
+         itemized-body
+         (and (org-export-last-sibling-p headline info)
+              (org-html-end-plain-list type)))))
      ;; Case 3. Standard headline.  Export it as a section.
      (t
       (let* ((level1 (+ level (1- org-html-toplevel-hlevel)))
              (hlevel (org-reveal--get-hlevel info))
-	     (first-content (car (org-element-contents headline))))
+             (first-content (car (org-element-contents headline))))
         (concat
          (if (or (/= level 1)
                  (not (org-export-first-sibling-p headline info)))
@@ -461,6 +490,21 @@ transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/conca
 transitionSpeed: '%s',\n"
              (plist-get info :reveal-trans)
              (plist-get info :reveal-speed))
+
+     ;; multiplexing - depends on defvar 'client-multiplex'
+     (when (plist-get info :reveal-multiplex-id)
+       (format
+"multiplex: {
+    secret: %s, // null if client
+    id: '%s', // id, obtained from socket.io server
+    url: '%s' // Location of socket.io server
+},\n"
+             (if (eq client-multiplex nil)
+                 (format "'%s'" (plist-get info :reveal-multiplex-secret))
+               (format "null"))
+             (plist-get info :reveal-multiplex-id)
+             (plist-get info :reveal-multiplex-url)))
+
      ;; optional JS library heading
      "
 // Optional libraries used to extend on reveal.js
@@ -475,7 +519,17 @@ dependencies: [
                zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
                notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
                search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)))
+               remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               multiplex (format " { src: '%s', async: true },\n%s"
+                                 (plist-get info :reveal-multiplex-socketio-url)
+                                 ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
+                                 (if (not client-multiplex)
+                                     (progn
+                                       (if (plist-get info :reveal-multiplex-secret)
+                                          (setq client-multiplex t))
+                                       (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
+
+                                   (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
             (builtin-codes
              (mapcar
                (lambda (p)
@@ -641,8 +695,8 @@ the plist used as a communication channel."
   (let ((parent (org-export-get-parent paragraph)))
     (cond
      ((and (eq (org-element-type parent) 'item)
-	   (= (org-element-property :begin paragraph)
-	      (org-element-property :contents-begin parent)))
+           (= (org-element-property :begin paragraph)
+              (org-element-property :contents-begin parent)))
       ;; leading paragraph in a list item have no tags
       contents)
      ((org-html-standalone-image-p paragraph info)
@@ -688,24 +742,24 @@ contextual information."
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
     (let ((lang (org-element-property :language src-block))
-	  (caption (org-export-get-caption src-block))
-	  (code (org-html-format-code src-block info))
+          (caption (org-export-get-caption src-block))
+          (code (org-html-format-code src-block info))
           (frag (org-export-read-attribute :attr_reveal src-block :frag))
-	  (label (let ((lbl (org-element-property :name src-block)))
-		   (if (not lbl) ""
-		     (format " id=\"%s\""
-			     (org-export-solidify-link-text lbl))))))
+          (label (let ((lbl (org-element-property :name src-block)))
+                   (if (not lbl) ""
+                     (format " id=\"%s\""
+                             (org-export-solidify-link-text lbl))))))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag) " class=\"example\"")
                   label
                   code)
-	(format
-	 "<div class=\"org-src-container\">\n%s%s\n</div>"
-	 (if (not caption) ""
-	   (format "<label class=\"org-src-name\">%s</label>"
-		   (org-export-data caption info)))
-	 (format "\n<pre %s%s>%s</pre>"
+        (format
+         "<div class=\"org-src-container\">\n%s%s\n</div>"
+         (if (not caption) ""
+           (format "<label class=\"org-src-name\">%s</label>"
+                   (org-export-data caption info)))
+         (format "\n<pre %s%s>%s</pre>"
                  (or (frag-class frag)
                      (format " class=\"src src-%s\"" lang))
                  label code))))))
@@ -744,15 +798,28 @@ info is a plist holding export options."
 </html>\n"))
 
 
+(defvar client-multiplex nil
+  "used to cause generation of client html file for multiplex")
 
 (defun org-reveal-export-to-html
   (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a reveal.js HTML file."
   (interactive)
   (let* ((extension (concat "." org-html-extension))
-         (file (org-export-output-file-name extension subtreep)))
-    (org-export-to-file 'reveal file
-      async subtreep visible-only body-only ext-plist)))
+         (file (org-export-output-file-name extension subtreep))
+         (clientfile (org-export-output-file-name (concat "_client" extension) subtreep)))
+
+    ; export filename_client HTML file if multiplexing
+    (setq client-multiplex nil)
+    (setq retfile (org-export-to-file 'reveal file
+                    async subtreep visible-only body-only ext-plist))
+
+    ; export the client HTML file if client-multiplex is set true
+    ; by previous call to org-export-to-file
+    (if (eq client-multiplex t)
+        (org-export-to-file 'reveal clientfile
+          async subtreep visible-only body-only ext-plist))
+    (cond (t retfile))))
 
 (defun org-reveal-export-to-html-and-browse
   (&optional async subtreep visible-only body-only ext-plist)

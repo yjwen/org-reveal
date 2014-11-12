@@ -293,7 +293,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * highlight-green
 #+ATTR_REVEAL: :frag highlight-blue
     * highlight-blue
-      
+
     Use default fragment style by setting ":frag t".
 
 ** Data State
@@ -314,6 +314,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    - reveal-progress : Show/hide progress bar.
    - reveal-history : Enable/disable slide history track.
    - reveal-center : Enable/disable slide centering.
+   - multiplex : Enable audience to view presentation on secondary devices.
 
 *** Configure Plug-ins
 
@@ -425,6 +426,33 @@ fibs = 0 : 1 : next fibs
    the presentation HTML file into the Reveal.js root directory and
    reopen it in the brower.
 
+** Multiplexing
+   Reveal.js supports multiplexing, which allows allows your audience to view
+   the slides of the presentation you are controlling on their own phone, tablet
+   or laptop. As the master presentation navigates the slides, all client
+   presentations will update in real time. See a demo at
+   http://revealjs.jit.su/.
+
+   You can enable multiplexing for your slide generation by including the
+   following options:
+#+BEGIN_SRC org
+#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. ]
+#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server. Gives the master control of the presentation.]
+#+REVEAL_MULTIPLEX_URL: http://revealjs.jit.su:80 [Location of socket.io server]
+#+REVEAL_MULTIPLEX_SOCKETIO_URL: http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js
+#+REVEAL_PLUGINS: ([any other plugins you are using] multiplex)
+#+END_SRC
+
+   You must generate unique values for the =REVEAL_MULTIPLEX_ID= and
+   =REVEAL_MULTIPLEX_SECRET= options, obtaining these from the socket.io server
+   you are using.
+
+   If you include these options in your .org file, reveal-org will enable your
+   .html file as the master file for multiplexing and will generate a file named
+   in the form =[filename]_client.html= in the same directory as the master
+   .html file. Provide your audience with a link to the client file to allow
+   them to track your presentation on their own device.
+
 ** Extra Stylesheets
 
    Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom
@@ -441,14 +469,14 @@ fibs = 0 : 1 : next fibs
 
    Available built-in scripts are:
    classList/markdown/highlight/zoom/notes/search/remotes.
-   
-   Default built-ins are: classList/markdown/highlight/zoom/notes.
+
+   Default built-ins are: classList/markdown/highlight/zoom/notes/multiplex.
 
    The following examples select /markdown/ and /highlight/ only.
 #+BEGIN_SRC org
 ,#+REVEAL_PLUGINS: (markdown highlight)
 #+END_SRC
-   
+
 ** Extra Dependent Script
 
    Set =REVEAL_EXTRA_JS= to the url of extra reveal.js dependent
