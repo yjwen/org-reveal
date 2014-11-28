@@ -752,6 +752,19 @@ info is a plist holding export options."
   (interactive)
   (browse-url-of-file (expand-file-name (org-reveal-export-to-html async subtreep visible-only body-only ext-plist))))
 
+;;;###autoload
+(defun org-reveal-publish-to-reveal
+ (plist filename pub-dir)
+  "Publish an org file to Html.
+
+FILENAME is the filename of the Org file to be published.  PLIST
+is the property list for the given project.  PUB-DIR is the
+publishing directory.
+
+Return output file name."
+  (org-publish-org-to 'reval filename ".html" plist pub-dir))
+
+
 (provide 'ox-reveal)
 
 ;;; ox-reveal.el ends here
