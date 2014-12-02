@@ -14,7 +14,7 @@
 #+REVEAL_HLEVEL: 2
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
-#+REVEAL_PLUGINS: (highlight markdown)
+#+REVEAL_PLUGINS: (highlight markdown notes)
 
 * Reveal.js and Org-Reveal
 
@@ -315,7 +315,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    - reveal-history : Enable/disable slide history track.
    - reveal-center : Enable/disable slide centering.
    - multiplex : Enable audience to view presentation on secondary devices.
-
+     
 *** Configure Plug-ins
 
     Each plug-ins can be set on/off by adding =#+OPTIONS= tags or
@@ -420,6 +420,12 @@ fibs = 0 : 1 : next fibs
 #+END_SRC
 
 #+REVEAL: split
+   Speaker notes requires the ~notes~ plug-in. If you changed default
+   plug-in setting by specifying =#+REVEAL_PLUGINS= or by setting
+   variable =org-reveal-plugins=, please make sure ~notes~ is in the
+   plug-in list to enable speaker notes.
+
+#+REVEAL: split
 
    Due to a bug in Reveal.js, sometimes the speaker notes window
    shows only blank screens. A workaround to this issue is to put
@@ -449,7 +455,7 @@ fibs = 0 : 1 : next fibs
 
    If you include these options in your .org file, reveal-org will enable your
    .html file as the master file for multiplexing and will generate a file named
-   in the form =[filename]_client.html= in the same directory as the master
+   in the form =[filename]_client.html= in the same directory as the client
    .html file. Provide your audience with a link to the client file to allow
    them to track your presentation on their own device.
 
