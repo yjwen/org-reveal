@@ -82,6 +82,7 @@
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (paragraph . org-reveal-paragraph)
+    (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
@@ -763,6 +764,14 @@ contextual information."
                  (or (frag-class frag)
                      (format " class=\"src src-%s\"" lang))
                  label code))))))
+
+(defun org-reveal-quote-block (quote-block contents info)
+  "Transcode a QUOTE-BLOCK element from Org to Reveal.
+CONTENTS holds the contents of the block INFO is a plist holding
+contextual information."
+  (format "<blockquote %s>\n%s</blockquote>"
+          (frag-class (org-export-read-attribute :attr_reveal quote-block :frag))
+          contents))
 
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
