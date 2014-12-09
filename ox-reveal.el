@@ -536,8 +536,10 @@ dependencies: [
                (lambda (p)
                  (eval (plist-get builtins p)))
                (let ((buffer-plugins (plist-get info :reveal-plugins)))
-                 (if buffer-plugins (car (read-from-string buffer-plugins))
-                   org-reveal-plugins))))
+                 (cond
+                  ((string= buffer-plugins "") ())
+                  (buffer-plugins (car (read-from-string buffer-plugins)))
+                  (t org-reveal-plugins)))))
             (extra-codes (plist-get info :reveal-extra-js))
             (total-codes
              (if (string= "" extra-codes) builtin-codes
