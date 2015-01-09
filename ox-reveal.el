@@ -83,6 +83,7 @@
     (keyword . org-reveal-keyword)
     (paragraph . org-reveal-paragraph)
     (quote-block . org-reveal-quote-block)
+    (table . org-reveal-table)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
@@ -773,6 +774,14 @@ CONTENTS holds the contents of the block INFO is a plist holding
 contextual information."
   (format "<blockquote %s>\n%s</blockquote>"
           (frag-class (org-export-read-attribute :attr_reveal quote-block :frag))
+          contents))
+
+(defun org-reveal-table (table contents info)
+  "Transcode a TABLE element from Org to Reveal.
+CONTENTS holds the contents of the table INFO is a plist holding
+contextual information."
+  (format "<table %s>\n%s</table>"
+          (frag-class (org-export-read-attribute :attr_reveal table :frag))
           contents))
 
 (defun org-reveal-template (contents info)
