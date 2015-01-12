@@ -325,7 +325,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    - reveal-history : Enable/disable slide history track.
    - reveal-center : Enable/disable slide centering.
    - multiplex : Enable audience to view presentation on secondary devices.
-     
+
 *** Configure Plug-ins
 
     Each plug-ins can be set on/off by adding =#+OPTIONS= tags or
@@ -353,7 +353,7 @@ fibs = 0 : 1 : next fibs
    If you saw odd indentation, please set variable =org-html-indent=
    to =nil= and export again.
 
-   If codes are not highlighted, please mark sure =htmlize.el= is
+   If codes are not highlighted, please make sure =htmlize.el= is
    installed.
 
 ** MathJax
