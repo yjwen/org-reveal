@@ -62,6 +62,7 @@
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
+    (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
     (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
@@ -83,6 +84,7 @@
     (keyword . org-reveal-keyword)
     (paragraph . org-reveal-paragraph)
     (quote-block . org-reveal-quote-block)
+    (table . org-reveal-table)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
@@ -108,6 +110,11 @@ else get value from custom variable `org-reveal-hlevel'."
   (let ((hlevel-str (plist-get info :reveal-hlevel)))
     (if hlevel-str (string-to-number hlevel-str)
       org-reveal-hlevel)))
+
+(defcustom org-reveal-title-slide t
+  "Include a title slide."
+  :group 'org-export-reveal
+  :type 'boolean)
 
 (defcustom org-reveal-title-slide-template
   "<h1>%t</h1>
@@ -775,6 +782,14 @@ contextual information."
           (frag-class (org-export-read-attribute :attr_reveal quote-block :frag))
           contents))
 
+(defun org-reveal-table (table contents info)
+  "Transcode a TABLE element from Org to Reveal.
+CONTENTS holds the contents of the table INFO is a plist holding
+contextual information."
+  (format "<table %s>\n%s</table>"
+          (frag-class (org-export-read-attribute :attr_reveal table :frag))
+          contents))
+
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
 contents is the transcoded contents string.
@@ -795,11 +810,13 @@ info is a plist holding export options."
 <body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
 "<div class=\"reveal\">
-<div class=\"slides\">
-<section>
-"
-   (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
-   "</section>\n"
+<div class=\"slides\">\n"
+   (if (plist-get info :reveal-title-slide)
+     (concat
+       "<section>\n"
+       (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
+       "\n</section>\n")
+     "")
    contents
    "</div>
 </div>\n"
