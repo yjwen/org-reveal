@@ -20,7 +20,7 @@
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
     authored by [[hakim.se][Hakim El Hattab]]. \\
-    For an example of reveal.js presentation, click [[http://lab.hakim.se/reveal-js/#/][here]].
+    For an example of a reveal.js presentation, see [[http://lab.hakim.se/reveal-js/#/][here]].
   - *Org-Reveal* exports your [[http://orgmode.org/][Org]] documents to reveal.js
     presentations.\\
     With Org-reveal, you can create beautiful presentations with 3D
@@ -40,15 +40,15 @@
 
    Extract Reveal.js folders from the downloaded zip file.
 
-   If you do not wish you download reveal.js and want to use a CDN
-   version, see the section /Set the location of Reveal.js/
+   If you do not wish to download reveal.js yourself and would rather get a copy from a CDN, 
+   see the section /Set the location of Reveal.js/
 
 ** Obtain org-mode
 
    *Note*: Org-reveal relies on the Org-mode 8.0 export frame work.
    Pre-packaged org-mode may be out-of-date.
 
-   If not sure, use the freshest development codes from git repository.
+   If in doubt, use the latest development version from the repository.
 #+BEGIN_SRC sh
 $ git clone git://orgmode.org/org-mode.git
 #+END_SRC
@@ -57,7 +57,7 @@ $ git clone git://orgmode.org/org-mode.git
 
 ** Obtain Org-reveal
 
-   Download latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal GitHub page]].
+   Download the latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal GitHub page]].
 
    Or clone the GitHub repository:
 #+BEGIN_SRC sh
@@ -77,12 +77,12 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
    Org-reveal must know where Reveal.js is on your computer before
    exporting Org contents. The location of Reveal.js is the path to
-   the top directory of Reveal.js packages, the one which contains
-   file *README.md*, but *not* the one contains file reveal.js.
+   the top directory of the Reveal.js packages, the directory which contains
+   file *README.md*, but *not* the one that contains the file reveal.js.
 
    The default location is =./reveal.js=, relative to the Org file.
 
-   Change variable =org-reveal-root= 's value will change the location
+   Changing =org-reveal-root= 's value will change the location
    globally. For example, add the following statement to your .emacs
    file:
 #+BEGIN_SRC lisp
@@ -96,20 +96,20 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ** Url form for file location
 
    For example if you cloned this repository to your home directory,
-   this file in Mac OS X would be reffered to as
+   this file in Mac OS X would be referred to as
    "file:///Users/username/org-reveal/readme.org".  This file in
    Ubuntu would be "file:///home/username/org-reveal/readme.org" and
    in Windows this file would be
    "file:///c:/Users/username/org-reveal/readme.org".  For more detail
-   on this standart please refer to
+   on this standar please refer to
    [[http://en.wikipedia.org/wiki/File_URI_scheme]]
 
 #+BEGIN_SRC org
 ,#+REVEAL_ROOT: file:///d:/reveal.js
 #+END_SRC
 
-   Set your =REVEAL_ROOT= to the following URL, to use reveal.js from
-   a CDN, instead of downloading your local copy.
+   Set your =REVEAL_ROOT= to the following URL to download reveal.js from
+   a CDN instead of downloading a local copy.
 
    #+BEGIN_SRC org
    ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
@@ -118,7 +118,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 ** First Try
 
-   To wake-up Org-reveal now, type "M-x load-library", then type
+   To load Org-reveal, type "M-x load-library", then type
    "ox-reveal".
 
    Now you can export this manual into Reveal.js presentation by
@@ -130,16 +130,16 @@ $ git clone https://github.com/yjwen/org-reveal.git
 ** The HLevel
 
    Org-reveal maps each heading and its contents to one Reveal.js
-   slides. Since Reveal.js arranges slides into a 2-dimentional matrix,
-   Org-reveal use a *HLevel* value to decide map headings to hozirontal
+   slide. Since Reveal.js arranges slides into a 2-dimensional matrix,
+   Org-reveal use a *HLevel* value to decide whether to map headings to horizontal
    or vertical slides.
 
-   * Headings of level less or equal to HLevel are mapped to hozirontal
+   * Headings of level less than or equal to *HLevel* are mapped to hozirontal
      slides.
-   * Headings of deeper levels are mapped to vertical slides.
+   * Headings with a deeper level are mapped to vertical slides.
 
    HLevel's default value is 1, means only level 1 headings are arranged
-   horizontally, deeper headings are mapped to vertical slides below its
+   horizontally. Deeper headings are mapped to vertical slides below their
    parent level 1 heading.
 
 *** HLevel's Affects on Slides Layout
@@ -154,12 +154,12 @@ $ git clone https://github.com/yjwen/org-reveal.git
 #+END_SRC
 
     If HLevel is 1, the default value, headings H2.1 and H2.1.1 will
-    be mapping to vertical slides below the slides of heading H2.
+    be mapped to vertical slides below the slides of heading H2.
 
     [[./images/hlevel.png]]
 
-    If HLevel is changed to 2, slide of heading H2.1 will be changed
-    to the main hozirontal queue, and slide of heading H2.1.1 will be
+    If HLevel is changed to 2, slides of heading H2.1 will be changed
+    to the main horizontal queue, and slides of heading H2.1.1 will be
     a vertical slide below it.
 
     [[./images/hlevel2.png]]
@@ -179,7 +179,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 ** Force Split
 
-   If one headings has too many things to fit into one slide, you can
+   If one heading has too many things to fit into one slide, you can
    split the contents into multiple vertical slides manually, by inserting
 
 #+BEGIN_SRC org
@@ -261,11 +261,10 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 ** Slide Size
 
-   Reveal.js scales slides to best fit the display resolution. But in case
-   the auto-sizes are not satisfiable, you can specify the desired size by
-   option tag =width= and =height=.
+   Reveal.js scales slides to best fit the display resolution, but you can
+   also specify the desired size by settings the option tags =width= and =height=.
 
-   The scaling behavior can also be contrainted by setting following
+   The scaling behavior can also be constrained by setting following
    options:
    * =#+REVEAL_MARGIN:= :: a float number, the factor of empty area
         surrounding slide contents.
@@ -328,8 +327,8 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 *** Configure Plug-ins
 
-    Each plug-ins can be set on/off by adding =#+OPTIONS= tags or
-    settinng custom variables.
+    Each plugin can be toggled on/off by adding =#+OPTIONS= tags or
+    by setting custom variables.
 
     - =#+OPTIONS= tags:\\
       =reveal_control=, =reveal_progress=, =reveal_history=,
@@ -353,8 +352,7 @@ fibs = 0 : 1 : next fibs
    If you saw odd indentation, please set variable =org-html-indent=
    to =nil= and export again.
 
-   If codes are not highlighted, please make sure =htmlize.el= is
-   installed.
+   If code is not highlighted, please make sure =htmlize.el= is installed.
 
 ** MathJax
   :PROPERTIES:
@@ -395,12 +393,12 @@ fibs = 0 : 1 : next fibs
 *** Generating Pre/Postamble by Emacs-Lisp Functions
 
     If the contents of pre/postamble is the name of an evaluated
-    Emacs-Lisp funtion, which must accept an argument of Org-mode
+    Emacs-Lisp function, which must accept an argument of Org-mode
     info and return a string, the returned string will be taken
     as pre/postamble contents.
 
     So you can embed the Emacs-Lisp function as an Org-Babel source
-    block and mark it to be evaluated at exporting the document.
+    block and mark it to be evaluated when exporting the document.
 
 ** Raw HTML in Slides
 
@@ -414,8 +412,8 @@ fibs = 0 : 1 : next fibs
 
 ** Speaker Notes
    Reveal.js supports speaker notes, which are displayed in a seperate
-   browser window. Press 's' on slide windows will pop up an window
-   displaying current slide, next slide and the speak notes on current
+   browser window. Pressing 's' on slide's windows will pop up a window
+   displaying the current slide, the next slide and the speaker notes on the current
    slide.
 
    Org-reveal recognize texts between =#+BEGIN_NOTES= and =#+END_NOTES=
