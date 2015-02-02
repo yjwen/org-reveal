@@ -320,10 +320,7 @@ holding contextual information."
          (priority (and (plist-get info :with-priority)
                         (org-element-property :priority headline)))
          ;; Create the headline text.
-         (full-text (funcall (or (plist-get info :html-format-headline-function)
-                                 ;; nil function, return a suggestive error
-                                 (error "Export failed. It seems you are using a stable release of Org-mode. Please use Org-reveal `stable' branch for Org-mode stable releases."))
-                             todo todo-type priority text tags info)))
+	 (full-text (org-html-format-headline--wrap headline info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
