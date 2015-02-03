@@ -64,6 +64,10 @@
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
     (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
+    (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
+    (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
+    (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
+    (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
@@ -812,10 +816,18 @@ info is a plist holding export options."
 "<div class=\"reveal\">
 <div class=\"slides\">\n"
    (if (plist-get info :reveal-title-slide)
-     (concat
-       "<section>\n"
-       (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
-       "\n</section>\n")
+       (concat
+        (format "<section id=\"sec-title-slide\"%s%s%s%s>\n"
+                (if-format " data-background=\"%s\""
+                           (plist-get info :reveal-title-slide-background))
+                (if-format " data-background-size=\"%s\""
+                           (plist-get info :reveal-title-slide-background-size))
+                (if-format " data-background-repeat=\"%s\""
+                           (plist-get info :reveal-title-slide-background-repeat))
+                (if-format " data-background-transition=\"%s\""
+                           (plist-get info :reveal-title-slide-background-transition)))
+        (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
+        "\n</section>\n")
      "")
    contents
    "</div>

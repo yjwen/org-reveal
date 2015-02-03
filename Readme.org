@@ -259,6 +259,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
     :END:
 #+END_SRC
 
+*** Title Slide Background Image
+    
+    To set the title slide's background image, please specify the
+    following options:
+
+    * =REVEAL_TITLE_SLIDE_BACKGROUND=: A URL to the background image.
+    * =REVEAL_TITLE_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
+    * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: set to ~repeat~ to repeat the image.
+
 ** Slide Size
 
    Reveal.js scales slides to best fit the display resolution, but you can
