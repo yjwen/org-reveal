@@ -400,7 +400,7 @@ using custom variable `org-reveal-root'."
     (concat
      ;; stylesheets
      (format "
-<link rel=\"stylesheet\" href=\"%scss/reveal.min.css\"/>
+<link rel=\"stylesheet\" href=\"%scss/reveal.css\"/>
 <link rel=\"stylesheet\" href=\"%scss/theme/%s.css\" id=\"theme\"/>
 "
              root-path root-path
@@ -436,10 +436,10 @@ custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root))))
     (concat
      ;; reveal.js/lib/js/head.min.js
-     ;; reveal.js/js/reveal.min.js
+     ;; reveal.js/js/reveal.js
      (format "
 <script src=\"%slib/js/head.min.js\"></script>
-<script src=\"%sjs/reveal.min.js\"></script>
+<script src=\"%sjs/reveal.js\"></script>
 "
              root-path root-path)
      ;; plugin headings
