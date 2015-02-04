@@ -608,7 +608,7 @@ Add proper internal link to each headline."
   "Build a slide of table of contents."
   (let ((headlines (org-export-collect-headlines info depth)))
     (and headlines
-         (format "<section>\n%s</section>\n"
+         (format "<section id=\"table-of-contents\">\n%s</section>\n"
                  (org-reveal-toc-headlines headlines info)))))
 
 (defun org-reveal-inner-template (contents info)
