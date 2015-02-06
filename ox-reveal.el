@@ -94,7 +94,7 @@
 
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
-  within which js/reveal.min.js is."
+  within which js/reveal.js is."
   :group 'org-export-reveal)
 
 (defcustom org-reveal-hlevel 1
