@@ -285,6 +285,28 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
+(defun org-reveal-attrs-list (attrs)
+  "Generate an HTML attribute list string from the list
+ATTRS. ATTRS is expected to be a list of key-value pairs, ((key0
+. value0) (key1 . value1) ...), and for each pair of none-nil
+value, an HTML attribute statement key=\"value\" is inserted into
+the result string."
+  (mapconcat
+   (lambda (elem)
+     (let ((key (car elem))
+           (value (car (cdr elem))))
+       (if value (format " %s=\"%s\"" key value))))
+   attrs ""))
+(defun org-reveal-tag (tagname attrs content &optional sep)
+  "Generate an HTML tag of form <TAGNAME ATTRS>CONTENT</TAGNAME>.  If
+SEP is given, then the CONTENT is enclosed by SEP, otherwise it is enclosed by 
+a '\n'"
+  (let ((sep_ (or sep "\n")))
+    (format "<%s%s>%s%s%s</%s>"
+          tagname                       ; The leading tagname.
+          (org-reveal-attrs-list attrs)
+          sep_ content sep_ tagname)))
+
 (defun frag-class (frag)
   ;; Return proper HTML string description of fragment style.
   (cond
@@ -294,14 +316,12 @@ can be include."
 
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
-CONTENTS is nil. NFO is a plist holding contextual information."
+CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((block-type (org-element-property :type export-block))
         (block-string (org-element-property :value export-block)))
     (cond ((string= block-type "NOTES")
-           (concat
-            "<aside class=\"notes\">\n"
-            (org-export-string-as block-string 'html 'body-only)
-            "</aside>"))
+           (org-reveal-tag 'aside '(('class . 'notes))
+                           (org-export-string-as block-string 'html 'body-only)))
           ((string= block-type "HTML")
            (org-remove-indentation block-string)))))
 
@@ -347,7 +367,7 @@ holding contextual information."
               (org-html-end-plain-list type)))))
      ;; Case 3. Standard headline.  Export it as a section.
      (t
-      (let* ((level1 (+ level (1- org-html-toplevel-hlevel)))
+      (let* ((level1 (format "h%d" (+ level (1- org-html-toplevel-hlevel))))
              (hlevel (org-reveal--get-hlevel info))
              (first-content (car (org-element-contents headline))))
         (concat
@@ -360,25 +380,29 @@ holding contextual information."
              ;; into vertical ones.
              "<section>\n")
          ;; Start a new slide.
-         (format "<section id=\"%s\" %s%s%s%s%s%s%s>\n"
-                 (or (org-element-property :CUSTOM_ID headline)
-                     (concat "sec-" (mapconcat 'number-to-string
-                                               (org-export-get-headline-number headline info)
-                                               "-")))
-                 (if-format " data-state=\"%s\"" (org-element-property :REVEAL_DATA_STATE headline))
-                 (if-format " data-transition=\"%s\"" (org-element-property :REVEAL_DATA_TRANSITION headline))
-                 (if-format " data-background=\"%s\"" (org-element-property :REVEAL_BACKGROUND headline))
-                 (if-format " data-background-size=\"%s\"" (org-element-property :REVEAL_BACKGROUND_SIZE headline))
-                 (if-format " data-background-repeat=\"%s\"" (org-element-property :REVEAL_BACKGROUND_REPEAT headline))
-                 (if-format " data-background-transition=\"%s\"" (org-element-property :REVEAL_BACKGROUND_TRANS headline))
-                 (if-format " %s" (org-element-property :REVEAL_EXTRA_ATTR headline)))
+         (format "<section%s%s>\n"
+                 (org-reveal-attrs-list
+                  `(("id" ,(or (org-element-property :CUSTOM_ID headline)
+                                (concat "sec-"
+                                        (mapconcat 'number-to-string
+                                                   (org-export-get-headline-number headline info)
+                                                   "-"))))
+                    ("data-state" ,(org-element-property :REVEAL_DATA_STATE headline))
+                    ("data-transition" ,(org-element-property :REVEAL_DATA_TRANSITION headline))
+                    ("data-background" ,(org-element-property :REVEAL_BACKGROUND headline))
+                    ("data-background-size" ,(org-element-property :REVEAL_BACKGROUND_SIZE headline))
+                    ("data-background-repeat" ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline))
+                    ("data-background-transition" ,(org-element-property :REVEAL_BACKGROUND_TRANS headline))))
+                   (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
+                     (if extra-attrs (format " %s" extra-attrs) "")))
+         "\n"
          ;; The HTML content of this headline.
-         (format "\n<h%d%s>%s</h%d>\n"
-                 level1
-                 (if-format " class=\"fragment %s\""
-                            (org-element-property :REVEAL-FRAG headline))
-                 full-text
-                 level1)
+         (org-reveal-tag  level1 ;;"\n<h%d%s>%s</h%d>\n"
+                          (let ((fragment (org-element-property :REVEAL-FRAG headline)))
+                            (if fragment `(("class" ,(concat "fragment " fragment)))))
+                          full-text
+                          "")
+         "\n"
          ;; When there is no section, pretend there is an empty
          ;; one to get the correct <div class="outline- ...>
          ;; which is needed by `org-info.js'.
