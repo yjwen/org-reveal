@@ -144,7 +144,7 @@ can be include."
   :type 'string)
 
 (defcustom org-reveal-theme
-  "default"
+  "moon"
   "Reveal theme."
   :group 'org-export-reveal
   :type 'string)
