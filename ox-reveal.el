@@ -34,6 +34,36 @@
 (require 'ox-html)
 (eval-when-compile (require 'cl))
 
+(defun frag-style (frag)
+  "Return \"fragment\" if frag is t, which indicates to use
+default fragment style, otherwise return \"fragment style\"."
+  (cond
+   ((string= frag t) "fragment")
+   (t (format "fragment %s" frag))))
+
+
+(defun org-reveal-append-frag (elem)
+  "Read org-reveal's fragment attribute from ELEM and append
+transformed fragment attribute to ELEM's attr_html plist."
+  (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
+    (if frag-attr
+        (let* ((attr-plist (car (cdr elem)))
+               (html-attr (plist-get attr-plist :attr_html)))
+          (push (cond
+                 ((string= frag-attr t) ":class fragment")
+                 (t (format ":class fragment %s" frag-attr)))
+                html-attr)
+          (plist-put attr-plist :attr_html html-attr)))
+    elem))
+
+(defun org-reveal-append-frag-wrapper (html-transcoder)
+  "Return a wrapped transcoder which update element's HTML
+attribute with Reveal.js's fragment attribute and call
+HTML-TRANSCODER to perform the transcoding."
+  `(lambda (elem contents info)
+     (org-reveal-append-frag elem)
+     (,html-transcoder elem contents info)))
+
 (org-export-define-derived-backend 'reveal 'html
 
   :menu-entry
@@ -81,14 +111,14 @@
     )
 
   :translate-alist
-  '((export-block . org-reveal-export-block)
+  `((export-block . org-reveal-export-block)
     (headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
-    (paragraph . org-reveal-paragraph)
+    (paragraph . ,(org-reveal-append-frag-wrapper 'org-html-paragraph))
     (quote-block . org-reveal-quote-block)
-    (table . org-reveal-table)
+    (table . ,(org-reveal-append-frag-wrapper 'org-html-table))
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
@@ -309,10 +339,8 @@ a '\n'"
 
 (defun frag-class (frag)
   ;; Return proper HTML string description of fragment style.
-  (cond
-   ((string= frag t) " class=\"fragment\"")
-   (frag (format " class=\"fragment %s\"" frag))))
-
+  (and frag
+       (format " class=\"%s\"" (frag-style frag))))
 
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
@@ -810,13 +838,6 @@ contextual information."
           (frag-class (org-export-read-attribute :attr_reveal quote-block :frag))
           contents))
 
-(defun org-reveal-table (table contents info)
-  "Transcode a TABLE element from Org to Reveal.
-CONTENTS holds the contents of the table INFO is a plist holding
-contextual information."
-  (format "<table %s>\n%s</table>"
-          (frag-class (org-export-read-attribute :attr_reveal table :frag))
-          contents))
 
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
