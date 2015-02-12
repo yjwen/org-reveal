@@ -754,33 +754,6 @@ CONTENTS is nil. INFO is a plist holding contextual information."
       (REVEAL (org-reveal-parse-keyword-value value))
       (REVEAL_HTML value))))
 
-(defun org-reveal-paragraph (paragraph contents info)
-  "Transcode a PARAGRAPH element from Org to Reveal HTML.
-CONTENTS is the contents of the paragraph, as a string.  INFO is
-the plist used as a communication channel."
-  (let ((parent (org-export-get-parent paragraph)))
-    (cond
-     ((and (eq (org-element-type parent) 'item)
-           (= (org-element-property :begin paragraph)
-              (org-element-property :contents-begin parent)))
-      ;; leading paragraph in a list item have no tags
-      contents)
-     ((org-html-standalone-image-p paragraph info)
-      ;; standalone image
-      (let ((frag (org-export-read-attribute :attr_reveal paragraph :frag)))
-        (if frag
-            (progn
-              ;; This is ugly; need to update if the output from
-              ;; org-html-format-inline-image changes.
-              (unless (string-match "class=\"figure\"" contents)
-                (error "Unexpected HTML output for image!"))
-              (replace-match (concat "class=\"figure fragment " frag " \"") t t contents))
-          contents)))
-     (t (format "<p%s>\n%s</p>"
-                (or (frag-class (org-export-read-attribute :attr_reveal paragraph :frag))
-                    "")
-                contents)))))
-
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
   (let ((section (plist-get info (intern (format ":reveal-%s" type))))
