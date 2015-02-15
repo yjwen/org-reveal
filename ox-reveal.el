@@ -47,22 +47,13 @@ default fragment style, otherwise return \"fragment style\"."
 transformed fragment attribute to ELEM's attr_html plist."
   (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
     (if frag-attr
-        (let* ((attr-plist (car (cdr elem)))
-               (html-attr (plist-get attr-plist :attr_html)))
+        (let ((attr-html (org-element-property :attr_html elem)))
           (push (cond
                  ((string= frag-attr t) ":class fragment")
                  (t (format ":class fragment %s" frag-attr)))
-                html-attr)
-          (plist-put attr-plist :attr_html html-attr)))
+                attr-html)
+          (org-element-put-property elem :attr_html attr-html)))
     elem))
-
-(defun org-reveal-append-frag-wrapper (html-transcoder)
-  "Return a wrapped transcoder which update element's HTML
-attribute with Reveal.js's fragment attribute and call
-HTML-TRANSCODER to perform the transcoding."
-  `(lambda (elem contents info)
-     (org-reveal-append-frag elem)
-     (,html-transcoder elem contents info)))
 
 (org-export-define-derived-backend 'reveal 'html
 
@@ -111,18 +102,17 @@ HTML-TRANSCODER to perform the transcoding."
     )
 
   :translate-alist
-  `((export-block . org-reveal-export-block)
+  '((export-block . org-reveal-export-block)
     (headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
-    (paragraph . ,(org-reveal-append-frag-wrapper 'org-html-paragraph))
     (quote-block . org-reveal-quote-block)
-    (table . ,(org-reveal-append-frag-wrapper 'org-html-table))
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
     (template . org-reveal-template))
 
+  :filters-alist '((:filter-parse-tree . org-reveal-filter-parse-tree))
   :export-block '("REVEAL" "NOTES")
   )
 
@@ -854,6 +844,21 @@ info is a plist holding export options."
    (org-reveal-scripts info)
    "</body>
 </html>\n"))
+
+(defun org-reveal-filter-parse-tree (tree backend info)
+  "Do filtering before parsing TREE.
+
+Tree is the parse tree being exported. BACKEND is the export
+back-end used. INFO  is a plist-used as a communication channel.
+
+Assuming BACKEND is `reveal'.
+
+Each `attr_reveal' attribute is mapped to corresponding
+`attr_html' attributes."
+  (org-element-map tree (remq 'item org-element-all-elements)
+    'org-reveal-append-frag)
+  ;; Return the updated tree.
+  tree)
 
 
 (defvar client-multiplex nil
