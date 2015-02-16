@@ -42,19 +42,6 @@ default fragment style, otherwise return \"fragment style\"."
    (t (format "fragment %s" frag))))
 
 
-(defun org-reveal-append-frag (elem)
-  "Read org-reveal's fragment attribute from ELEM and append
-transformed fragment attribute to ELEM's attr_html plist."
-  (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
-    (if frag-attr
-        (let ((attr-html (org-element-property :attr_html elem)))
-          (push (cond
-                 ((string= frag-attr t) ":class fragment")
-                 (t (format ":class fragment %s" frag-attr)))
-                attr-html)
-          (org-element-put-property elem :attr_html attr-html)))
-    elem))
-
 (org-export-define-derived-backend 'reveal 'html
 
   :menu-entry
@@ -860,6 +847,18 @@ Each `attr_reveal' attribute is mapped to corresponding
   ;; Return the updated tree.
   tree)
 
+(defun org-reveal-append-frag (elem)
+  "Read org-reveal's fragment attribute from ELEM and append
+transformed fragment attribute to ELEM's attr_html plist."
+  (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
+    (if frag-attr
+        (let ((attr-html (org-element-property :attr_html elem)))
+          (push (cond
+                 ((string= frag-attr t) ":class fragment")
+                 (t (format ":class fragment %s" frag-attr)))
+                attr-html)
+          (org-element-put-property elem :attr_html attr-html)))
+    elem))
 
 (defvar client-multiplex nil
   "used to cause generation of client html file for multiplex")
