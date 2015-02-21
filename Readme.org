@@ -294,25 +294,24 @@ $ git clone https://github.com/yjwen/org-reveal.git
     Paragraphs can be fragmented.
 
 #+ATTR_REVEAL: :frag roll-in
-    Items can be fragmented, too.
+    - Lists can 
+    - be fragmented.
 
-    Availabe fragment styles are:
-#+ATTR_REVEAL: :frag grow
-    * grow
-#+ATTR_REVEAL: :frag shrink
-    * shrink
 #+ATTR_REVEAL: :frag roll-in
-    * roll-in
-#+ATTR_REVEAL: :frag fade-out
-    * fade-out
-#+ATTR_REVEAL: :frag highlight-red
-    * highlight-red
-#+ATTR_REVEAL: :frag highlight-green
-    * highlight-green
-#+ATTR_REVEAL: :frag highlight-blue
-    * highlight-blue
+    Pictures, tables and many other HTML elements can be fragmented.
 
     Use default fragment style by setting ":frag t".
+
+*** Fragment Styles
+    Availabe fragment styles are:
+#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out highlight-red highlight-green highlight-blue)
+    * grow
+    * shrink
+    * roll-in
+    * fade-out
+    * highlight-red
+    * highlight-green
+    * highlight-blue
 
 ** Data State
    :PROPERTIES:
