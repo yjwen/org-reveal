@@ -304,7 +304,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 *** Fragment Styles
     Availabe fragment styles are:
-#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out highlight-red highlight-green highlight-blue)
+#+ATTR_REVEAL: :frag t
     * grow
     * shrink
     * roll-in
@@ -312,6 +312,30 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * highlight-red
     * highlight-green
     * highlight-blue
+
+*** List Fragments
+
+    ~#+ATTR_REVEAL: :frag frag-style~ above a list defines fragment
+    style for the list as a whole.
+#+ATTR_REVEAL: :frag grow
+    1. All items grow.
+    2. As a whole.
+
+    To define fragment styles for every list item, please enumerate
+    each item's style within parenthesis.
+#+BEGIN_SRC org
+,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out)
+   * I will grow.
+   * I will shrink.
+   * I rolled in.
+   * I will fade out.
+#+END_SRC
+
+#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out)
+   * I will grow.
+   * I will shrink.
+   * I rolled in.
+   * I will fade out.
 
 ** Data State
    :PROPERTIES:
