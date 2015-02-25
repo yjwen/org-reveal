@@ -324,18 +324,23 @@ $ git clone https://github.com/yjwen/org-reveal.git
     To define fragment styles for every list item, please enumerate
     each item's style within parenthesis.
 #+BEGIN_SRC org
-,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out)
+,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none)
    * I will grow.
    * I will shrink.
    * I rolled in.
    * I will fade out.
+   * I don't fragment.
 #+END_SRC
 
-#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out)
+    ~none~ in the style list will disable fragment for the
+    corresponding list item.
+
+#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none)
    * I will grow.
    * I will shrink.
    * I rolled in.
    * I will fade out.
+   * I don't fragment.
 
 ** Data State
    :PROPERTIES:

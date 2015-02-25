@@ -821,10 +821,11 @@ transformed fragment attribute to ELEM's attr_html plist."
              (lambda (item frag)
                "Overwrite item's `:checkbox' property with
                reveal's fragment attribute."
-               (org-element-put-property
-                item :checkbox
-                (intern (cond ((string= frag t) "fragment")
-                              (t (format "fragment %s" frag))))))
+               (and (not (string= frag "none"))
+                    (org-element-put-property
+                     item :checkbox
+                     (intern (cond ((string= frag t) "fragment")
+                                   (t (format "fragment %s" frag)))))))
              (org-element-contents elem)
              (car (read-from-string frag-attr))))
            (t
