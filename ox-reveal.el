@@ -803,7 +803,10 @@ Assuming BACKEND is `reveal'.
 Each `attr_reveal' attribute is mapped to corresponding
 `attr_html' attributes."
   (org-element-map tree (remq 'item org-element-all-elements)
-    'org-reveal-append-frag)
+    (lambda (elem)
+      "Append ELEM's fragment attributes."
+      (org-reveal-append-frag elem)
+      (org-reveal-append-frag-index elem)))
   ;; Return the updated tree.
   tree)
 
@@ -812,31 +815,38 @@ Each `attr_reveal' attribute is mapped to corresponding
 transformed fragment attribute to ELEM's attr_html plist."
   (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
     (if frag-attr
-        (let ((attr-html (org-element-property :attr_html elem))
-              (elem-type (org-element-type elem)))
-          (cond
-           ((and (string= elem-type 'plain-list)
-                 (char-equal (string-to-char frag-attr) ?\())
-            (mapcar*
-             (lambda (item frag)
-               "Overwrite item's `:checkbox' property with
-               reveal's fragment attribute."
-               (and (not (string= frag "none"))
-                    (org-element-put-property
-                     item :checkbox
-                     (intern (cond ((string= frag t) "fragment")
-                                   (t (format "fragment %s" frag)))))))
-             (org-element-contents elem)
-             (car (read-from-string frag-attr))))
-           (t
-            ;; Convert reveal's fragment attribute to HTML attribute.
-            (let ((attr-html (org-element-property :attr_html elem)))
-              (push
-               (cond ((string= frag-attr t) ":class fragment")
-                     (t (concat ":class fragment " frag-attr)))
-               attr-html)
-              (org-element-put-property elem :attr_html attr-html))))))
+        (cond
+         ((and (string= (org-element-type elem) 'plain-list)
+               (char-equal (string-to-char frag-attr) ?\())
+          (mapcar*
+           (lambda (item frag)
+             "Overwrite item's `:checkbox' property with reveal's
+fragment attribute."
+             (and (not (string= frag "none"))
+                  (org-element-put-property
+                   item :checkbox
+                   (intern (cond ((string= frag t) "fragment")
+                                 (t (format "fragment %s" frag)))))))
+           (org-element-contents elem)
+           (car (read-from-string frag-attr))))
+         (t
+          ;; Convert reveal's fragment attribute to HTML attribute.
+          (let ((attr-html (org-element-property :attr_html elem)))
+            (push
+             (cond ((string= frag-attr t) ":class fragment")
+                   (t (concat ":class fragment " frag-attr)))
+             attr-html)
+            (org-element-put-property elem :attr_html attr-html)))))
     elem))
+
+(defun org-reveal-append-frag-index (elem)
+  "Read org-reveal's fragment index from ELEM and append
+transformed fragment index attribute to ELEM's atr_html plist."
+  (let ((frag-index (org-export-read-attribute :attr_reveal elem :frag_idx)))
+    (if frag-index
+        (let ((attr-html (org-element-property :attr_html elem)))
+          (push (concat ":data-fragment-index " frag-index) attr-html)
+          (org-element-put-property elem :attr_html attr-html)))))
 
 (defvar client-multiplex nil
   "used to cause generation of client html file for multiplex")
