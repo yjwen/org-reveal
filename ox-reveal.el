@@ -92,6 +92,7 @@ default fragment style, otherwise return \"fragment style\"."
   '((export-block . org-reveal-export-block)
     (headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
+    (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (plain-list . org-reveal-plain-list)
     (quote-block . org-reveal-quote-block)
@@ -666,6 +667,62 @@ holding export options."
      tokens
      "")))
 
+;; Copied from org-html-format-list-item. Overwrite HTML class
+;; attribute when there is attr_html attributes.
+(defun org-reveal-format-list-item (contents type checkbox attributes info
+					     &optional term-counter-id
+					     headline)
+  "Format a list item into HTML."
+  (let ((attr-html (cond (attributes (format " %s" (org-html--make-attribute-string attributes)))
+                         (checkbox (format " class=\"%s\"" (symbol-name checkbox)))
+                         (t "")))
+	(checkbox (concat (org-html-checkbox checkbox info)
+			  (and checkbox " ")))
+	(br (org-html-close-tag "br" nil info)))
+    (concat
+     (case type
+       (ordered
+	(let* ((counter term-counter-id)
+	       (extra (if counter (format " value=\"%s\"" counter) "")))
+	  (concat
+	   (format "<li%s%s>" attr-html extra)
+	   (when headline (concat headline br)))))
+       (unordered
+	(let* ((id term-counter-id)
+	       (extra (if id (format " id=\"%s\"" id) "")))
+	  (concat
+	   (format "<li%s%s>" attr-html extra)
+	   (when headline (concat headline br)))))
+       (descriptive
+	(let* ((term term-counter-id))
+	  (setq term (or term "(no term)"))
+	  ;; Check-boxes in descriptive lists are associated to tag.
+	  (concat (format "<dt%s>%s</dt>"
+			  attr-html (concat checkbox term))
+		  "<dd>"))))
+     (unless (eq type 'descriptive) checkbox)
+     (and contents (org-trim contents))
+     (case type
+       (ordered "</li>")
+       (unordered "</li>")
+       (descriptive "</dd>")))))
+
+;; Copied from org-html-item, changed to call
+;; org-reveal-format-list-item.
+(defun org-reveal-item (item contents info)
+  "Transcode an ITEM element from Org to Reveal.
+CONTENTS holds the contents of the item.  INFO is a plist holding
+contextual information."
+  (let* ((plain-list (org-export-get-parent item))
+	 (type (org-element-property :type plain-list))
+	 (counter (org-element-property :counter item))
+         (attributes (org-export-read-attribute :attr_html item))
+         ; (attributes (org-html--make-attribute-string (org-export-read-attribute :attr_html item)))
+	 (checkbox (org-element-property :checkbox item))
+	 (tag (let ((tag (org-element-property :tag item)))
+		(and tag (org-export-data tag info)))))
+    (org-reveal-format-list-item
+     contents type checkbox attributes info (or tag counter))))
 
 (defun org-reveal-keyword (keyword contents info)
   "Transcode a KEYWORD element from Org to HTML,
@@ -810,33 +867,33 @@ Each `attr_reveal' attribute is mapped to corresponding
   ;; Return the updated tree.
   tree)
 
+(defun org-reveal--update-attr-html (elem frag-attr)
+  "Update ELEM's attr_html atrribute with reveal's
+fragment attributes."
+  (let ((attr-html (org-element-property :attr_html elem)))
+    (push (cond ((string= frag-attr t) ":class fragment")
+                (t (format ":class fragment %s" frag-attr)))
+          attr-html)
+    (org-element-put-property elem :attr_html attr-html)))
+
 (defun org-reveal-append-frag (elem)
   "Read org-reveal's fragment attribute from ELEM and append
 transformed fragment attribute to ELEM's attr_html plist."
   (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
     (if frag-attr
-        (cond
-         ((and (string= (org-element-type elem) 'plain-list)
-               (char-equal (string-to-char frag-attr) ?\())
-          (mapcar*
-           (lambda (item frag)
-             "Overwrite item's `:checkbox' property with reveal's
-fragment attribute."
-             (and (not (string= frag "none"))
-                  (org-element-put-property
-                   item :checkbox
-                   (intern (cond ((string= frag t) "fragment")
-                                 (t (format "fragment %s" frag)))))))
-           (org-element-contents elem)
-           (car (read-from-string frag-attr))))
-         (t
-          ;; Convert reveal's fragment attribute to HTML attribute.
-          (let ((attr-html (org-element-property :attr_html elem)))
-            (push
-             (cond ((string= frag-attr t) ":class fragment")
-                   (t (concat ":class fragment " frag-attr)))
-             attr-html)
-            (org-element-put-property elem :attr_html attr-html)))))
+        (cond ((and (string= (org-element-type elem) 'plain-list)
+                    (char-equal (string-to-char frag-attr) ?\())
+               (mapcar*
+                (lambda (item frag)
+                  "Append reveal's fragment attribute to item's
+`:attr_html' property."
+                  (and (not (string= frag "none"))
+                       (org-reveal--update-attr-html item frag))
+                  ;; Return nil.
+                  nil)
+                (org-element-contents elem)
+                (car (read-from-string frag-attr))))
+              (t (org-reveal--update-attr-html elem frag-attr))))
     elem))
 
 (defun org-reveal-append-frag-index (elem)
