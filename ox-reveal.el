@@ -320,7 +320,7 @@ holding contextual information."
          (priority (and (plist-get info :with-priority)
                         (org-element-property :priority headline)))
          ;; Create the headline text.
-	 (full-text (org-html-format-headline--wrap headline info)))
+         (full-text (org-html-format-headline--wrap headline info)))
     (cond
      ;; Case 1: This is a footnote section: ignore it.
      ((org-element-property :footnote-section-p headline) nil)
@@ -815,9 +815,9 @@ info is a plist holding export options."
        "\n</section>\n")
      "")
    contents
-   "</div>
-</div>\n"
+   "</div>"
    (org-reveal--build-pre/postamble 'postamble info)
+"</div>\n"
    (org-reveal-scripts info)
    "</body>
 </html>\n"))
