@@ -860,50 +860,38 @@ Assuming BACKEND is `reveal'.
 Each `attr_reveal' attribute is mapped to corresponding
 `attr_html' attributes."
   (org-element-map tree (remq 'item org-element-all-elements)
-    (lambda (elem)
-      "Append ELEM's fragment attributes."
-      (org-reveal-append-frag elem)
-      (org-reveal-append-frag-index elem)))
+    'org-reveal-append-frag)
   ;; Return the updated tree.
   tree)
 
-(defun org-reveal--update-attr-html (elem frag-attr)
+(defun org-reveal--update-attr-html (elem frag &optional frag-index)
   "Update ELEM's attr_html atrribute with reveal's
 fragment attributes."
   (let ((attr-html (org-element-property :attr_html elem)))
-    (push (cond ((string= frag-attr t) ":class fragment")
-                (t (format ":class fragment %s" frag-attr)))
-          attr-html)
+    (when (and frag (not (string= frag "none")))
+      (push (cond ((string= frag t) ":class fragment")
+                  (t (format ":class fragment %s" frag)))
+            attr-html)
+      (when frag-index
+        (push (format ":data-fragment-index %s" frag-index) attr-html)))
     (org-element-put-property elem :attr_html attr-html)))
 
 (defun org-reveal-append-frag (elem)
   "Read org-reveal's fragment attribute from ELEM and append
 transformed fragment attribute to ELEM's attr_html plist."
-  (let ((frag-attr (org-export-read-attribute :attr_reveal elem :frag)))
-    (if frag-attr
+  (let ((frag (org-export-read-attribute :attr_reveal elem :frag))
+        (frag-index (org-export-read-attribute :attr_reveal elem :frag_idx)))
+    (if frag
         (cond ((and (string= (org-element-type elem) 'plain-list)
-                    (char-equal (string-to-char frag-attr) ?\())
-               (mapcar*
-                (lambda (item frag)
-                  "Append reveal's fragment attribute to item's
-`:attr_html' property."
-                  (and (not (string= frag "none"))
-                       (org-reveal--update-attr-html item frag))
-                  ;; Return nil.
-                  nil)
-                (org-element-contents elem)
-                (car (read-from-string frag-attr))))
-              (t (org-reveal--update-attr-html elem frag-attr))))
+                    (char-equal (string-to-char frag) ?\())
+               (let ((frag-list (car (read-from-string frag)))
+                     (items (org-element-contents elem)))
+                 (if frag-index
+                     (mapcar* 'org-reveal--update-attr-html
+                              items frag-list (car (read-from-string frag-index)))
+                   (mapcar* 'org-reveal--update-attr-html items frag-list))))
+              (t (org-reveal--update-attr-html elem frag frag-index))))
     elem))
-
-(defun org-reveal-append-frag-index (elem)
-  "Read org-reveal's fragment index from ELEM and append
-transformed fragment index attribute to ELEM's atr_html plist."
-  (let ((frag-index (org-export-read-attribute :attr_reveal elem :frag_idx)))
-    (if frag-index
-        (let ((attr-html (org-element-property :attr_html elem)))
-          (push (concat ":data-fragment-index " frag-index) attr-html)
-          (org-element-put-property elem :attr_html attr-html)))))
 
 (defvar client-multiplex nil
   "used to cause generation of client html file for multiplex")
