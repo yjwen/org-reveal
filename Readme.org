@@ -287,8 +287,9 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
 ** Fragmented Contents
 
-    Make contents fragmented (show up one-by-one) by setting option =ATTR_REVEAL= with
-    property ":frag frag-style", as illustrated below.
+    Make contents fragmented (show up one-by-one) by setting option
+    =ATTR_REVEAL= with property ":frag frag-style", as illustrated
+    below.
 
 #+ATTR_REVEAL: :frag roll-in
     Paragraphs can be fragmented.
@@ -313,6 +314,19 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * highlight-green
     * highlight-blue
 
+*** Fragment Index
+    Fragment sequence can be changed by assigning adding ~:frag_idx~
+    property to each fragmented element.
+
+#+ATTR_REVEAL: :frag t :frag_idx 3
+    And, this paragraph shows at last.
+
+#+ATTR_REVEAL: :frag t :frag_idx 2
+    This paragraph shows secondly.
+
+#+ATTR_REVEAL: :frag t :frag_idx 1
+    This paragraph shows at first.
+
 *** List Fragments
 
     ~#+ATTR_REVEAL: :frag frag-style~ above a list defines fragment
@@ -323,8 +337,18 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     To define fragment styles for every list item, please enumerate
     each item's style within parenthesis.
+
+    ~none~ in the style list will disable fragment for the
+    corresponding list item.
+
+    Custom fragment sequence should also be enumerated for each list
+    item.
+
+#+REVEAL: split
+    An example:
+
 #+BEGIN_SRC org
-,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none)
+,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)
    * I will grow.
    * I will shrink.
    * I rolled in.
@@ -332,15 +356,14 @@ $ git clone https://github.com/yjwen/org-reveal.git
    * I don't fragment.
 #+END_SRC
 
-    ~none~ in the style list will disable fragment for the
-    corresponding list item.
-
-#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none)
+#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)
    * I will grow.
    * I will shrink.
    * I rolled in.
    * I will fade out.
    * I don't fragment.
+
+
 
 ** Data State
    :PROPERTIES:
