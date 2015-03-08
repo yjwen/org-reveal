@@ -465,11 +465,6 @@ fibs = 0 : 1 : next fibs
    Besides the Org contents, you can embed raw HTML contents
    into slides by placing a =#+REVEAL_HTML= keyword.
 
-   Now break time, listen to a girl's song.
-
-#+REVEAL_HTML: <video  src="http://naga-eda.org/home/yujie/lengwanwan_youthtime.mp4"></video>
-   Leng WanWan - Youth times (冷碗碗 青春)
-
 ** Speaker Notes
    Reveal.js supports speaker notes, which are displayed in a seperate
    browser window. Pressing 's' on slide's windows will pop up a window
