@@ -293,18 +293,6 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
-(defun org-reveal-attrs-list (attrs)
-  "Generate an HTML attribute list string from the list
-ATTRS. ATTRS is expected to be a list of key-value pairs, ((key0
-. value0) (key1 . value1) ...), and for each pair of none-nil
-value, an HTML attribute statement key=\"value\" is inserted into
-the result string."
-  (mapconcat
-   (lambda (elem)
-     (let ((key (car elem))
-           (value (car (cdr elem))))
-       (if value (format " %s=\"%s\"" key value))))
-   attrs ""))
 (defun org-reveal-tag (tagname attrs content &optional sep)
   "Generate an HTML tag of form <TAGNAME ATTRS>CONTENT</TAGNAME>.  If
 SEP is given, then the CONTENT is enclosed by SEP, otherwise it is enclosed by 
@@ -331,91 +319,54 @@ CONTENTS is nil. INFO is a plist holding contextual information."
           ((string= block-type "HTML")
            (org-remove-indentation block-string)))))
 
+;; Copied from org-html-headline and modified to embed org-reveal
+;; specific attributes.
 (defun org-reveal-headline (headline contents info)
-  "Transcode a HEADLINE element from Org to Reveal.
-CONTENTS holds the contents of the headline. INFO is a plist
+  "Transcode a HEADLINE element from Org to HTML.
+CONTENTS holds the contents of the headline.  INFO is a plist
 holding contextual information."
-  ;; First call org-html-headline to get the formatted HTML contents.
-  ;; Then add enclosing <section> tags to mark slides.
-  (setq contents (or contents ""))
-  (let* ((numberedp (org-export-numbered-headline-p headline info))
-         (level (org-export-get-relative-level headline info))
-         (text (org-export-data (org-element-property :title headline) info))
-         (todo (and (plist-get info :with-todo-keywords)
-                    (let ((todo (org-element-property :todo-keyword headline)))
-                      (and todo (org-export-data todo info)))))
-         (todo-type (and todo (org-element-property :todo-type headline)))
-         (tags (and (plist-get info :with-tags)
-                    (org-export-get-tags headline info)))
-         (priority (and (plist-get info :with-priority)
-                        (org-element-property :priority headline)))
-         ;; Create the headline text.
-         (full-text (funcall (or (plist-get info :html-format-headline-function)
-                                 ;; nil function, return a suggestive error
-                                 (error "Export failed. It seems you are using a stable release of Org-mode. Please use Org-reveal `stable' branch for Org-mode stable releases."))
-                             todo todo-type priority text tags info)))
-    (cond
-     ;; Case 1: This is a footnote section: ignore it.
-     ((org-element-property :footnote-section-p headline) nil)
-     ;; Case 2. This is a deep sub-tree: export it as a list item.
-     ;;         Also export as items headlines for which no section
-     ;;         format has been found.
-     ((org-export-low-level-p headline info)
-      ;; Build the real contents of the sub-tree.
-      (let* ((type (if numberedp 'ordered 'unordered))
-             (itemized-body (org-reveal-format-list-item
-                             contents type nil info nil 'none full-text)))
-        (concat
-         (and (org-export-first-sibling-p headline info)
-              (org-html-begin-plain-list type))
-         itemized-body
-         (and (org-export-last-sibling-p headline info)
-              (org-html-end-plain-list type)))))
-     ;; Case 3. Standard headline.  Export it as a section.
-     (t
-      (let* ((level1 (format "h%d" (+ level (1- org-html-toplevel-hlevel))))
-             (hlevel (org-reveal--get-hlevel info))
-             (first-content (car (org-element-contents headline))))
+  (unless (org-element-property :footnote-section-p headline)
+    (if (org-export-low-level-p headline info)
+        ;; This is a deep sub-tree: export it as in ox-html.
+        (org-html-headline headline contents info)
+      ;; Standard headline.  Export it as a slide
+      (let ((level (org-export-get-relative-level headline info))
+            (preferred-id (or (org-element-property :CUSTOM_ID headline)
+                              (org-export-get-headline-id headline info)
+                              (org-element-property :ID headline)))
+            (hlevel (org-reveal--get-hlevel info)))
         (concat
          (if (or (/= level 1)
                  (not (org-export-first-sibling-p headline info)))
-             ;; Stop previous slide.
+             ;; Stop previous slide
              "</section>\n")
          (if (eq level hlevel)
              ;; Add an extra "<section>" to group following slides
              ;; into vertical ones.
              "<section>\n")
          ;; Start a new slide.
-         (format "<section%s%s>\n"
-                 (org-reveal-attrs-list
-                  `(("id" ,(or (org-element-property :CUSTOM_ID headline)
-                                (concat "sec-"
-                                        (mapconcat 'number-to-string
-                                                   (org-export-get-headline-number headline info)
-                                                   "-"))))
-                    ("data-state" ,(org-element-property :REVEAL_DATA_STATE headline))
-                    ("data-transition" ,(org-element-property :REVEAL_DATA_TRANSITION headline))
-                    ("data-background" ,(org-element-property :REVEAL_BACKGROUND headline))
-                    ("data-background-size" ,(org-element-property :REVEAL_BACKGROUND_SIZE headline))
-                    ("data-background-repeat" ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline))
-                    ("data-background-transition" ,(org-element-property :REVEAL_BACKGROUND_TRANS headline))))
-                   (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
-                     (if extra-attrs (format " %s" extra-attrs) "")))
-         "\n"
-         ;; The HTML content of this headline.
-         (org-reveal-tag  level1 ;;"\n<h%d%s>%s</h%d>\n"
-                          (let ((fragment (org-element-property :REVEAL-FRAG headline)))
-                            (if fragment `(("class" ,(concat "fragment " fragment)))))
-                          full-text
-                          "")
-         "\n"
-         ;; When there is no section, pretend there is an empty
-         ;; one to get the correct <div class="outline- ...>
-         ;; which is needed by `org-info.js'.
-         (if (not (eq (org-element-type first-content) 'section))
-             (concat (org-reveal-section first-content "" info)
-                     contents)
-           contents)
+         (format "<section %s%s>\n"
+                 (org-html--make-attribute-string
+                  `(:id ,(format "slide-%s" preferred-id)
+                        :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
+                        :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
+                        :data-background ,(org-element-property :REVEAL_BACKGROUND headline)
+                        :data-background-size ,(org-element-property :REVEAL_BACKGROUND_SIZE headline)
+                        :data-background-repeat ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline)
+                        :data-background-transition ,(org-element-property :REVEAL_BACKGROUND_TRANS headline)))
+                 (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
+                   (if extra-attrs (format " %s" extra-attrs) "")))
+         ;; The HTML content of the headline
+         ;; Strip the <div> tags, if any
+         (let ((html (org-html-headline headline contents info)))
+           (if (string-prefix-p "<div" html)
+               ;; Remove the first <div> and the last </div> tags from html
+               (concat "<"
+                       (mapconcat 'identity
+                                  (butlast (cdr (split-string html "<" t)))
+                                  "<"))
+             ;; Return the HTML content unchanged
+             html))
          (if (= level hlevel)
              ;; Add an extra "</section>" to stop vertical slide
              ;; grouping.
@@ -423,8 +374,8 @@ holding contextual information."
          (if (and (= level 1)
                   (org-export-last-sibling-p headline info))
              ;; Last head 1. Stop all slides.
-             "</section>")))))))
-
+             "</section>\n"))))))
+  
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
   :tag "Org Export Reveal"
@@ -591,55 +542,11 @@ dependencies: [
 });
 </script>\n")))
 
-(defun org-reveal-toc-headlines-r (headlines info prev_level hlevel prev_x prev_y)
-  "Generate toc headline text recursively."
-  (let* ((headline (car headlines))
-         (text (org-export-data (org-element-property :title headline) info))
-         (level (org-export-get-relative-level headline info))
-         (x (if (<= level hlevel) (+ prev_x 1) prev_x))
-         (y (if (<= level hlevel) 0 (+ prev_y 1)))
-         (remains (cdr headlines))
-         (remain-text
-          (if remains
-              ;; Generate text for remain headlines
-              (org-reveal-toc-headlines-r remains info level hlevel x y)
-            "")))
-    (concat
-     (cond
-      ((> level prev_level)
-       ;; Need to start a new level of unordered list
-       "<ul>\n")
-      ((< level prev_level)
-       ;; Need to end previous list item and the whole list.
-       "</li>\n</ul>\n")
-      (t
-       ;; level == prev_level, Need to end previous list item.
-       "</li>\n"))
-     (format "<li>\n<a href=\"#%s\">%s</a>\n%s"
-             (or (org-element-property :CUSTOM_ID headline)
-                 (concat "sec-" (mapconcat 'number-to-string
-                                           (org-export-get-headline-number headline info)
-                                           "-")))
-             text remain-text))))
-
-(defun org-reveal-toc-headlines (headlines info)
-  "Generate the Reveal.js contents for headlines in table of contents.
-Add proper internal link to each headline."
-  (let ((level (org-export-get-relative-level (car headlines) info))
-        (hlevel (org-reveal--get-hlevel info)))
-    (concat
-     (format "<h2>%s</h2>"
-             (org-export-translate "Table of Contents" :html info))
-     (org-reveal-toc-headlines-r headlines info 0 hlevel 1 1)
-     (if headlines "</li>\n</ul>\n" ""))))
-
-
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (let ((headlines (org-export-collect-headlines info depth)))
-    (and headlines
-         (format "<section id=\"table-of-contents\">\n%s</section>\n"
-                 (org-reveal-toc-headlines headlines info)))))
+  (format "<section id=\"table-of-contents\">\n%s</section>\n"
+          (replace-regexp-in-string "<a href=\"#" "<a href=\"#slide-"
+                                    (org-html-toc depth info))))
 
 (defun org-reveal-inner-template (contents info)
   "Return body of document string after HTML conversion.
