@@ -545,7 +545,7 @@ dependencies: [
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
   (format "<section id=\"table-of-contents\">\n%s</section>\n"
-          (replace-regexp-in-string "<a href=\"#" "<a href=\"#slide-"
+          (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
                                     (org-html-toc depth info))))
 
 (defun org-reveal-inner-template (contents info)
