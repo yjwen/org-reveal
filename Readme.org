@@ -15,6 +15,7 @@
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
 #+REVEAL_PLUGINS: (highlight markdown notes)
+#+REVEAL_EXTRA_CSS: ./local.css
 
 * Reveal.js and Org-Reveal
 
