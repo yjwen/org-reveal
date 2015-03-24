@@ -85,6 +85,8 @@ default fragment style, otherwise return \"fragment style\"."
     (:reveal-multiplex-secret "REVEAL_MULTIPLEX_SECRET" nil org-reveal-multiplex-secret nil)
     (:reveal-multiplex-url "REVEAL_MULTIPLEX_URL" nil org-reveal-multiplex-url nil)
     (:reveal-multiplex-socketio-url "REVEAL_MULTIPLEX_SOCKETIO_URL" nil org-reveal-multiplex-socketio-url nil)
+    (:reveal-slide-header "REVEAL_SLIDE_HEADER" nil org-reveal-slide-header t)
+    (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     )
 
@@ -276,6 +278,16 @@ can be include."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-slide-header nil
+  "HTML content used as Reveal.js slide header"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-slide-footer nil
+  "HTML content used as Reveal.js slide footer"
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-plugins
   '(classList markdown highlight zoom notes)
   "Default builtin plugins"
@@ -334,15 +346,25 @@ holding contextual information."
             (preferred-id (or (org-element-property :CUSTOM_ID headline)
                               (org-export-get-headline-id headline info)
                               (org-element-property :ID headline)))
-            (hlevel (org-reveal--get-hlevel info)))
+            (hlevel (org-reveal--get-hlevel info))
+            (header (plist-get info :reveal-slide-header))
+            (footer (plist-get info :reveal-slide-footer))
+            (first-sibling (org-export-first-sibling-p headline info))
+            (last-sibling (org-export-last-sibling-p headline info)))
         (concat
-         (if (or (/= level 1)
-                 (not (org-export-first-sibling-p headline info)))
-             ;; Stop previous slide
-             "</section>\n")
-         (if (eq level hlevel)
+         (if (or (/= level 1) (not first-sibling))
+             ;; Not the first heading. Close previou slide.
+             (concat
+              ;; Slide footer if any
+              (if footer (format "%s\n" footer))
+              ;; Close previous slide
+              "</section>\n"
+              (if (<= level hlevel)
+                ;; Close previous vertical slide group.
+                "</section>\n")))
+         (if (<= level hlevel)
              ;; Add an extra "<section>" to group following slides
-             ;; into vertical ones.
+             ;; into vertical slide group.
              "<section>\n")
          ;; Start a new slide.
          (format "<section %s%s>\n"
@@ -356,6 +378,8 @@ holding contextual information."
                         :data-background-transition ,(org-element-property :REVEAL_BACKGROUND_TRANS headline)))
                  (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
                    (if extra-attrs (format " %s" extra-attrs) "")))
+         ;; Slide header if any.
+         (if header (format "%s\n" header))
          ;; The HTML content of the headline
          ;; Strip the <div> tags, if any
          (let ((html (org-html-headline headline contents info)))
@@ -367,14 +391,13 @@ holding contextual information."
                                   "<"))
              ;; Return the HTML content unchanged
              html))
-         (if (= level hlevel)
-             ;; Add an extra "</section>" to stop vertical slide
-             ;; grouping.
-             "</section>\n")
          (if (and (= level 1)
                   (org-export-last-sibling-p headline info))
-             ;; Last head 1. Stop all slides.
-             "</section>\n"))))))
+             ;; Last head 1. Close all slides.
+             (concat
+              ;; Slide footer if any
+              (if footer (format "%s\n" footer))
+              "</section>\n</section>\n")))))))
   
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
