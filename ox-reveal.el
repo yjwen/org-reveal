@@ -342,13 +342,15 @@ holding contextual information."
         ;; This is a deep sub-tree: export it as in ox-html.
         (org-html-headline headline contents info)
       ;; Standard headline.  Export it as a slide
-      (let ((level (org-export-get-relative-level headline info))
+      (let* ((level (org-export-get-relative-level headline info))
             (preferred-id (or (org-element-property :CUSTOM_ID headline)
                               (org-export-get-headline-id headline info)
                               (org-element-property :ID headline)))
             (hlevel (org-reveal--get-hlevel info))
             (header (plist-get info :reveal-slide-header))
+            (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
             (footer (plist-get info :reveal-slide-footer))
+            (footer-div (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer)))
             (first-sibling (org-export-first-sibling-p headline info))
             (last-sibling (org-export-last-sibling-p headline info)))
         (concat
@@ -356,7 +358,7 @@ holding contextual information."
              ;; Not the first heading. Close previou slide.
              (concat
               ;; Slide footer if any
-              (if footer (format "%s\n" footer))
+              footer-div
               ;; Close previous slide
               "</section>\n"
               (if (<= level hlevel)
@@ -379,7 +381,7 @@ holding contextual information."
                  (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
                    (if extra-attrs (format " %s" extra-attrs) "")))
          ;; Slide header if any.
-         (if header (format "%s\n" header))
+         header-div
          ;; The HTML content of the headline
          ;; Strip the <div> tags, if any
          (let ((html (org-html-headline headline contents info)))
@@ -396,7 +398,7 @@ holding contextual information."
              ;; Last head 1. Close all slides.
              (concat
               ;; Slide footer if any
-              (if footer (format "%s\n" footer))
+              footer-div
               "</section>\n</section>\n")))))))
   
 (defgroup org-export-reveal nil

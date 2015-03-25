@@ -284,7 +284,13 @@ $ git clone https://github.com/yjwen/org-reveal.git
         ratio.
 
 ** Slide Numbering
-   Activate slide numbers by setting =#+REVEAL-SLIDE-NUMBER:= to =t= (true).
+   Activate slide numbers by setting =#+REVEAL_SLIDE_NUMBER:= to =t= (true).
+
+** Slide Header/Footer
+   Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
+   =#+REVEAL_SLIDE_FOOTER:=. The option content will be put into
+   divisions of class =slide-header= and =slide-footer=, so you can
+   control their appearance in custom CSS file(see [[Extra Stylesheets]]).
 
 ** Fragmented Contents
 
