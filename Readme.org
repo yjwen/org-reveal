@@ -15,6 +15,7 @@
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
 #+REVEAL_PLUGINS: (highlight markdown notes)
+#+REVEAL_EXTRA_CSS: ./local.css
 
 * Reveal.js and Org-Reveal
 
@@ -259,6 +260,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
     :END:
 #+END_SRC
 
+*** Title Slide Background Image
+    
+    To set the title slide's background image, please specify the
+    following options:
+
+    * =REVEAL_TITLE_SLIDE_BACKGROUND=: A URL to the background image.
+    * =REVEAL_TITLE_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
+    * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: set to ~repeat~ to repeat the image.
+
 ** Slide Size
 
    Reveal.js scales slides to best fit the display resolution, but you can
@@ -274,36 +284,93 @@ $ git clone https://github.com/yjwen/org-reveal.git
         ratio.
 
 ** Slide Numbering
-   Activate slide numbers by setting =#+REVEAL-SLIDE-NUMBER:= to =t= (true).
+   Activate slide numbers by setting =#+REVEAL_SLIDE_NUMBER:= to =t= (true).
+
+** Slide Header/Footer
+   Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
+   =#+REVEAL_SLIDE_FOOTER:=. The option content will be put into
+   divisions of class =slide-header= and =slide-footer=, so you can
+   control their appearance in custom CSS file(see [[Extra Stylesheets]]).
 
 ** Fragmented Contents
 
-    Make contents fragmented (show up one-by-one) by setting option =ATTR_REVEAL= with
-    property ":frag frag-style", as illustrated below.
+    Make contents fragmented (show up one-by-one) by setting option
+    =ATTR_REVEAL= with property ":frag frag-style", as illustrated
+    below.
 
 #+ATTR_REVEAL: :frag roll-in
     Paragraphs can be fragmented.
 
 #+ATTR_REVEAL: :frag roll-in
-    Items can be fragmented, too.
+    - Lists can 
+    - be fragmented.
 
-    Availabe fragment styles are:
-#+ATTR_REVEAL: :frag grow
-    * grow
-#+ATTR_REVEAL: :frag shrink
-    * shrink
 #+ATTR_REVEAL: :frag roll-in
-    * roll-in
-#+ATTR_REVEAL: :frag fade-out
-    * fade-out
-#+ATTR_REVEAL: :frag highlight-red
-    * highlight-red
-#+ATTR_REVEAL: :frag highlight-green
-    * highlight-green
-#+ATTR_REVEAL: :frag highlight-blue
-    * highlight-blue
+    Pictures, tables and many other HTML elements can be fragmented.
 
     Use default fragment style by setting ":frag t".
+
+*** Fragment Styles
+    Availabe fragment styles are:
+#+ATTR_REVEAL: :frag t
+    * grow
+    * shrink
+    * roll-in
+    * fade-out
+    * highlight-red
+    * highlight-green
+    * highlight-blue
+
+*** Fragment Index
+    Fragment sequence can be changed by assigning adding ~:frag_idx~
+    property to each fragmented element.
+
+#+ATTR_REVEAL: :frag t :frag_idx 3
+    And, this paragraph shows at last.
+
+#+ATTR_REVEAL: :frag t :frag_idx 2
+    This paragraph shows secondly.
+
+#+ATTR_REVEAL: :frag t :frag_idx 1
+    This paragraph shows at first.
+
+*** List Fragments
+
+    ~#+ATTR_REVEAL: :frag frag-style~ above a list defines fragment
+    style for the list as a whole.
+#+ATTR_REVEAL: :frag grow
+    1. All items grow.
+    2. As a whole.
+
+    To define fragment styles for every list item, please enumerate
+    each item's style within parenthesis.
+
+    ~none~ in the style list will disable fragment for the
+    corresponding list item.
+
+    Custom fragment sequence should also be enumerated for each list
+    item.
+
+#+REVEAL: split
+    An example:
+
+#+BEGIN_SRC org
+,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)
+   * I will grow.
+   * I will shrink.
+   * I rolled in.
+   * I will fade out.
+   * I don't fragment.
+#+END_SRC
+
+#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)
+   * I will grow.
+   * I will shrink.
+   * I rolled in.
+   * I will fade out.
+   * I don't fragment.
+
+
 
 ** Data State
    :PROPERTIES:
@@ -335,7 +402,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
       =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=, =reveal_overview=
     - Custom variables:\\
       =org-reveal-control=, =org-reveal-progress=,
-      =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyaboard, =org-reveal-overview=
+      =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyaboard=, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
 ** Source Codes
@@ -405,10 +472,8 @@ fibs = 0 : 1 : next fibs
    Besides the Org contents, you can embed raw HTML contents
    into slides by placing a =#+REVEAL_HTML= keyword.
 
-   Now break time, listen to a girl's song.
-
-#+REVEAL_HTML: <video  src="http://naga-eda.org/home/yujie/lengwanwan_youthtime.mp4"></video>
-   Leng WanWan - Youth times (冷碗碗 青春)
+   The famous cat jump fail:
+#+REVEAL_HTML: <iframe width="560" height="315" src="https://www.youtube.com/embed/OQzJR3BqS7o" frameborder="0" allowfullscreen></iframe>
 
 ** Speaker Notes
    Reveal.js supports speaker notes, which are displayed in a seperate
