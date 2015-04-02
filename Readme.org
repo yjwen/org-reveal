@@ -308,10 +308,8 @@ $ git clone https://github.com/yjwen/org-reveal.git
 #+ATTR_REVEAL: :frag roll-in
     Pictures, tables and many other HTML elements can be fragmented.
 
-    Use default fragment style by setting ":frag t".
-
 *** Fragment Styles
-    Availabe fragment styles are:
+    Available fragment styles are:
 #+ATTR_REVEAL: :frag t
     * grow
     * shrink
@@ -320,6 +318,10 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * highlight-red
     * highlight-green
     * highlight-blue
+
+    Setting ~:frag t~ will use Reveal.js default fragment style, which 
+    can be overriden by local option ~#+REVEAL_DEFAULT_FRAG_STYLE~ or
+    global variable ~org-reveal-default-frag-style~.
 
 *** Fragment Index
     Fragment sequence can be changed by assigning adding ~:frag_idx~
