@@ -97,6 +97,7 @@ default fragment style, otherwise return \"fragment style\"."
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (plain-list . org-reveal-plain-list)
+    (paragraph . org-reveal-paragraph)
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
@@ -682,6 +683,15 @@ Extract and set `attr_html' to plain-list tag attributes."
                   (org-export-read-attribute :attr_html plain-list)
                   contents))
 
+(defun org-reveal-paragraph (paragraph contents info)
+  "Transcode a PARAGRAPH element from Org to Reveal.
+CONTENTS is the contents of the paragraph, as a string. INFO is
+the plist used as a communication channel."
+  (let ((frag (org-export-read-attribute :attr_reveal paragraph :frag))
+        (html (org-html-paragraph paragraph contents info)))
+    (if frag (format "<span%s>%s</span>" (frag-class frag) html)
+      html)))
+
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
   (let ((section (plist-get info (intern (format ":reveal-%s" type))))
@@ -735,7 +745,7 @@ contextual information."
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the block INFO is a plist holding
 contextual information."
-  (format "<blockquote %s>\n%s</blockquote>"
+  (format "<blockquote%s>\n%s</blockquote>"
           (frag-class (org-export-read-attribute :attr_reveal quote-block :frag))
           contents))
 
