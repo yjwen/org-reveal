@@ -306,16 +306,6 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
-(defun org-reveal-tag (tagname attrs content &optional sep)
-  "Generate an HTML tag of form <TAGNAME ATTRS>CONTENT</TAGNAME>.  If
-SEP is given, then the CONTENT is enclosed by SEP, otherwise it is enclosed by 
-a '\\n'"
-  (let ((sep_ (or sep "\n")))
-    (format "<%s %s>%s%s%s</%s>"
-          tagname                       ; The leading tagname.
-          (if attrs (org-html--make-attribute-string attrs) "")
-          sep_ content sep_ tagname)))
-
 (defun frag-class (frag)
   ;; Return proper HTML string description of fragment style.
   (and frag
@@ -327,8 +317,8 @@ CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((block-type (org-element-property :type export-block))
         (block-string (org-element-property :value export-block)))
     (cond ((string= block-type "NOTES")
-           (org-reveal-tag 'aside '(('class . 'notes))
-                           (org-export-string-as block-string 'html 'body-only)))
+           (format "<aside class=\"notes\">\n%s\n</aside>\n"
+                   (org-export-string-as block-string 'html 'body-only)))
           ((string= block-type "HTML")
            (org-remove-indentation block-string)))))
 
@@ -676,12 +666,16 @@ CONTENTS is the contents of the list. INFO is a plist holding
 contextual information.
 
 Extract and set `attr_html' to plain-list tag attributes."
-  (org-reveal-tag (case (org-element-property :type plain-list)
-                    (ordered "ol")
-                    (unordered "ul")
-                    (descriptive "dl"))
-                  (org-export-read-attribute :attr_html plain-list)
-                  contents))
+  (let ((tag (case (org-element-property :type plain-list)
+               (ordered "ol")
+               (unordered "ul")
+               (descriptive "dl")))
+        (attrs (org-export-read-attribute :attr_html plain-list)))
+    (format "<%s%s>\n%s\n</%s>"
+            tag
+            (if attrs (org-html--make-attribute-string attrs) "")
+            contents
+            tag)))
 
 (defun org-reveal-paragraph (paragraph contents info)
   "Transcode a PARAGRAPH element from Org to Reveal.
