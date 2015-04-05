@@ -681,7 +681,7 @@ Extract and set `attr_html' to plain-list tag attributes."
         (attrs (org-export-read-attribute :attr_html plain-list)))
     (format "<%s%s>\n%s\n</%s>\n"
             tag
-            (if attrs (org-html--make-attribute-string attrs) "")
+            (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
             contents
             tag)))
 
