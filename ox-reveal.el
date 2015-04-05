@@ -34,14 +34,6 @@
 (require 'ox-html)
 (eval-when-compile (require 'cl))
 
-(defun frag-style (frag)
-  "Return \"fragment\" if frag is t, which indicates to use
-default fragment style, otherwise return \"fragment style\"."
-  (cond
-   ((string= frag t) "fragment")
-   (t (format "fragment %s" frag))))
-
-
 (org-export-define-derived-backend 'reveal 'html
 
   :menu-entry
@@ -88,6 +80,7 @@ default fragment style, otherwise return \"fragment style\"."
     (:reveal-slide-header "REVEAL_SLIDE_HEADER" nil org-reveal-slide-header t)
     (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
+    (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     )
 
   :translate-alist
@@ -289,6 +282,11 @@ can be include."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-default-frag-style nil
+  "Default fragment style."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-plugins
   '(classList markdown highlight zoom notes)
   "Default builtin plugins"
@@ -306,10 +304,23 @@ can be include."
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
-(defun frag-class (frag)
-  ;; Return proper HTML string description of fragment style.
+(defun frag-style (frag info)
+  "Return proper fragment string according to FRAG and the default fragment style.
+FRAG is the fragment style set on element, INFO is a plist
+holding contextual information."
+  (cond
+   ((string= frag t)
+    (let ((default-frag-style (plist-get info :reveal-default-frag-style)))
+      (if default-frag-style (format "fragment %s" default-frag-style)
+        "fragment")))
+   (t (format "fragment %s" frag))))
+
+(defun frag-class (frag info)
+  "Return proper HTML string description of fragment style. 
+FRAG is the fragment style set on element, INFO is a plist
+holding contextual information."
   (and frag
-       (format " class=\"%s\"" (frag-style frag))))
+       (format " class=\"%s\"" (frag-style frag info))))
 
 (defun org-reveal-export-block (export-block contents info)
   "Transocde a EXPORT-BLOCK element from Org to Reveal.
@@ -673,7 +684,7 @@ Extract and set `attr_html' to plain-list tag attributes."
         (attrs (org-export-read-attribute :attr_html plain-list)))
     (format "<%s%s>\n%s\n</%s>"
             tag
-            (if attrs (org-html--make-attribute-string attrs) "")
+            (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
             contents
             tag)))
 
@@ -683,7 +694,7 @@ CONTENTS is the contents of the paragraph, as a string. INFO is
 the plist used as a communication channel."
   (let ((frag (org-export-read-attribute :attr_reveal paragraph :frag))
         (html (org-html-paragraph paragraph contents info)))
-    (if frag (format "<span%s>%s</span>" (frag-class frag) html)
+    (if frag (format "<span%s>%s</span>" (frag-class frag info) html)
       html)))
 
 (defun org-reveal--build-pre/postamble (type info)
@@ -722,7 +733,7 @@ contextual information."
                              (org-export-solidify-link-text lbl))))))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
-                  (or (frag-class frag) " class=\"example\"")
+                  (or (frag-class frag info) " class=\"example\"")
                   label
                   code)
         (format
@@ -731,7 +742,7 @@ contextual information."
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
          (format "\n<pre %s%s>%s</pre>"
-                 (or (frag-class frag)
+                 (or (frag-class frag info)
                      (format " class=\"src src-%s\"" lang))
                  label code))))))
 
@@ -739,8 +750,8 @@ contextual information."
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the block INFO is a plist holding
 contextual information."
-  (format "<blockquote%s>\n%s</blockquote>"
-          (frag-class (org-export-read-attribute :attr_reveal quote-block :frag))
+  (format "<blockquote %s>\n%s</blockquote>"
+          (frag-class (org-export-read-attribute :attr_reveal quote-block :frag) info)
           contents))
 
 
@@ -797,8 +808,9 @@ Assuming BACKEND is `reveal'.
 
 Each `attr_reveal' attribute is mapped to corresponding
 `attr_html' attributes."
-  (org-element-map tree (remq 'item org-element-all-elements)
-    'org-reveal-append-frag)
+  (let ((default-frag-style (plist-get info :reveal-default-frag-style)))
+    (org-element-map tree (remq 'item org-element-all-elements)
+      (lambda (elem) (org-reveal-append-frag elem default-frag-style))))
   ;; Return the updated tree.
   tree)
 
@@ -814,7 +826,7 @@ fragment attributes."
         (push (format ":data-fragment-index %s" frag-index) attr-html)))
     (org-element-put-property elem :attr_html attr-html)))
 
-(defun org-reveal-append-frag (elem)
+(defun org-reveal-append-frag (elem default-style)
   "Read org-reveal's fragment attribute from ELEM and append
 transformed fragment attribute to ELEM's attr_html plist."
   (let ((frag (org-export-read-attribute :attr_reveal elem :frag))
@@ -822,12 +834,21 @@ transformed fragment attribute to ELEM's attr_html plist."
     (if frag
         (cond ((and (string= (org-element-type elem) 'plain-list)
                     (char-equal (string-to-char frag) ?\())
-               (let ((frag-list (car (read-from-string frag)))
-                     (items (org-element-contents elem)))
+               (let* ((frag-list (car (read-from-string frag)))
+                      (frag-list-mapped (if default-style
+                                            (mapcar (lambda (s)
+                                                      "Replace t with default-style"
+                                                      (if (string= s t) default-style
+                                                        s))
+                                                    frag-list)
+                                          frag-list))
+                      (items (org-element-contents elem)))
+                 (message "default-style: %s" default-style)
+                 (message "frag-list-mapped: %s" frag-list-mapped)
                  (if frag-index
                      (mapcar* 'org-reveal--update-attr-html
-                              items frag-list (car (read-from-string frag-index)))
-                   (mapcar* 'org-reveal--update-attr-html items frag-list))))
+                              items frag-list-mapped (car (read-from-string frag-index)))
+                   (mapcar* 'org-reveal--update-attr-html items frag-list-mapped))))
               (t (org-reveal--update-attr-html elem frag frag-index))))
     elem))
 
