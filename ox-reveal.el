@@ -694,7 +694,9 @@ CONTENTS is the contents of the paragraph, as a string. INFO is
 the plist used as a communication channel."
   (let ((frag (org-export-read-attribute :attr_reveal paragraph :frag))
         (html (org-html-paragraph paragraph contents info)))
-    (if frag (format "<span%s>%s</span>" (frag-class frag info) html)
+    (if (and frag
+             (not (org-html-standalone-image-p paragraph info)))
+        (format "<span%s>%s</span>" (frag-class frag info) html)
       html)))
 
 (defun org-reveal--build-pre/postamble (type info)
