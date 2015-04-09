@@ -823,20 +823,20 @@ transformed fragment attribute to ELEM's attr_html plist."
         (cond ((and (string= (org-element-type elem) 'plain-list)
                     (char-equal (string-to-char frag) ?\())
                (let* ((frag-list (car (read-from-string frag)))
-                      (frag-list-mapped (if default-style
-                                            (mapcar (lambda (s)
-                                                      "Replace t with default-style"
-                                                      (if (string= s t) default-style
-                                                        s))
-                                                    frag-list)
-                                          frag-list))
+                      (frag-list (if default-style
+                                     (mapcar (lambda (s)
+                                               "Replace t with default-style"
+                                               (if (string= s t) default-style
+                                                 s))
+                                             frag-list)
+                                   frag-list))
                       (items (org-element-contents elem)))
-                 (message "default-style: %s" default-style)
-                 (message "frag-list-mapped: %s" frag-list-mapped)
                  (if frag-index
                      (mapcar* 'org-reveal--update-attr-html
-                              items frag-list-mapped (car (read-from-string frag-index)))
-                   (mapcar* 'org-reveal--update-attr-html items frag-list-mapped))))
+                              items frag-list (car (read-from-string frag-index)))
+                   ;; Make frag-list tail circular
+                   (nconc frag-list (last frag-list))
+                   (mapcar* 'org-reveal--update-attr-html items frag-list))))
               (t (org-reveal--update-attr-html elem frag frag-index))))
     elem))
 

@@ -318,6 +318,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * highlight-red
     * highlight-green
     * highlight-blue
+    * appear
 
     Setting ~:frag t~ will use Reveal.js default fragment style, which 
     can be overriden by local option ~#+REVEAL_DEFAULT_FRAG_STYLE~ or
@@ -345,7 +346,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
     2. As a whole.
 
     To define fragment styles for every list item, please enumerate
-    each item's style within parenthesis.
+    each item's style in a lisp list.
 
     ~none~ in the style list will disable fragment for the
     corresponding list item.
@@ -371,7 +372,20 @@ $ git clone https://github.com/yjwen/org-reveal.git
    * I rolled in.
    * I will fade out.
    * I don't fragment.
-
+#+REVEAL: split
+   When there is ~:frag_idx~ specified, insufficient fragment style
+   list will be extended by its last element. So a ~:frag (appear)~
+   assigns each item of a list the ~appear~ fragment style.
+#+BEGIN_SRC org
+,#+ATTR_REVEAL: :frag (appear)
+   * I appear.
+   * I appear.
+   * I appear.
+#+END_SRC
+#+ATTR_REVEAL: :frag (appear)
+   * I appear.
+   * I appear.
+   * I appear.
 
 
 ** Data State
