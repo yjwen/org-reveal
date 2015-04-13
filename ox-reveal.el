@@ -128,9 +128,15 @@ else get value from custom variable `org-reveal-hlevel'."
 <h2>%a</h2>
 <h2>%e</h2>
 <h2>%d</h2>"
-  "Format template to specify title page slide.
-See `org-html-postamble-format' for the valid elements which
-can be include."
+  "Format template to specify title page slide. The format string
+can contain the following escaping elements:
+
+  %s stands for the title.
+  %a stands for the author's name.
+  %e stands for the author's email.
+  %d stands for the date.
+  %% stands for a literal %.
+"
   :group 'org-export-reveal
   :type 'string)
 
