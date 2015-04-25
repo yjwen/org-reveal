@@ -293,7 +293,7 @@ can contain the following escaping elements:
   :type 'string)
 
 (defcustom org-reveal-plugins
-  '(classList markdown highlight zoom notes)
+  '(classList markdown zoom notes)
   "Default builtin plugins"
   :group 'org-export-reveal
   :type '(set
@@ -717,14 +717,24 @@ CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
-    (let ((lang (org-element-property :language src-block))
-          (caption (org-export-get-caption src-block))
-          (code (org-html-format-code src-block info))
-          (frag (org-export-read-attribute :attr_reveal src-block :frag))
-          (label (let ((lbl (org-element-property :name src-block)))
-                   (if (not lbl) ""
-                     (format " id=\"%s\""
-                             (org-export-solidify-link-text lbl))))))
+    (let* ((buffer-plugins (plist-get info :reveal-plugins))
+           (use-highlight (memq 'highlight
+                                (cond
+                                 ((string= buffer-plugins "") nil)
+                                 (buffer-plugins (car (read-from-string buffer-plugins)))
+                                 (t org-reveal-plugins))))
+           (lang (org-element-property :language src-block))
+           (caption (org-export-get-caption src-block))
+           (code (if (not use-highlight)
+                     (org-html-format-code src-block info)
+                   (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
+                              #'buffer-substring))
+                     (org-html-format-code src-block info))))
+           (frag (org-export-read-attribute :attr_reveal src-block :frag))
+           (label (let ((lbl (org-element-property :name src-block)))
+                    (if (not lbl) ""
+                      (format " id=\"%s\""
+                              (org-export-solidify-link-text lbl))))))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
@@ -735,10 +745,14 @@ contextual information."
          (if (not caption) ""
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
-         (format "\n<pre %s%s>%s</pre>"
-                 (or (frag-class frag info)
-                     (format " class=\"src src-%s\"" lang))
-                 label code))))))
+         (if use-highlight
+             (format "\n<pre%s%s><code class=\"%s\">%s</code></pre>"
+                     (or (frag-class frag info) "")
+                     label lang code)
+           (format "\n<pre %s%s>%s</pre>"
+                   (or (frag-class frag info)
+                       (format " class=\"src src-%s\"" lang))
+                   label code)))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
