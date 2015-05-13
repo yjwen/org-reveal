@@ -321,7 +321,7 @@ holding contextual information."
    (t (format "fragment %s" frag))))
 
 (defun frag-class (frag info)
-  "Return proper HTML string description of fragment style. 
+  "Return proper HTML string description of fragment style.
 FRAG is the fragment style set on element, INFO is a plist
 holding contextual information."
   (and frag
@@ -350,16 +350,16 @@ holding contextual information."
         (org-html-headline headline contents info)
       ;; Standard headline.  Export it as a slide
       (let* ((level (org-export-get-relative-level headline info))
-            (preferred-id (or (org-element-property :CUSTOM_ID headline)
-                              (org-export-get-headline-id headline info)
-                              (org-element-property :ID headline)))
-            (hlevel (org-reveal--get-hlevel info))
-            (header (plist-get info :reveal-slide-header))
-            (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
-            (footer (plist-get info :reveal-slide-footer))
-            (footer-div (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer)))
-            (first-sibling (org-export-first-sibling-p headline info))
-            (last-sibling (org-export-last-sibling-p headline info)))
+	     (preferred-id (or (org-element-property :CUSTOM_ID headline)
+			       (org-export-get-reference headline info)
+			       (org-element-property :ID headline)))
+	     (hlevel (org-reveal--get-hlevel info))
+	     (header (plist-get info :reveal-slide-header))
+	     (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
+	     (footer (plist-get info :reveal-slide-footer))
+	     (footer-div (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer)))
+	     (first-sibling (org-export-first-sibling-p headline info))
+	     (last-sibling (org-export-last-sibling-p headline info)))
         (concat
          (if (or (/= level 1) (not first-sibling))
              ;; Not the first heading. Close previou slide.
@@ -369,8 +369,8 @@ holding contextual information."
               ;; Close previous slide
               "</section>\n"
               (if (<= level hlevel)
-                ;; Close previous vertical slide group.
-                "</section>\n")))
+		  ;; Close previous vertical slide group.
+		  "</section>\n")))
          (if (<= level hlevel)
              ;; Add an extra "<section>" to group following slides
              ;; into vertical slide group.
@@ -407,7 +407,7 @@ holding contextual information."
               ;; Slide footer if any
               footer-div
               "</section>\n</section>\n")))))))
-  
+
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
   :tag "Org Export Reveal"
