@@ -20,7 +20,7 @@
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
-    authored by [[hakim.se][Hakim El Hattab]]. \\
+    authored by [[http://hakim.se/][Hakim El Hattab]]. \\
     For an example of a reveal.js presentation, see [[http://lab.hakim.se/reveal-js/#/][here]].
   - *Org-Reveal* exports your [[http://orgmode.org/][Org]] documents to reveal.js
     presentations.\\
@@ -448,7 +448,7 @@ fibs = 0 : 1 : next fibs
    LateX equation are renderred in native HTML5 contents.
 
    *IMPORTANT*: Displaying equations requires internet connection to
-   [[mathjax.org]] or local MathJax installation.
+   [[http://mathjax.org/][mathjax.org]] or local MathJax installation.
 
    *IMPORTANT 2*: MathJax is disabled by default to reduce internet
    traffic. Set =#+OPTIONS= tag =reveal_mathjax= or variable
