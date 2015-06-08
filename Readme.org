@@ -20,7 +20,7 @@
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
-    authored by [[hakim.se][Hakim El Hattab]]. \\
+    authored by [[http://hakim.se/][Hakim El Hattab]]. \\
     For an example of a reveal.js presentation, see [[http://lab.hakim.se/reveal-js/#/][here]].
   - *Org-Reveal* exports your [[http://orgmode.org/][Org]] documents to reveal.js
     presentations.\\
@@ -102,7 +102,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Ubuntu would be "file:///home/username/org-reveal/readme.org" and
    in Windows this file would be
    "file:///c:/Users/username/org-reveal/readme.org".  For more detail
-   on this standar please refer to
+   on this standard please refer to
    [[http://en.wikipedia.org/wiki/File_URI_scheme]]
 
 #+BEGIN_SRC org
@@ -135,7 +135,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Org-reveal use a *HLevel* value to decide whether to map headings to horizontal
    or vertical slides.
 
-   * Headings of level less than or equal to *HLevel* are mapped to hozirontal
+   * Headings of level less than or equal to *HLevel* are mapped to horizontal
      slides.
    * Headings with a deeper level are mapped to vertical slides.
 
@@ -278,7 +278,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    options:
    * =#+REVEAL_MARGIN:= :: a float number, the factor of empty area
         surrounding slide contents.
-   * =#+REVEAL_MIN_SCALE:= :: a float number, the minimun scaling down
+   * =#+REVEAL_MIN_SCALE:= :: a float number, the minimum scaling down
         ratio.
    * =#+REVEAL_MAX_SCALE:= :: a float number, the maximum scaling up
         ratio.
@@ -321,7 +321,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
     * appear
 
     Setting ~:frag t~ will use Reveal.js default fragment style, which 
-    can be overriden by local option ~#+REVEAL_DEFAULT_FRAG_STYLE~ or
+    can be overridden by local option ~#+REVEAL_DEFAULT_FRAG_STYLE~ or
     global variable ~org-reveal-default-frag-style~.
 
 *** Fragment Index
@@ -396,7 +396,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    Set property =reveal_data_state= to headings to change this slide's
    display style, as illustrated above.
 
-   Availabe data states are: alert|blackout|soothe.
+   Available data states are: alert|blackout|soothe.
 
 ** Plug-ins
 
@@ -445,10 +445,10 @@ fibs = 0 : 1 : next fibs
 
    ${n! \over k!(n-k)!} = {n \choose k}$
 
-   LateX equation are renderred in native HTML5 contents.
+   LateX equation are rendered in native HTML5 contents.
 
    *IMPORTANT*: Displaying equations requires internet connection to
-   [[mathjax.org]] or local MathJax installation.
+   [[http://mathjax.org/][mathjax.org]] or local MathJax installation.
 
    *IMPORTANT 2*: MathJax is disabled by default to reduce internet
    traffic. Set =#+OPTIONS= tag =reveal_mathjax= or variable
@@ -492,7 +492,7 @@ fibs = 0 : 1 : next fibs
 #+REVEAL_HTML: <iframe width="560" height="315" src="https://www.youtube.com/embed/OQzJR3BqS7o" frameborder="0" allowfullscreen></iframe>
 
 ** Speaker Notes
-   Reveal.js supports speaker notes, which are displayed in a seperate
+   Reveal.js supports speaker notes, which are displayed in a separate
    browser window. Pressing 's' on slide's windows will pop up a window
    displaying the current slide, the next slide and the speaker notes on the current
    slide.
@@ -519,7 +519,7 @@ fibs = 0 : 1 : next fibs
    Due to a bug in Reveal.js, sometimes the speaker notes window
    shows only blank screens. A workaround to this issue is to put
    the presentation HTML file into the Reveal.js root directory and
-   reopen it in the brower.
+   reopen it in the browser.
 
 ** Multiplexing
    Reveal.js supports multiplexing, which allows allows your audience to view
@@ -600,7 +600,7 @@ fibs = 0 : 1 : next fibs
    elements on slides. Thus, we can only link to headlines in an Org
    document.
 
-   You can create links pointings to a headline's text, or its
+   You can create links pointing to a headline's text, or its
    custom-id, as the examples below:
 
    * [[Tips]].
