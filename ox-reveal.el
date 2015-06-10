@@ -257,7 +257,7 @@ can contain the following escaping elements:
   :type 'boolean)
 
 (defcustom org-reveal-mathjax-url
-  "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
   "Default MathJax URL."
   :group 'org-export-reveal
   :type 'string)
