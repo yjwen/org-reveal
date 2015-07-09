@@ -164,7 +164,7 @@ can contain the following escaping elements:
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-css-js
+(defcustom org-reveal-extra-css
   ""
   "URL to extra css file."
   :group 'org-export-reveal
