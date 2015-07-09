@@ -59,7 +59,7 @@
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
-    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
+    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
@@ -161,6 +161,12 @@ can contain the following escaping elements:
 (defcustom org-reveal-extra-js
   ""
   "URL to extra JS file."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-css-js
+  ""
+  "URL to extra css file."
   :group 'org-export-reveal
   :type 'string)
 
