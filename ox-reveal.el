@@ -81,6 +81,7 @@
     (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
+    (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     )
 
   :translate-alist
@@ -89,6 +90,7 @@
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
+    (link . org-reveal-link)
     (plain-list . org-reveal-plain-list)
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
@@ -311,6 +313,12 @@ can contain the following escaping elements:
           (const search)
           (const remotes)
           (const multiplex)))
+
+(defcustom org-reveal-single-file nil
+  "Export presentation into one single HTML file, which embedded
+  JS scripts and pictures."
+  :group 'org-export-reveal
+  :type 'boolean)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -670,7 +678,7 @@ contextual information."
      contents type checkbox attributes info (or tag counter))))
 
 (defun org-reveal-keyword (keyword contents info)
-  "Transcode a KEYWORD element from Org to HTML,
+  "Transcode a KEYWORD element from Org to Reveal,
 and may change custom variables as SIDE EFFECT.
 CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((key (org-element-property :key keyword))
@@ -678,6 +686,36 @@ CONTENTS is nil. INFO is a plist holding contextual information."
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
       (REVEAL_HTML value))))
+
+(defun org-reveal--format-image-data-uri (link info)
+  "Generate the data URI for the image referenced by LINK."
+  (let ((path (org-element-property :path link)))
+    (org-html-close-tag
+     "img"
+     (org-html--make-attribute-string
+      (list :src
+            (concat
+             "data:image/"
+             ;; Image type
+             (downcase (file-name-extension path))
+             ";base64,"
+             ;; Base64 content
+             (with-temp-buffer
+               (insert-file-contents-literally path)
+               (base64-encode-region 1 (point-max))
+               (buffer-string)))))
+     info)))
+
+(defun org-reveal-link (link desc info)
+  "Transcode a LINK object from Org to Reveal. The result is
+  identical to ox-html expect for image links. When `org-reveal-single-file' is t,
+the result is the Data URIs of the referenced image."
+  (if (and (plist-get info :reveal-single-file)
+           (plist-get info :html-inline-images)
+           (org-export-inline-image-p link (plist-get info :html-inline-image-rules)))
+      ;; Export image data URIs.
+      (org-reveal--format-image-data-uri link info)
+    (org-html-link link desc info)))
 
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
