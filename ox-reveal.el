@@ -686,25 +686,35 @@ CONTENTS is nil. INFO is a plist holding contextual information."
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
       (REVEAL_HTML value))))
+(defun org-reveal-embedded-svg (link)
+  "Embed the SVG content into Reveal HTML."
+  (with-temp-buffer
+    (insert-file-contents-literally path)
+    (let ((start (re-search-forward "<[ \t\n]*svg[ \t\n]"))
+          (end (re-search-forward "<[ \t\n]*/svg[ \t\n]*>")))
+      (concat "<svg " (buffer-substring-no-properties start end)))))
 
 (defun org-reveal--format-image-data-uri (link info)
   "Generate the data URI for the image referenced by LINK."
-  (let ((path (org-element-property :path link)))
-    (org-html-close-tag
-     "img"
-     (org-html--make-attribute-string
-      (list :src
-            (concat
-             "data:image/"
-             ;; Image type
-             (downcase (file-name-extension path))
-             ";base64,"
-             ;; Base64 content
-             (with-temp-buffer
-               (insert-file-contents-literally path)
-               (base64-encode-region 1 (point-max))
-               (buffer-string)))))
-     info)))
+  (let* ((path (org-element-property :path link))
+         (ext (downcase (file-name-extension path))))
+    (if (string= ext "svg")
+        (org-reveal-embedded-svg link)
+      (org-html-close-tag
+       "img"
+       (org-html--make-attribute-string
+        (list :src
+              (concat
+               "data:image/"
+               ;; Image type
+               (downcase (file-name-extension path))
+               ";base64,"
+               ;; Base64 content
+               (with-temp-buffer
+                 (insert-file-contents-literally path)
+                 (base64-encode-region 1 (point-max))
+                 (buffer-string)))))
+       info))))
 
 (defun org-reveal-link (link desc info)
   "Transcode a LINK object from Org to Reveal. The result is
