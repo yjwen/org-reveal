@@ -580,10 +580,27 @@ fibs = 0 : 1 : next fibs
 ,#+REVEAL_EXTRA_JS: url-to-custom-script.js
 #+END_SRC
 
-** Extra Slide attribute
+** Extra Slide Attribute
 
    Set property =reveal_extra_attr= to headings to add any necessary attributes
    to slides.
+
+** Export into Single File
+
+   By setting option =reveal_single_file= to ~t~, images and necessary
+   Reveal.js scripts will be embedded into the exported HTML file, to make
+   an portable HTML.
+
+   #+BEGIN_SRC org
+   ,#+OPTIONS: reveal_single_file:t
+   #+END_SRC
+
+   When exporting into single file, functions provided by Reveal.js
+   libraries will be disabled due to limitation, including PDF export,
+   Markdown support, zooming, speaker notes and remote control.
+
+   Code highlight by highlight.js is also disabled. But *code
+   highlight by Emacs is not effected.*
 
 * Tips
 
