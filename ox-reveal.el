@@ -739,7 +739,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
       (REVEAL_HTML value))))
-(defun org-reveal-embedded-svg (link)
+(defun org-reveal-embedded-svg (path)
   "Embed the SVG content into Reveal HTML."
   (with-temp-buffer
     (insert-file-contents-literally path)
@@ -747,12 +747,11 @@ CONTENTS is nil. INFO is a plist holding contextual information."
           (end (re-search-forward "<[ \t\n]*/svg[ \t\n]*>")))
       (concat "<svg " (buffer-substring-no-properties start end)))))
 
-(defun org-reveal--format-image-data-uri (link info)
+(defun org-reveal--format-image-data-uri (link path info)
   "Generate the data URI for the image referenced by LINK."
-  (let* ((path (org-element-property :path link))
-         (ext (downcase (file-name-extension path))))
+  (let* ((ext (downcase (file-name-extension path))))
     (if (string= ext "svg")
-        (org-reveal-embedded-svg link)
+        (org-reveal-embedded-svg path)
       (org-html-close-tag
        "img"
        (org-html--make-attribute-string
@@ -760,7 +759,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
               (concat
                "data:image/"
                ;; Image type
-               (downcase (file-name-extension path))
+               ext
                ";base64,"
                ;; Base64 content
                (with-temp-buffer
@@ -773,12 +772,19 @@ CONTENTS is nil. INFO is a plist holding contextual information."
   "Transcode a LINK object from Org to Reveal. The result is
   identical to ox-html expect for image links. When `org-reveal-single-file' is t,
 the result is the Data URIs of the referenced image."
-  (if (and (plist-get info :reveal-single-file)
-           (plist-get info :html-inline-images)
-           (org-export-inline-image-p link (plist-get info :html-inline-image-rules)))
-      ;; Export image data URIs.
-      (org-reveal--format-image-data-uri link info)
-    (org-html-link link desc info)))
+  (let* ((want-embed-image (and (plist-get info :reveal-single-file)
+                                (plist-get info :html-inline-images)
+                                (org-export-inline-image-p
+                                 link (plist-get info :html-inline-image-rules))))
+         (raw-path (org-element-property :path link))
+         (clean-path (replace-regexp-in-string "^file:///" "" raw-path))
+         (can-embed-image (and want-embed-image
+                               (file-readable-p clean-path))))
+    (if can-embed-image
+        (org-reveal--format-image-data-uri link clean-path info)
+      (if want-embed-image
+          (error "Cannot embed image %s" raw-path)
+        (org-html-link link desc info)))))
 
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
