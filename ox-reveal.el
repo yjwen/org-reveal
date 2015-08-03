@@ -846,8 +846,7 @@ contextual information."
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
-                      (format " id=\"%s\""
-                              (org-export-solidify-link-text lbl))))))
+                      (format " id=\"%s\"" lbl)))))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
