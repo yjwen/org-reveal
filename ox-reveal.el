@@ -1011,7 +1011,7 @@ is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'reval filename ".html" plist pub-dir))
+  (org-publish-org-to 'reveal filename ".html" plist pub-dir))
 
 
 (provide 'ox-reveal)
