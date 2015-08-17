@@ -5,7 +5,7 @@
 ;; Author: Yujie Wen <yjwen.ty at gmail dot com>
 ;; Created: 2013-04-27
 ;; Version: 1.0
-;; Package-Requires: ((org "8.0"))
+;; Package-Requires: ((org "20150330"))
 ;; Keywords: outlines, hypermedia, slideshow, presentation
 
 ;; This file is not part of GNU Emacs.
