@@ -750,22 +750,34 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 (defun org-reveal--format-image-data-uri (link path info)
   "Generate the data URI for the image referenced by LINK."
   (let* ((ext (downcase (file-name-extension path))))
+    (message "link=%s" link)
     (if (string= ext "svg")
         (org-reveal-embedded-svg path)
       (org-html-close-tag
        "img"
        (org-html--make-attribute-string
-        (list :src
-              (concat
-               "data:image/"
-               ;; Image type
-               ext
-               ";base64,"
-               ;; Base64 content
-               (with-temp-buffer
-                 (insert-file-contents-literally path)
-                 (base64-encode-region 1 (point-max))
-                 (buffer-string)))))
+        (org-combine-plists
+         (list :src
+               (concat
+                "data:image/"
+                ;; Image type
+                ext
+                ";base64,"
+                ;; Base64 content
+                (with-temp-buffer
+                  (insert-file-contents-literally path)
+                  (base64-encode-region 1 (point-max))
+                  (buffer-string))))
+         ;; Get attribute list from parent element
+         ;; Copied from ox-html.el
+         (let* ((parent (org-export-get-parent-element link))
+                (link (let ((container (org-export-get-parent link)))
+                        (if (and (eq (org-element-type container) 'link)
+                                 (org-html-inline-image-p link info))
+                            container
+                          link))))
+           (and (eq (org-element-map parent 'link 'identity info t) link)
+                (org-export-read-attribute :attr_html parent)))))
        info))))
 
 (defun org-reveal-link (link desc info)
