@@ -59,7 +59,7 @@
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
-    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil nil nil)
+    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css nil)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
@@ -81,6 +81,7 @@
     (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
+    (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     )
 
   :translate-alist
@@ -89,6 +90,7 @@
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
+    (link . org-reveal-link)
     (plain-list . org-reveal-plain-list)
     (paragraph . org-reveal-paragraph)
     (quote-block . org-reveal-quote-block)
@@ -129,9 +131,15 @@ else get value from custom variable `org-reveal-hlevel'."
 <h2>%a</h2>
 <h2>%e</h2>
 <h2>%d</h2>"
-  "Format template to specify title page slide.
-See `org-html-postamble-format' for the valid elements which
-can be include."
+  "Format template to specify title page slide. The format string
+can contain the following escaping elements:
+
+  %s stands for the title.
+  %a stands for the author's name.
+  %e stands for the author's email.
+  %d stands for the date.
+  %% stands for a literal %.
+"
   :group 'org-export-reveal
   :type 'string)
 
@@ -156,6 +164,12 @@ can be include."
 (defcustom org-reveal-extra-js
   ""
   "URL to extra JS file."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-extra-css
+  ""
+  "URL to extra css file."
   :group 'org-export-reveal
   :type 'string)
 
@@ -252,7 +266,7 @@ can be include."
   :type 'boolean)
 
 (defcustom org-reveal-mathjax-url
-  "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
   "Default MathJax URL."
   :group 'org-export-reveal
   :type 'string)
@@ -288,7 +302,7 @@ can be include."
   :type 'string)
 
 (defcustom org-reveal-plugins
-  '(classList markdown highlight zoom notes)
+  '(classList markdown zoom notes)
   "Default builtin plugins"
   :group 'org-export-reveal
   :type '(set
@@ -300,6 +314,12 @@ can be include."
           (const search)
           (const remotes)
           (const multiplex)))
+
+(defcustom org-reveal-single-file nil
+  "Export presentation into one single HTML file, which embedded
+  JS scripts and pictures."
+  :group 'org-export-reveal
+  :type 'boolean)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -316,7 +336,7 @@ holding contextual information."
    (t (format "fragment %s" frag))))
 
 (defun frag-class (frag info)
-  "Return proper HTML string description of fragment style. 
+  "Return proper HTML string description of fragment style.
 FRAG is the fragment style set on element, INFO is a plist
 holding contextual information."
   (and frag
@@ -345,18 +365,16 @@ holding contextual information."
         (org-html-headline headline contents info)
       ;; Standard headline.  Export it as a slide
       (let* ((level (org-export-get-relative-level headline info))
-            (preferred-id (or (org-element-property :CUSTOM_ID headline)
-                              (concat "sec-" (mapconcat #'number-to-string
-                                                        (org-export-get-headline-number
-                                                         headline info) "-"))
-                              (org-element-property :ID headline)))
-            (hlevel (org-reveal--get-hlevel info))
-            (header (plist-get info :reveal-slide-header))
-            (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
-            (footer (plist-get info :reveal-slide-footer))
-            (footer-div (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer)))
-            (first-sibling (org-export-first-sibling-p headline info))
-            (last-sibling (org-export-last-sibling-p headline info)))
+	     (preferred-id (or (org-element-property :CUSTOM_ID headline)
+			       (org-export-get-reference headline info)
+			       (org-element-property :ID headline)))
+	     (hlevel (org-reveal--get-hlevel info))
+	     (header (plist-get info :reveal-slide-header))
+	     (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
+	     (footer (plist-get info :reveal-slide-footer))
+	     (footer-div (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer)))
+	     (first-sibling (org-export-first-sibling-p headline info))
+	     (last-sibling (org-export-last-sibling-p headline info)))
         (concat
          (if (or (/= level 1) (not first-sibling))
              ;; Not the first heading. Close previou slide.
@@ -366,8 +384,8 @@ holding contextual information."
               ;; Close previous slide
               "</section>\n"
               (if (<= level hlevel)
-                ;; Close previous vertical slide group.
-                "</section>\n")))
+		  ;; Close previous vertical slide group.
+		  "</section>\n")))
          (if (<= level hlevel)
              ;; Add an extra "<section>" to group following slides
              ;; into vertical slide group.
@@ -404,29 +422,58 @@ holding contextual information."
               ;; Slide footer if any
               footer-div
               "</section>\n</section>\n")))))))
-  
+
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
   :tag "Org Export Reveal"
   :group 'org-export)
 
+(defun org-reveal--read-file (file)
+  "Return the content of file"
+  (with-temp-buffer
+    (insert-file-contents-literally file)
+    (buffer-string)))
+
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
-  (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
+  (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
+         (reveal-css (concat root-path "css/reveal.css"))
+         (theme (plist-get info :reveal-theme))
+         (theme-css (concat root-path "css/theme/" theme ".css"))
+         ;; Local file names.
+         (local-root (replace-regexp-in-string "^file:///" "" root-path))
+         (local-reveal-css (concat local-root "css/reveal.css"))
+         (local-theme-css (concat local-root "css/theme/" theme ".css"))
+         (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; stylesheets
-     (format "
-<link rel=\"stylesheet\" href=\"%scss/reveal.css\"/>
-<link rel=\"stylesheet\" href=\"%scss/theme/%s.css\" id=\"theme\"/>
-"
-             root-path root-path
-             (plist-get info :reveal-theme))
+     (if (and in-single-file
+              (file-readable-p local-reveal-css)
+              (file-readable-p local-theme-css))
+         ;; CSS files exist and are readable. Embed them.
+         (concat "<style type=\"text/css\">\n"
+                 (org-reveal--read-file local-reveal-css)
+                 "\n"
+                 (org-reveal--read-file local-theme-css)
+                 "</style>\n")
+       ;; Fall-back to external CSS links.
+       (if in-single-file
+           ;; Tried to embed CSS files but failed. Print a message about possible errors.
+           (error (concat "Cannot read "
+                            (mapconcat 'identity
+                                       (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
+                                                         (list local-reveal-css local-theme-css)))
+                                       ", "))))
+       ;; Create links to CSS files.
+       (concat "<link rel=\"stylesheet\" href=\"" reveal-css "\"/>\n"
+               "<link rel=\"stylesheet\" href=\"" theme-css "\" id=\"theme\"/>\n"))
      ;; extra css
      (let ((extra-css (plist-get info :reveal-extra-css)))
        (if extra-css (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css) ""))
      ;; print-pdf
-     (format "
+     (if in-single-file ""
+       (format "
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
     if( window.location.search.match( /print-pdf/gi ) ) {
@@ -438,7 +485,7 @@ using custom variable `org-reveal-root'."
     }
 </script>
 "
-             root-path))))
+               root-path)))))
 
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
@@ -450,15 +497,37 @@ using custom variable `org-reveal-root'."
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
-  (let* ((root-path (file-name-as-directory (plist-get info :reveal-root))))
+  (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
+         (head-min-js (concat root-path "lib/js/head.min.js"))
+         (reveal-js (concat root-path "js/reveal.js"))
+         ;; Local files
+         (local-root-path (replace-regexp-in-string "^file:///" "" root-path))
+         (local-head-min-js (concat local-root-path "lib/js/head.min.js"))
+         (local-reveal-js (concat local-root-path "js/reveal.js"))
+         (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; reveal.js/lib/js/head.min.js
      ;; reveal.js/js/reveal.js
-     (format "
-<script src=\"%slib/js/head.min.js\"></script>
-<script src=\"%sjs/reveal.js\"></script>
-"
-             root-path root-path)
+     (if (and in-single-file
+              (file-readable-p local-head-min-js)
+              (file-readable-p local-reveal-js))
+         ;; Embed scripts into HTML
+         (concat "<script>\n"
+                 (org-reveal--read-file local-head-min-js)
+                 "\n"
+                 (org-reveal--read-file local-reveal-js)
+                 "\n</script>")
+       ;; Fall-back to extern script links
+       (if in-single-file
+           ;; Tried to embed scripts but failed. Print a message about possible errors.
+           (error (concat "Cannot read "
+                            (mapconcat 'identity
+                                       (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
+                                                         (list local-head-min-js local-reveal-js)))
+                                       ", "))))
+       (concat
+        "<script src=\"" head-min-js "\"></script>\n"
+        "<script src=\"" reveal-js "\"></script>\n"))
      ;; plugin headings
      "
 <script>
@@ -528,48 +597,50 @@ transitionSpeed: '%s',\n"
              (plist-get info :reveal-multiplex-url)))
 
      ;; optional JS library heading
-     "
+     (if in-single-file ""
+       (concat
+        "
 // Optional libraries used to extend on reveal.js
 dependencies: [
 "
-     ;; JS libraries
-     (let* ((builtins
-             '(classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
-               markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+        ;; JS libraries
+        (let* ((builtins
+                '(classList
+                  (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+                  markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
-               highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
-               zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               multiplex (format " { src: '%s', async: true },\n%s"
-                                 (plist-get info :reveal-multiplex-socketio-url)
-                                 ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
-                                 (if (not client-multiplex)
-                                     (progn
-                                       (if (plist-get info :reveal-multiplex-secret)
-                                          (setq client-multiplex t))
-                                       (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
-
-                                   (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
-            (builtin-codes
-             (mapcar
-               (lambda (p)
-                 (eval (plist-get builtins p)))
-               (let ((buffer-plugins (plist-get info :reveal-plugins)))
-                 (cond
-                  ((string= buffer-plugins "") ())
-                  (buffer-plugins (car (read-from-string buffer-plugins)))
-                  (t org-reveal-plugins)))))
-            (extra-codes (plist-get info :reveal-extra-js))
-            (total-codes
-             (if (string= "" extra-codes) builtin-codes
-               (append (list extra-codes) builtin-codes))))
-       (mapconcat 'identity total-codes ",\n"))
-     "
-]
-});
-</script>\n")))
+                  highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
+                  zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                  notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                  search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                  remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                  multiplex (format " { src: '%s', async: true },\n%s"
+                                    (plist-get info :reveal-multiplex-socketio-url)
+                                        ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
+                                    (if (not client-multiplex)
+                                        (progn
+                                          (if (plist-get info :reveal-multiplex-secret)
+                                              (setq client-multiplex t))
+                                          (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
+                                      (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
+               (builtin-codes
+                (mapcar
+                 (lambda (p)
+                   (eval (plist-get builtins p)))
+                 (let ((buffer-plugins (plist-get info :reveal-plugins)))
+                   (cond
+                    ((string= buffer-plugins "") ())
+                    (buffer-plugins (car (read-from-string buffer-plugins)))
+                    (t org-reveal-plugins)))))
+               (extra-codes (plist-get info :reveal-extra-js))
+               (total-codes
+                (if (string= "" extra-codes) builtin-codes
+                  (append (list extra-codes) builtin-codes))))
+          (mapconcat 'identity total-codes ",\n"))
+        "]\n"
+        )
+       "\n")
+     "});\n</script>\n")))
 
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
@@ -612,7 +683,7 @@ holding export options."
   (let ((attr-html (cond (attributes (format " %s" (org-html--make-attribute-string attributes)))
                          (checkbox (format " class=\"%s\"" (symbol-name checkbox)))
                          (t "")))
-	(checkbox (concat (org-html-checkbox checkbox)
+	(checkbox (concat (org-html-checkbox checkbox info)
 			  (and checkbox " ")))
 	(br (org-html-close-tag "br" nil info)))
     (concat
@@ -661,7 +732,7 @@ contextual information."
      contents type checkbox attributes info (or tag counter))))
 
 (defun org-reveal-keyword (keyword contents info)
-  "Transcode a KEYWORD element from Org to HTML,
+  "Transcode a KEYWORD element from Org to Reveal,
 and may change custom variables as SIDE EFFECT.
 CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((key (org-element-property :key keyword))
@@ -669,6 +740,52 @@ CONTENTS is nil. INFO is a plist holding contextual information."
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
       (REVEAL_HTML value))))
+(defun org-reveal-embedded-svg (path)
+  "Embed the SVG content into Reveal HTML."
+  (with-temp-buffer
+    (insert-file-contents-literally path)
+    (let ((start (re-search-forward "<[ \t\n]*svg[ \t\n]"))
+          (end (re-search-forward "<[ \t\n]*/svg[ \t\n]*>")))
+      (concat "<svg " (buffer-substring-no-properties start end)))))
+
+(defun org-reveal--format-image-data-uri (link path info)
+  "Generate the data URI for the image referenced by LINK."
+  (let* ((ext (downcase (file-name-extension path))))
+    (if (string= ext "svg")
+        (org-reveal-embedded-svg path)
+      (org-html-close-tag
+       "img"
+       (org-html--make-attribute-string
+        (list :src
+              (concat
+               "data:image/"
+               ;; Image type
+               ext
+               ";base64,"
+               ;; Base64 content
+               (with-temp-buffer
+                 (insert-file-contents-literally path)
+                 (base64-encode-region 1 (point-max))
+                 (buffer-string)))))
+       info))))
+
+(defun org-reveal-link (link desc info)
+  "Transcode a LINK object from Org to Reveal. The result is
+  identical to ox-html expect for image links. When `org-reveal-single-file' is t,
+the result is the Data URIs of the referenced image."
+  (let* ((want-embed-image (and (plist-get info :reveal-single-file)
+                                (plist-get info :html-inline-images)
+                                (org-export-inline-image-p
+                                 link (plist-get info :html-inline-image-rules))))
+         (raw-path (org-element-property :path link))
+         (clean-path (replace-regexp-in-string "^file:///" "" raw-path))
+         (can-embed-image (and want-embed-image
+                               (file-readable-p clean-path))))
+    (if can-embed-image
+        (org-reveal--format-image-data-uri link clean-path info)
+      (if want-embed-image
+          (error "Cannot embed image %s" raw-path)
+        (org-html-link link desc info)))))
 
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
@@ -725,14 +842,23 @@ CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
-    (let ((lang (org-element-property :language src-block))
-          (caption (org-export-get-caption src-block))
-          (code (org-html-format-code src-block info))
-          (frag (org-export-read-attribute :attr_reveal src-block :frag))
-          (label (let ((lbl (org-element-property :name src-block)))
-                   (if (not lbl) ""
-                     (format " id=\"%s\""
-                             (org-export-solidify-link-text lbl))))))
+    (let* ((buffer-plugins (plist-get info :reveal-plugins))
+           (use-highlight (memq 'highlight
+                                (cond
+                                 ((string= buffer-plugins "") nil)
+                                 (buffer-plugins (car (read-from-string buffer-plugins)))
+                                 (t org-reveal-plugins))))
+           (lang (org-element-property :language src-block))
+           (caption (org-export-get-caption src-block))
+           (code (if (not use-highlight)
+                     (org-html-format-code src-block info)
+                   (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
+                              #'buffer-substring))
+                     (org-html-format-code src-block info))))
+           (frag (org-export-read-attribute :attr_reveal src-block :frag))
+           (label (let ((lbl (org-element-property :name src-block)))
+                    (if (not lbl) ""
+                      (format " id=\"%s\"" lbl)))))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
@@ -743,10 +869,14 @@ contextual information."
          (if (not caption) ""
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
-         (format "\n<pre %s%s>%s</pre>"
-                 (or (frag-class frag info)
-                     (format " class=\"src src-%s\"" lang))
-                 label code))))))
+         (if use-highlight
+             (format "\n<pre%s%s><code class=\"%s\">%s</code></pre>"
+                     (or (frag-class frag info) "")
+                     label lang code)
+           (format "\n<pre %s%s>%s</pre>"
+                   (or (frag-class frag info)
+                       (format " class=\"src src-%s\"" lang))
+                   label code)))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
@@ -837,20 +967,20 @@ transformed fragment attribute to ELEM's attr_html plist."
         (cond ((and (string= (org-element-type elem) 'plain-list)
                     (char-equal (string-to-char frag) ?\())
                (let* ((frag-list (car (read-from-string frag)))
-                      (frag-list-mapped (if default-style
-                                            (mapcar (lambda (s)
-                                                      "Replace t with default-style"
-                                                      (if (string= s t) default-style
-                                                        s))
-                                                    frag-list)
-                                          frag-list))
+                      (frag-list (if default-style
+                                     (mapcar (lambda (s)
+                                               "Replace t with default-style"
+                                               (if (string= s t) default-style
+                                                 s))
+                                             frag-list)
+                                   frag-list))
                       (items (org-element-contents elem)))
-                 (message "default-style: %s" default-style)
-                 (message "frag-list-mapped: %s" frag-list-mapped)
                  (if frag-index
                      (mapcar* 'org-reveal--update-attr-html
-                              items frag-list-mapped (car (read-from-string frag-index)))
-                   (mapcar* 'org-reveal--update-attr-html items frag-list-mapped))))
+                              items frag-list (car (read-from-string frag-index)))
+                   ;; Make frag-list tail circular
+                   (nconc frag-list (last frag-list))
+                   (mapcar* 'org-reveal--update-attr-html items frag-list))))
               (t (org-reveal--update-attr-html elem frag frag-index))))
     elem))
 
@@ -893,7 +1023,7 @@ is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'reval filename ".html" plist pub-dir))
+  (org-publish-org-to 'reveal filename ".html" plist pub-dir))
 
 
 (provide 'ox-reveal)
