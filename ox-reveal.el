@@ -892,8 +892,7 @@ contextual information."
 contents is the transcoded contents string.
 info is a plist holding export options."
   (concat
-   (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<!DOCTYPE html>\n<html%s>\n<head>\n"
+   (format "<!DOCTYPE html>\n<html%s>\n<head>\n"
            (if-format " lang=\"%s\"" (plist-get info :language)))
    "<meta charset=\"utf-8\"/>\n"
    (if-format "<title>%s</title>\n" (org-export-data (plist-get info :title) info))
