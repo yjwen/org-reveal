@@ -796,7 +796,8 @@ the result is the Data URIs of the referenced image."
         (org-reveal--format-image-data-uri link clean-path info)
       (if want-embed-image
           (error "Cannot embed image %s" raw-path)
-        (org-html-link link desc info)))))
+        (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
+                                  (org-html-link link desc info))))))
 
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
