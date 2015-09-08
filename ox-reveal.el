@@ -638,7 +638,7 @@ dependencies: [
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
         )
-       "\n")
+       )
      "});\n</script>\n")))
 
 (defun org-reveal-toc (depth info)
