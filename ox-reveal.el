@@ -92,7 +92,6 @@
     (keyword . org-reveal-keyword)
     (link . org-reveal-link)
     (plain-list . org-reveal-plain-list)
-    (paragraph . org-reveal-paragraph)
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
@@ -804,17 +803,6 @@ Extract and set `attr_html' to plain-list tag attributes."
             (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
             contents
             tag)))
-
-(defun org-reveal-paragraph (paragraph contents info)
-  "Transcode a PARAGRAPH element from Org to Reveal.
-CONTENTS is the contents of the paragraph, as a string. INFO is
-the plist used as a communication channel."
-  (let ((frag (org-export-read-attribute :attr_reveal paragraph :frag))
-        (html (org-html-paragraph paragraph contents info)))
-    (if (and frag
-             (not (org-html-standalone-image-p paragraph info)))
-        (format "<span%s>%s</span>" (frag-class frag info) html)
-      html)))
 
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
