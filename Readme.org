@@ -590,6 +590,7 @@ fibs = 0 : 1 : next fibs
    By setting option =reveal_single_file= to ~t~, images and necessary
    Reveal.js scripts will be embedded into the exported HTML file, to make
    an portable HTML.
+   Attention: This needs locally available reveal.js files!
 
    #+BEGIN_SRC org
    ,#+OPTIONS: reveal_single_file:t
