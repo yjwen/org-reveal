@@ -320,6 +320,18 @@ can contain the following escaping elements:
   :group 'org-export-reveal
   :type 'boolean)
 
+(defcustom org-reveal-note-key-char "n"
+  "If not nil, org-reveal-note-key-char's value is registered as
+  the key character to Org-mode's structure completion for
+  Reveal.js notes. When `<' followed by the key character are
+  typed and then the completion key is pressed, which is usually
+  `TAB', \"#+BEGIN_NOTES\" and \"#+END_NOTES\" is inserted.
+
+  The default value is \"n\". Set the variable to nil to disable
+  registering the completion"
+  :group 'org-export-reveal
+  :type 'string)
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -604,8 +616,7 @@ dependencies: [
 "
         ;; JS libraries
         (let* ((builtins
-                '(classList
-                  (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+                '(classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
                   markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
                   highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
@@ -1025,6 +1036,10 @@ publishing directory.
 Return output file name."
   (org-publish-org-to 'reveal filename ".html" plist pub-dir))
 
+;; Register auto-completion for speaker notes.
+(when org-reveal-note-key-char
+  (add-to-list 'org-structure-template-alist
+               (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES")))
 
 (provide 'ox-reveal)
 

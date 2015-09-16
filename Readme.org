@@ -521,6 +521,15 @@ fibs = 0 : 1 : next fibs
    the presentation HTML file into the Reveal.js root directory and
    reopen it in the browser.
 
+*** Easy-Template for Speaker Notes
+
+    Org-reveal registers 'n' as the key for speaker notes easy-template.
+    So you can press '<' followed by 'n' and then press TAB, the ~#+BEGIN_NOTES~
+    and ~#+END_NOTES~ pair is inserted automatically.
+
+    Customize ~org-reveal-note-key-char~ to change the default key
+    'n'. set it to nil will forbid the auto-completion for speaker notes.
+
 ** Multiplexing
    Reveal.js supports multiplexing, which allows allows your audience to view
    the slides of the presentation you are controlling on their own phone, tablet
