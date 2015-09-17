@@ -453,7 +453,9 @@ using custom variable `org-reveal-root'."
          (theme (plist-get info :reveal-theme))
          (theme-css (concat root-path "css/theme/" theme ".css"))
          ;; Local file names.
-         (local-root (replace-regexp-in-string "^file:///" "" root-path))
+         (local-root (replace-regexp-in-string
+                      (if (string-equal system-type "windows-nt") "^file:///" "^file://")
+                      "" root-path))
          (local-reveal-css (concat local-root "css/reveal.css"))
          (local-theme-css (concat local-root "css/theme/" theme ".css"))
          (in-single-file (plist-get info :reveal-single-file)))
