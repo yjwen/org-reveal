@@ -63,7 +63,7 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
-    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
+    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template space)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
