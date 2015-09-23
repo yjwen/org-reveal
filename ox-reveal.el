@@ -445,6 +445,12 @@ holding contextual information."
     (insert-file-contents-literally file)
     (buffer-string)))
 
+(defun org-reveal--file-url-to-path (url)
+  "Convert URL that points to local files to file path."
+  (replace-regexp-in-string
+   (if (string-equal system-type "windows-nt") "^file:///" "^file://")
+   "" url))
+
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
@@ -453,9 +459,7 @@ using custom variable `org-reveal-root'."
          (theme (plist-get info :reveal-theme))
          (theme-css (concat root-path "css/theme/" theme ".css"))
          ;; Local file names.
-         (local-root (replace-regexp-in-string
-                      (if (string-equal system-type "windows-nt") "^file:///" "^file://")
-                      "" root-path))
+         (local-root (org-reveal--file-url-to-path root-path))
          (local-reveal-css (concat local-root "css/reveal.css"))
          (local-theme-css (concat local-root "css/theme/" theme ".css"))
          (in-single-file (plist-get info :reveal-single-file)))
@@ -514,7 +518,7 @@ custom variable `org-reveal-root'."
          (head-min-js (concat root-path "lib/js/head.min.js"))
          (reveal-js (concat root-path "js/reveal.js"))
          ;; Local files
-         (local-root-path (replace-regexp-in-string "^file:///" "" root-path))
+         (local-root-path (org-reveal--file-url-to-path root-path))
          (local-head-min-js (concat local-root-path "lib/js/head.min.js"))
          (local-reveal-js (concat local-root-path "js/reveal.js"))
          (in-single-file (plist-get info :reveal-single-file)))
@@ -802,7 +806,7 @@ the result is the Data URIs of the referenced image."
                                 (org-export-inline-image-p
                                  link (plist-get info :html-inline-image-rules))))
          (raw-path (org-element-property :path link))
-         (clean-path (replace-regexp-in-string "^file:///" "" raw-path))
+         (clean-path (org-reveal--file-url-to-path raw-path))
          (can-embed-image (and want-embed-image
                                (file-readable-p clean-path))))
     (if can-embed-image
