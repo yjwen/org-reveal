@@ -39,7 +39,8 @@
   :menu-entry
   '(?R "Export to reveal.js HTML Presentation"
        ((?R "To file" org-reveal-export-to-html)
-        (?B "To file and Browse" org-reveal-export-to-html-and-browse)))
+        (?B "To file and browse" org-reveal-export-to-html-and-browse)
+        (?S "Current subtree to file" org-reveal-export-current-subtree)))
 
   :options-alist
   '((:reveal-control nil "reveal_control" org-reveal-control t)
@@ -660,9 +661,10 @@ dependencies: [
 
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (format "<section id=\"table-of-contents\">\n%s</section>\n"
-          (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
-                                    (org-html-toc depth info))))
+  (let ((toc (org-html-toc depth info)))
+    (if toc
+        (format "<section id=\"table-of-contents\">\n%s</section>\n"
+                (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" toc)))))
 
 (defun org-reveal-inner-template (contents info)
   "Return body of document string after HTML conversion.
@@ -671,7 +673,9 @@ holding export options."
   (concat
    ;; Table of contents.
    (let ((depth (plist-get info :with-toc)))
-     (when depth (org-reveal-toc depth info)))
+     (when (and depth
+                (not (plist-get info :reveal-subtree)))
+       (org-reveal-toc depth info)))
    ;; Document contents.
    contents))
 
@@ -923,9 +927,10 @@ info is a plist holding export options."
    "</head>
 <body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
-"<div class=\"reveal\">
+   "<div class=\"reveal\">
 <div class=\"slides\">\n"
-   (if (plist-get info :reveal-title-slide)
+   (if (and (plist-get info :reveal-title-slide)
+            (not (plist-get info :reveal-subtree)))
        (concat
         (format "<section id=\"sec-title-slide\"%s%s%s%s>\n"
                 (if-format " data-background=\"%s\""
@@ -1029,6 +1034,15 @@ transformed fragment attribute to ELEM's attr_html plist."
   "Export current buffer to a reveal.js and browse HTML file."
   (interactive)
   (browse-url-of-file (expand-file-name (org-reveal-export-to-html async subtreep visible-only body-only ext-plist))))
+
+(defun org-reveal-export-current-subtree
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current subtree to a Reveal.js HTML file."
+  (interactive)
+  (org-narrow-to-subtree)
+  (let ((ret (org-reveal-export-to-html async subtreep visible-only body-only (plist-put ext-plist :reveal-subtree t))))
+    (widen)
+    ret))
 
 ;;;###autoload
 (defun org-reveal-publish-to-reveal

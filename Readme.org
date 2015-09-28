@@ -612,6 +612,12 @@ fibs = 0 : 1 : next fibs
    Code highlight by highlight.js is also disabled. But *code
    highlight by Emacs is not effected.*
 
+** Export Current Subtree
+
+  Use menu entry " C-c C-e R S" to export only current subtree,
+  without the title slide and the table of content, for a quick preview
+  of your current edition.
+
 * Tips
 
 ** Disable Heading Numbers
