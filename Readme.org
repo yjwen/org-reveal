@@ -105,15 +105,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
    on this standard please refer to
    [[http://en.wikipedia.org/wiki/File_URI_scheme]]
 
-#+BEGIN_SRC org
-,#+REVEAL_ROOT: file:///d:/reveal.js
-#+END_SRC
+   #+BEGIN_SRC org
+   ,#+REVEAL_ROOT: file:///d:/reveal.js
+   #+END_SRC
 
    Set your =REVEAL_ROOT= to the following URL to download reveal.js from
    a CDN instead of downloading a local copy.
 
    #+BEGIN_SRC org
-   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
+   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
    #+END_SRC
 
 
