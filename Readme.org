@@ -105,15 +105,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
    on this standard please refer to
    [[http://en.wikipedia.org/wiki/File_URI_scheme]]
 
-#+BEGIN_SRC org
-,#+REVEAL_ROOT: file:///d:/reveal.js
-#+END_SRC
+   #+BEGIN_SRC org
+   ,#+REVEAL_ROOT: file:///d:/reveal.js
+   #+END_SRC
 
    Set your =REVEAL_ROOT= to the following URL to download reveal.js from
    a CDN instead of downloading a local copy.
 
    #+BEGIN_SRC org
-   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
+   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
    #+END_SRC
 
 
@@ -521,6 +521,15 @@ fibs = 0 : 1 : next fibs
    the presentation HTML file into the Reveal.js root directory and
    reopen it in the browser.
 
+*** Easy-Template for Speaker Notes
+
+    Org-reveal registers 'n' as the key for speaker notes easy-template.
+    So you can press '<' followed by 'n' and then press TAB, the ~#+BEGIN_NOTES~
+    and ~#+END_NOTES~ pair is inserted automatically.
+
+    Customize ~org-reveal-note-key-char~ to change the default key
+    'n'. set it to nil will forbid the auto-completion for speaker notes.
+
 ** Multiplexing
    Reveal.js supports multiplexing, which allows allows your audience to view
    the slides of the presentation you are controlling on their own phone, tablet
@@ -580,10 +589,34 @@ fibs = 0 : 1 : next fibs
 ,#+REVEAL_EXTRA_JS: url-to-custom-script.js
 #+END_SRC
 
-** Extra Slide attribute
+** Extra Slide Attribute
 
    Set property =reveal_extra_attr= to headings to add any necessary attributes
    to slides.
+
+** Export into Single File
+
+   By setting option =reveal_single_file= to ~t~, images and necessary
+   Reveal.js scripts will be embedded into the exported HTML file, to make
+   an portable HTML.
+   Attention: This needs locally available reveal.js files!
+
+   #+BEGIN_SRC org
+   ,#+OPTIONS: reveal_single_file:t
+   #+END_SRC
+
+   When exporting into single file, functions provided by Reveal.js
+   libraries will be disabled due to limitation, including PDF export,
+   Markdown support, zooming, speaker notes and remote control.
+
+   Code highlight by highlight.js is also disabled. But *code
+   highlight by Emacs is not effected.*
+
+** Export Current Subtree
+
+  Use menu entry " C-c C-e R S" to export only current subtree,
+  without the title slide and the table of content, for a quick preview
+  of your current edition.
 
 * Tips
 
