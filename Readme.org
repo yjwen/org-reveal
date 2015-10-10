@@ -143,7 +143,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    horizontally. Deeper headings are mapped to vertical slides below their
    parent level 1 heading.
 
-*** HLevel's Affects on Slides Layout
+*** HLevel's Effects on Slides Layout
 
     Assume we have a simple Org file as below:
 #+BEGIN_SRC org
