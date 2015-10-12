@@ -83,6 +83,7 @@
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
+    (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
     )
 
   :translate-alist
@@ -320,6 +321,11 @@ can contain the following escaping elements:
   JS scripts and pictures."
   :group 'org-export-reveal
   :type 'boolean)
+
+(defcustom org-reveal-init-script nil
+  "Custom script that will be passed to Reveal.initialize."
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-note-key-char "n"
   "If not nil, org-reveal-note-key-char's value is registered as
@@ -655,8 +661,9 @@ dependencies: [
                   (append (list extra-codes) builtin-codes))))
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
-        )
-       )
+        (let ((init-script (plist-get info :reveal-init-script)))
+          (if init-script (concat "," init-script)))
+        ))
      "});\n</script>\n")))
 
 (defun org-reveal-toc (depth info)

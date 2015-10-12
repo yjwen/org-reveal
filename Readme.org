@@ -639,6 +639,12 @@ fibs = 0 : 1 : next fibs
    * [[Tips]].
    * [[#my-heading][Heading]] with a =CUSTOM_ID= property.
 
+** Custom JS
+
+   To pass custom JS code to ~Reveal.initialize~, state the code by
+   ~#+REVEAL_INIT_SCRIPT~ (multiple statements are concatenated) or by
+   custom variable ~org-reveal-init-script~.
+
 * Thanks
 
   Courtesy to:
