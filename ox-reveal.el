@@ -69,7 +69,6 @@
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
-    (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
@@ -93,6 +92,12 @@
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (link . org-reveal-link)
+    (latex-environment . (lambda (latex-env contents info)
+                           (setq info (plist-put info :reveal-mathjax t))
+                           (org-html-latex-environment latex-env contents info)))
+    (latex-fragment . (lambda (frag contents info)
+                        (setq info (plist-put info :reveal-mathjax t))
+                        (org-html-latex-fragment frag contents info)))
     (plain-list . org-reveal-plain-list)
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
@@ -262,7 +267,8 @@ can contain the following escaping elements:
   :type 'string)
 
 (defcustom org-reveal-mathjax nil
-  "Enable MathJax script."
+  "Obsolete. Org-reveal enable mathjax when it find latex
+content."
   :group 'org-export-reveal
   :type 'boolean)
 
