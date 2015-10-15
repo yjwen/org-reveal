@@ -3,7 +3,7 @@
 #+Email: yjwen.ty@gmail.com
 
 #+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
-#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
 #+OPTIONS: reveal_width:1200 reveal_height:800
 #+OPTIONS: toc:1
 #+REVEAL_MARGIN: 0.1
@@ -448,13 +448,13 @@ fibs = 0 : 1 : next fibs
    LateX equation are rendered in native HTML5 contents.
 
    *IMPORTANT*: Displaying equations requires internet connection to
-   [[http://mathjax.org/][mathjax.org]] or local MathJax installation.
-
-   *IMPORTANT 2*: MathJax is disabled by default to reduce internet
-   traffic. Set =#+OPTIONS= tag =reveal_mathjax= or variable
-   =org-reveal-mathjax= to true to enable it. For local MathJax
+   [[http://mathjax.org/][mathjax.org]] or local MathJax installation. For local MathJax
    installation, set option =REVEAL_MATHJAX_URL= to the URL pointing
    to the local MathJax location.
+
+   *Note*: Option ~reveal_mathjax~ is obsolete now. Org-reveal
+   exports necessary MathJax configurations when there is Latex
+   equation found.
 
 ** Preamble and Postamble
 
