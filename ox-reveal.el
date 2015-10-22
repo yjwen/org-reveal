@@ -32,7 +32,7 @@
 ;;; Code:
 
 (require 'ox-html)
-(eval-when-compile (require 'cl))
+(require 'cl)
 
 (org-export-define-derived-backend 'reveal 'html
 
