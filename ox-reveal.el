@@ -32,14 +32,15 @@
 ;;; Code:
 
 (require 'ox-html)
-(eval-when-compile (require 'cl))
+(require 'cl)
 
 (org-export-define-derived-backend 'reveal 'html
 
   :menu-entry
   '(?R "Export to reveal.js HTML Presentation"
        ((?R "To file" org-reveal-export-to-html)
-        (?B "To file and Browse" org-reveal-export-to-html-and-browse)))
+        (?B "To file and browse" org-reveal-export-to-html-and-browse)
+        (?S "Current subtree to file" org-reveal-export-current-subtree)))
 
   :options-alist
   '((:reveal-control nil "reveal_control" org-reveal-control t)
@@ -63,12 +64,11 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
-    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template t)
+    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template space)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
-    (:reveal-mathjax nil "reveal_mathjax" org-reveal-mathjax t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
@@ -82,6 +82,7 @@
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
+    (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
     )
 
   :translate-alist
@@ -91,6 +92,12 @@
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (link . org-reveal-link)
+    (latex-environment . (lambda (latex-env contents info)
+                           (setq info (plist-put info :reveal-mathjax t))
+                           (org-html-latex-environment latex-env contents info)))
+    (latex-fragment . (lambda (frag contents info)
+                        (setq info (plist-put info :reveal-mathjax t))
+                        (org-html-latex-fragment frag contents info)))
     (plain-list . org-reveal-plain-list)
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
@@ -260,7 +267,8 @@ can contain the following escaping elements:
   :type 'string)
 
 (defcustom org-reveal-mathjax nil
-  "Enable MathJax script."
+  "Obsolete. Org-reveal enable mathjax when it find latex
+content."
   :group 'org-export-reveal
   :type 'boolean)
 
@@ -319,6 +327,23 @@ can contain the following escaping elements:
   JS scripts and pictures."
   :group 'org-export-reveal
   :type 'boolean)
+
+(defcustom org-reveal-init-script nil
+  "Custom script that will be passed to Reveal.initialize."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-note-key-char "n"
+  "If not nil, org-reveal-note-key-char's value is registered as
+  the key character to Org-mode's structure completion for
+  Reveal.js notes. When `<' followed by the key character are
+  typed and then the completion key is pressed, which is usually
+  `TAB', \"#+BEGIN_NOTES\" and \"#+END_NOTES\" is inserted.
+
+  The default value is \"n\". Set the variable to nil to disable
+  registering the completion"
+  :group 'org-export-reveal
+  :type 'string)
 
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
@@ -433,6 +458,12 @@ holding contextual information."
     (insert-file-contents-literally file)
     (buffer-string)))
 
+(defun org-reveal--file-url-to-path (url)
+  "Convert URL that points to local files to file path."
+  (replace-regexp-in-string
+   (if (string-equal system-type "windows-nt") "^file:///" "^file://")
+   "" url))
+
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
@@ -441,7 +472,7 @@ using custom variable `org-reveal-root'."
          (theme (plist-get info :reveal-theme))
          (theme-css (concat root-path "css/theme/" theme ".css"))
          ;; Local file names.
-         (local-root (replace-regexp-in-string "^file:///" "" root-path))
+         (local-root (org-reveal--file-url-to-path root-path))
          (local-reveal-css (concat local-root "css/reveal.css"))
          (local-theme-css (concat local-root "css/theme/" theme ".css"))
          (in-single-file (plist-get info :reveal-single-file)))
@@ -500,7 +531,7 @@ custom variable `org-reveal-root'."
          (head-min-js (concat root-path "lib/js/head.min.js"))
          (reveal-js (concat root-path "js/reveal.js"))
          ;; Local files
-         (local-root-path (replace-regexp-in-string "^file:///" "" root-path))
+         (local-root-path (org-reveal--file-url-to-path root-path))
          (local-head-min-js (concat local-root-path "lib/js/head.min.js"))
          (local-reveal-js (concat local-root-path "js/reveal.js"))
          (in-single-file (plist-get info :reveal-single-file)))
@@ -604,8 +635,7 @@ dependencies: [
 "
         ;; JS libraries
         (let* ((builtins
-                '(classList
-                  (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+                '(classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
                   markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
                   highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
@@ -637,15 +667,17 @@ dependencies: [
                   (append (list extra-codes) builtin-codes))))
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
-        )
-       "\n")
+        (let ((init-script (plist-get info :reveal-init-script)))
+          (if init-script (concat "," init-script)))
+        ))
      "});\n</script>\n")))
 
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
-  (format "<section id=\"table-of-contents\">\n%s</section>\n"
-          (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
-                                    (org-html-toc depth info))))
+  (let ((toc (org-html-toc depth info)))
+    (if toc
+        (format "<section id=\"table-of-contents\">\n%s</section>\n"
+                (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" toc)))))
 
 (defun org-reveal-inner-template (contents info)
   "Return body of document string after HTML conversion.
@@ -654,7 +686,9 @@ holding export options."
   (concat
    ;; Table of contents.
    (let ((depth (plist-get info :with-toc)))
-     (when depth (org-reveal-toc depth info)))
+     (when (and depth
+                (not (plist-get info :reveal-subtree)))
+       (org-reveal-toc depth info)))
    ;; Document contents.
    contents))
 
@@ -750,22 +784,34 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 (defun org-reveal--format-image-data-uri (link path info)
   "Generate the data URI for the image referenced by LINK."
   (let* ((ext (downcase (file-name-extension path))))
+    (message "link=%s" link)
     (if (string= ext "svg")
         (org-reveal-embedded-svg path)
       (org-html-close-tag
        "img"
        (org-html--make-attribute-string
-        (list :src
-              (concat
-               "data:image/"
-               ;; Image type
-               ext
-               ";base64,"
-               ;; Base64 content
-               (with-temp-buffer
-                 (insert-file-contents-literally path)
-                 (base64-encode-region 1 (point-max))
-                 (buffer-string)))))
+        (org-combine-plists
+         (list :src
+               (concat
+                "data:image/"
+                ;; Image type
+                ext
+                ";base64,"
+                ;; Base64 content
+                (with-temp-buffer
+                  (insert-file-contents-literally path)
+                  (base64-encode-region 1 (point-max))
+                  (buffer-string))))
+         ;; Get attribute list from parent element
+         ;; Copied from ox-html.el
+         (let* ((parent (org-export-get-parent-element link))
+                (link (let ((container (org-export-get-parent link)))
+                        (if (and (eq (org-element-type container) 'link)
+                                 (org-html-inline-image-p link info))
+                            container
+                          link))))
+           (and (eq (org-element-map parent 'link 'identity info t) link)
+                (org-export-read-attribute :attr_html parent)))))
        info))))
 
 (defun org-reveal-link (link desc info)
@@ -777,14 +823,15 @@ the result is the Data URIs of the referenced image."
                                 (org-export-inline-image-p
                                  link (plist-get info :html-inline-image-rules))))
          (raw-path (org-element-property :path link))
-         (clean-path (replace-regexp-in-string "^file:///" "" raw-path))
+         (clean-path (org-reveal--file-url-to-path raw-path))
          (can-embed-image (and want-embed-image
                                (file-readable-p clean-path))))
     (if can-embed-image
         (org-reveal--format-image-data-uri link clean-path info)
       (if want-embed-image
           (error "Cannot embed image %s" raw-path)
-        (org-html-link link desc info)))))
+        (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
+                                  (org-html-link link desc info))))))
 
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
@@ -880,8 +927,7 @@ contextual information."
 contents is the transcoded contents string.
 info is a plist holding export options."
   (concat
-   (format "<?xml version=\"1.0\" encoding=\"utf-8\"?>
-<!DOCTYPE html>\n<html%s>\n<head>\n"
+   (format "<!DOCTYPE html>\n<html%s>\n<head>\n"
            (if-format " lang=\"%s\"" (plist-get info :language)))
    "<meta charset=\"utf-8\"/>\n"
    (if-format "<title>%s</title>\n" (org-export-data (plist-get info :title) info))
@@ -894,9 +940,10 @@ info is a plist holding export options."
    "</head>
 <body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
-"<div class=\"reveal\">
+   "<div class=\"reveal\">
 <div class=\"slides\">\n"
-   (if (plist-get info :reveal-title-slide)
+   (if (and (plist-get info :reveal-title-slide)
+            (not (plist-get info :reveal-subtree)))
        (concat
         (format "<section id=\"sec-title-slide\"%s%s%s%s>\n"
                 (if-format " data-background=\"%s\""
@@ -1001,6 +1048,15 @@ transformed fragment attribute to ELEM's attr_html plist."
   (interactive)
   (browse-url-of-file (expand-file-name (org-reveal-export-to-html async subtreep visible-only body-only ext-plist))))
 
+(defun org-reveal-export-current-subtree
+    (&optional async subtreep visible-only body-only ext-plist)
+  "Export current subtree to a Reveal.js HTML file."
+  (interactive)
+  (org-narrow-to-subtree)
+  (let ((ret (org-reveal-export-to-html async subtreep visible-only body-only (plist-put ext-plist :reveal-subtree t))))
+    (widen)
+    ret))
+
 ;;;###autoload
 (defun org-reveal-publish-to-reveal
  (plist filename pub-dir)
@@ -1013,6 +1069,10 @@ publishing directory.
 Return output file name."
   (org-publish-org-to 'reveal filename ".html" plist pub-dir))
 
+;; Register auto-completion for speaker notes.
+(when org-reveal-note-key-char
+  (add-to-list 'org-structure-template-alist
+               (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES")))
 
 (provide 'ox-reveal)
 

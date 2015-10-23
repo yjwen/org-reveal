@@ -3,7 +3,7 @@
 #+Email: yjwen.ty@gmail.com
 
 #+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
-#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
 #+OPTIONS: reveal_width:1200 reveal_height:800
 #+OPTIONS: toc:1
 #+REVEAL_MARGIN: 0.1
@@ -105,15 +105,15 @@ $ git clone https://github.com/yjwen/org-reveal.git
    on this standard please refer to
    [[http://en.wikipedia.org/wiki/File_URI_scheme]]
 
-#+BEGIN_SRC org
-,#+REVEAL_ROOT: file:///d:/reveal.js
-#+END_SRC
+   #+BEGIN_SRC org
+   ,#+REVEAL_ROOT: file:///d:/reveal.js
+   #+END_SRC
 
    Set your =REVEAL_ROOT= to the following URL to download reveal.js from
    a CDN instead of downloading a local copy.
 
    #+BEGIN_SRC org
-   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/2.5.0/
+   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
    #+END_SRC
 
 
@@ -143,7 +143,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
    horizontally. Deeper headings are mapped to vertical slides below their
    parent level 1 heading.
 
-*** HLevel's Affects on Slides Layout
+*** HLevel's Effects on Slides Layout
 
     Assume we have a simple Org file as below:
 #+BEGIN_SRC org
@@ -448,13 +448,13 @@ fibs = 0 : 1 : next fibs
    LateX equation are rendered in native HTML5 contents.
 
    *IMPORTANT*: Displaying equations requires internet connection to
-   [[http://mathjax.org/][mathjax.org]] or local MathJax installation.
-
-   *IMPORTANT 2*: MathJax is disabled by default to reduce internet
-   traffic. Set =#+OPTIONS= tag =reveal_mathjax= or variable
-   =org-reveal-mathjax= to true to enable it. For local MathJax
+   [[http://mathjax.org/][mathjax.org]] or local MathJax installation. For local MathJax
    installation, set option =REVEAL_MATHJAX_URL= to the URL pointing
    to the local MathJax location.
+
+   *Note*: Option ~reveal_mathjax~ is obsolete now. Org-reveal
+   exports necessary MathJax configurations when there is Latex
+   equation found.
 
 ** Preamble and Postamble
 
@@ -520,6 +520,15 @@ fibs = 0 : 1 : next fibs
    shows only blank screens. A workaround to this issue is to put
    the presentation HTML file into the Reveal.js root directory and
    reopen it in the browser.
+
+*** Easy-Template for Speaker Notes
+
+    Org-reveal registers 'n' as the key for speaker notes easy-template.
+    So you can press '<' followed by 'n' and then press TAB, the ~#+BEGIN_NOTES~
+    and ~#+END_NOTES~ pair is inserted automatically.
+
+    Customize ~org-reveal-note-key-char~ to change the default key
+    'n'. set it to nil will forbid the auto-completion for speaker notes.
 
 ** Multiplexing
    Reveal.js supports multiplexing, which allows allows your audience to view
@@ -590,6 +599,7 @@ fibs = 0 : 1 : next fibs
    By setting option =reveal_single_file= to ~t~, images and necessary
    Reveal.js scripts will be embedded into the exported HTML file, to make
    an portable HTML.
+   Attention: This needs locally available reveal.js files!
 
    #+BEGIN_SRC org
    ,#+OPTIONS: reveal_single_file:t
@@ -601,6 +611,12 @@ fibs = 0 : 1 : next fibs
 
    Code highlight by highlight.js is also disabled. But *code
    highlight by Emacs is not effected.*
+
+** Export Current Subtree
+
+  Use menu entry " C-c C-e R S" to export only current subtree,
+  without the title slide and the table of content, for a quick preview
+  of your current edition.
 
 * Tips
 
@@ -622,6 +638,12 @@ fibs = 0 : 1 : next fibs
 
    * [[Tips]].
    * [[#my-heading][Heading]] with a =CUSTOM_ID= property.
+
+** Custom JS
+
+   To pass custom JS code to ~Reveal.initialize~, state the code by
+   ~#+REVEAL_INIT_SCRIPT~ (multiple statements are concatenated) or by
+   custom variable ~org-reveal-init-script~.
 
 * Thanks
 
