@@ -14,7 +14,7 @@
 #+REVEAL_HLEVEL: 2
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
-#+REVEAL_PLUGINS: (highlight markdown notes)
+#+REVEAL_PLUGINS: (markdown notes)
 #+REVEAL_EXTRA_CSS: ./local.css
 
 * Reveal.js and Org-Reveal
@@ -421,21 +421,39 @@ $ git clone https://github.com/yjwen/org-reveal.git
       =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyboard=, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
-** Source Codes
+** Highlight Source Code
 
-   Org-reveal use Org-Babel to highlight source codes.
+   There are two ways to highlight source code.
+   1. Use your Emacs theme
+   2. Use highlight.js
 
-   Codes copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
-#+BEGIN_SRC haskell
+      
+   To Use your Emacs theme, please make sure ~htmlize.el~ is
+   installed. Then no more setup is necessary.  
 
-fibs = 0 : 1 : next fibs
+   Below is an example. Codes are copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
+   #+BEGIN_SRC haskell
+   fibs = 0 : 1 : next fibs
        where next (a : t@(b:_)) = (a+b) : next t
-#+END_SRC
+   #+END_SRC
 
    If you saw odd indentation, please set variable =org-html-indent=
    to =nil= and export again.
 
-   If code is not highlighted, please make sure =htmlize.el= is installed.
+*** Using highlight.js
+
+    You can also use [[http://hightlightjs.org][highlight.js]], by adding ~highlight~ to the Reveal.js
+    plugin list. 
+    #+BEGIN_SRC org
+      ,#+REVEAL_PLUGINS: (highlight)
+    #+END_SRC
+
+    The default highlighting theme is ~zenburn.css~ brought with
+    Reveal.js. To use other themes, please specify the CSS file name by
+    ~#+REVEAL_HIGHLIGHT_CSS~ or the variable ~org-reveal-highlight-css~.
+    
+    The "%r" in the given CSS file name will be replaced by Reveal.js'
+    URL.
 
 ** MathJax
   :PROPERTIES:

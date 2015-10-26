@@ -83,6 +83,7 @@
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
+    (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     )
 
   :translate-alist
@@ -333,6 +334,11 @@ content."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-highlight-css "%r/lib/css/zenburn.css"
+  "Hightlight.js CSS file."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-note-key-char "n"
   "If not nil, org-reveal-note-key-char's value is registered as
   the key character to Org-mode's structure completion for
@@ -500,7 +506,13 @@ using custom variable `org-reveal-root'."
                "<link rel=\"stylesheet\" href=\"" theme-css "\" id=\"theme\"/>\n"))
      ;; extra css
      (let ((extra-css (plist-get info :reveal-extra-css)))
-       (if extra-css (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css) ""))
+       (if (string= extra-css "") ""
+         (format "<link rel=\"stylesheet\" href=\"%s\"/>\n" extra-css)))
+     ;; Include CSS for highlight.js if necessary
+     (if (org-reveal--using-highlight.js info)
+         (format "<link rel=\"stylesheet\" href=\"%s\"/>" 
+                 (format-spec (plist-get info :reveal-highlight-css)
+                              `((?r . ,(directory-file-name root-path))))))
      ;; print-pdf
      (if in-single-file ""
        (format "
@@ -871,18 +883,18 @@ holding contextual information."
   ;; Just return the contents. No "<div>" tags.
   contents)
 
+(defun org-reveal--using-highlight.js (info)
+  "Check whether highlight.js plugin is enabled."
+  (memq 'highlight (or (car (read-from-string (plist-get info :reveal-plugins)))
+                       org-reveal-plugins)))
+
 (defun org-reveal-src-block (src-block contents info)
   "Transcode a SRC-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
-    (let* ((buffer-plugins (plist-get info :reveal-plugins))
-           (use-highlight (memq 'highlight
-                                (cond
-                                 ((string= buffer-plugins "") nil)
-                                 (buffer-plugins (car (read-from-string buffer-plugins)))
-                                 (t org-reveal-plugins))))
+    (let* ((use-highlight (org-reveal--using-highlight.js info))
            (lang (org-element-property :language src-block))
            (caption (org-export-get-caption src-block))
            (code (if (not use-highlight)
