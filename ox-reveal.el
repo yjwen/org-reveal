@@ -227,10 +227,10 @@ can contain the following escaping elements:
   :group 'org-export-reveal
   :type 'boolean)
 
-(defcustom org-reveal-slide-number t
+(defcustom org-reveal-slide-number "c"
   "Reveal showing slide numbers."
   :group 'org-export-reveal
-  :type 'boolean)
+  :type 'string)
 
 (defcustom org-reveal-keyboard t
   "Reveal use keyboard navigation."
@@ -591,7 +591,9 @@ overview: %s,
             (if (plist-get info :reveal-progress) "true" "false")
             (if (plist-get info :reveal-history) "true" "false")
             (if (plist-get info :reveal-center) "true" "false")
-            (if (plist-get info :reveal-slide-number) "true" "false")
+            (let ((slide-number (plist-get info :reveal-slide-number)))
+              (if slide-number (format "'%s'" slide-number)
+                "false"))
             (if (plist-get info :reveal-rolling-links) "true" "false")
             (if (plist-get info :reveal-keyboard) "true" "false")
             (if (plist-get info :reveal-overview) "true" "false"))
