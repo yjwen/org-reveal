@@ -175,7 +175,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     * Setting Org files local HLevel to option =REVEAL_HLEVEL=.
 #+BEGIN_SRC org
-,#+REVEAL_HLEVEL 2
+,#+REVEAL_HLEVEL: 2
 #+END_SRC
 
 ** Force Split
