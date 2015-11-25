@@ -17,6 +17,11 @@
 #+REVEAL_PLUGINS: (markdown notes)
 #+REVEAL_EXTRA_CSS: ./local.css
 
+[![MELPA](http://melpa.org/packages/org-reveal-badge.svg)](http://melpa.org/#/org-reveal)
+[![MELPA stable](http://stable.melpa.org/packages/org-reveal-badge.svg)](http://stable.melpa.org/#/org-reveal)
+[![Tag Version](https://img.shields.io/github/tag/yjwen/org-reveal.svg)](https://github.com/yjwen/org-reveal/tags)
+[![License] (http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
