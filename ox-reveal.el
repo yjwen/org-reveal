@@ -670,11 +670,12 @@ dependencies: [
                 (mapcar
                  (lambda (p)
                    (eval (plist-get builtins p)))
-                 (let ((buffer-plugins (plist-get info :reveal-plugins)))
-                   (cond
-                    ((string= buffer-plugins "") ())
-                    (buffer-plugins (car (read-from-string buffer-plugins)))
-                    (t org-reveal-plugins)))))
+                 (let ((buffer-plugins (condition-case e
+                                           (car (read-from-string (plist-get info :reveal-plugins)))
+                                         (end-of-file nil)
+                                         (wrong-type-argument nil))))
+                   (or (and buffer-plugins (listp buffer-plugins) buffer-plugins)
+                       org-reveal-plugins))))
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
                 (if (string= "" extra-codes) builtin-codes
@@ -887,8 +888,12 @@ holding contextual information."
 
 (defun org-reveal--using-highlight.js (info)
   "Check whether highlight.js plugin is enabled."
-  (memq 'highlight (or (car (read-from-string (plist-get info :reveal-plugins)))
-                       org-reveal-plugins)))
+  (let ((reveal-plugins (condition-case e
+                            (car (read-from-string (plist-get info :reveal-plugins)))
+                          (end-of-file nil)
+                          (wrong-type-argument nil))))
+    (memq 'highlight (or (and reveal-plugins (listp reveal-plugins) reveal-plugins)
+                         org-reveal-plugins))))
 
 (defun org-reveal-src-block (src-block contents info)
   "Transcode a SRC-BLOCK element from Org to Reveal.
