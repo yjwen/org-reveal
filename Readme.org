@@ -17,9 +17,9 @@
 #+REVEAL_PLUGINS: (markdown notes)
 #+REVEAL_EXTRA_CSS: ./local.css
 
-[[http://melpa.org/#/org-reveal][file:http://melpa.org/packages/org-reveal-badge.svg]]
-[[http://stable.melpa.org/#/org-reveal][file:http://stable.melpa.org/packages/org-reveal-badge.svg]]
-[[https://github.com/yjwen/org-reveal/tags][file:https://img.shields.io/github/tag/yjwen/org-reveal.svg]]
+[[http://melpa.org/#/org-reveal][http://melpa.org/packages/org-reveal-badge.svg]]
+[[http://stable.melpa.org/#/org-reveal][http://stable.melpa.org/packages/org-reveal-badge.svg]]
+[[https://github.com/yjwen/org-reveal/tags][https://img.shields.io/github/tag/yjwen/org-reveal.svg]]
 [[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
 
 * Reveal.js and Org-Reveal
