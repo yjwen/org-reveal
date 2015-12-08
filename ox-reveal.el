@@ -754,7 +754,7 @@ holding export options."
 	  ;; Check-boxes in descriptive lists are associated to tag.
 	  (concat (format "<dt%s>%s</dt>"
 			  attr-html (concat checkbox term))
-		  "<dd>"))))
+		 (format "<dd%s>" attr-html)))))
      (unless (eq type 'descriptive) checkbox)
      (and contents (org-trim contents))
      (case type
