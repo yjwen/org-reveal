@@ -87,8 +87,7 @@
     )
 
   :translate-alist
-  '((export-block . org-reveal-export-block)
-    (headline . org-reveal-headline)
+  '((headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
@@ -103,10 +102,10 @@
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
+    (special-block . org-reveal-special-block)
     (template . org-reveal-template))
 
   :filters-alist '((:filter-parse-tree . org-reveal-filter-parse-tree))
-  :export-block '("REVEAL" "NOTES")
   )
 
 (defcustom org-reveal-root "./reveal.js"
@@ -372,16 +371,18 @@ holding contextual information."
   (and frag
        (format " class=\"%s\"" (frag-style frag info))))
 
-(defun org-reveal-export-block (export-block contents info)
-  "Transocde a EXPORT-BLOCK element from Org to Reveal.
-CONTENTS is nil. INFO is a plist holding contextual information."
-  (let ((block-type (org-element-property :type export-block))
-        (block-string (org-element-property :value export-block)))
-    (cond ((string= block-type "NOTES")
-           (format "<aside class=\"notes\">\n%s\n</aside>\n"
-                   (org-export-string-as block-string 'html 'body-only)))
-          ((string= block-type "HTML")
-           (org-remove-indentation block-string)))))
+(defun org-reveal-special-block (special-block contents info)
+  "Transcode a SPECIAL-BLOCK element from Org to Reveal.
+CONTENTS holds the contents of the block. INFO is a plist
+holding contextual information.
+
+If the block type is 'NOTES', transcode the block into a
+Reveal.js slide note. Otherwise, export the block as by the HTML
+exporter."
+  (let ((block-type (org-element-property :type special-block)))
+    (if (string= block-type "NOTES")
+        (format "<aside class=\"notes\">\n%s\n</aside>\n" contents)
+      (org-html-special-block special-block contents info))))
 
 ;; Copied from org-html-headline and modified to embed org-reveal
 ;; specific attributes.
