@@ -484,6 +484,11 @@ using custom variable `org-reveal-root'."
          (local-theme-css (concat local-root "css/theme/" theme ".css"))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
+     ;; Default embedded style sheets
+     "<style type=\"text/css\">
+.underline { text-decoration: underline; }
+</style>
+"
      ;; stylesheets
      (if (and in-single-file
               (file-readable-p local-reveal-css)
