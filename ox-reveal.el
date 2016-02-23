@@ -92,9 +92,7 @@
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (link . org-reveal-link)
-    (latex-environment . (lambda (latex-env contents info)
-                           (setq info (plist-put info :reveal-mathjax t))
-                           (org-html-latex-environment latex-env contents info)))
+    (latex-environment . org-reveal-latex-environment)
     (latex-fragment . (lambda (frag contents info)
                         (setq info (plist-put info :reveal-mathjax t))
                         (org-html-latex-fragment frag contents info)))
@@ -853,6 +851,16 @@ the result is the Data URIs of the referenced image."
           (error "Cannot embed image %s" raw-path)
         (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
                                   (org-html-link link desc info))))))
+
+(defun org-reveal-latex-environment (latex-env contents info)
+  "Transcode a LaTeX environment from Org to Reveal.
+
+LATEX-ENV is the Org element. CONTENTS is the contents of the environment. INFO is a plist holding contextual information "
+  (setq info (plist-put info :reveal-mathjax t))
+  (let ((attrs (org-export-read-attribute :attr_html latex-env)))
+    (format "<div%s>\n%s\n</div>\n"
+            (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
+            (org-html-latex-environment latex-env contents info))))
 
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
