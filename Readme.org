@@ -33,7 +33,7 @@
 * Requirements and Installation
 
   - Reveal.js.
-  - Latest org-mode.
+  - Org-mode.
   - ox-reveal.el.
   - htmlize.el (optional, for syntax highlighting).
   - And, of course, emacs.
@@ -63,9 +63,16 @@
    You can also install the latest developing version of org-reveal directly
    from GitHub.
 
-   Please use the following command to clone the org-reveal GitHub repository.
+   Please download the latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal
+   GitHub page]]. Or clone the GitHub repository:
    #+BEGIN_SRC sh
    git clone https://github.com/yjwen/org-reveal.git
+   #+END_SRC
+
+   Copy =ox-reveal.el= to one of your Emacs's ~load-path~, and add the
+   following statement to your =.emacs= file.
+   #+BEGIN_SRC lisp
+   (require 'ox-reveal)
    #+END_SRC
 
    *Note*: It is suggested to use the Org-mode git repository in pair
@@ -77,21 +84,6 @@
 
    Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] for building and installing Org-mode.
 
-** Obtain Org-reveal
-
-   Download the latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal GitHub page]].
-
-   Or clone the GitHub repository:
-#+BEGIN_SRC sh
-$ git clone https://github.com/yjwen/org-reveal.git
-#+END_SRC
-
-   Copy =ox-reveal.el= to the Org-mode installation directory.
-
-   Add the following statement to your =.emacs= file.
-#+BEGIN_SRC lisp
-(require 'ox-reveal)
-#+END_SRC
 
 * Configuration
 
