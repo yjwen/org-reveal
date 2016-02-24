@@ -38,26 +38,44 @@
   - htmlize.el (optional, for syntax highlighting).
   - And, of course, emacs.
 
-** Obtain Reveal.js
+** Install Reveal.js
 
    Download Reveal.js packages from [[https://github.com/hakimel/reveal.js/][here]].
 
    Extract Reveal.js folders from the downloaded zip file.
 
    If you do not wish to download reveal.js yourself and would rather get a copy from a CDN, 
-   see the section /Set the location of Reveal.js/
+   see the section [[Set the location of Reveal.js]]
 
-** Obtain org-mode
+** Install org-reveal from MELPA
 
-   *Note*: Org-reveal relies on the Org-mode 8.0 export frame work.
-   Pre-packaged org-mode may be out-of-date.
+   The easiest way to install org-reveal is to install package
+   ox-reveal from MELPA.
 
-   If in doubt, use the latest development version from the repository.
-#+BEGIN_SRC sh
-$ git clone git://orgmode.org/org-mode.git
-#+END_SRC
+   Please refer to [[http://melpa.org/#/getting-started]] for using MELPA.
 
-    Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] to build and install Org-mode.
+   *Note*: It is suggested to use the [[http://orgmode.org/elpa.html][Org ELPA]] archive in pair
+   with the ox-reveal packages. Emacs builtin Org-mode package may be
+   out of date for MELPA's ox-reveal.
+
+** Install org-reveal from GitHub
+
+   You can also install the latest developing version of org-reveal directly
+   from GitHub.
+
+   Please use the following command to clone the org-reveal GitHub repository.
+   #+BEGIN_SRC sh
+   git clone https://github.com/yjwen/org-reveal.git
+   #+END_SRC
+
+   *Note*: It is suggested to use the Org-mode git repository in pair
+   with the GitHub org-reveal. Please get the Org-mode git repository
+   by:
+   #+BEGIN_SRC sh
+   $ git clone git://orgmode.org/org-mode.git
+   #+END_SRC
+
+   Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] for building and installing Org-mode.
 
 ** Obtain Org-reveal
 
