@@ -14,8 +14,11 @@
 #+REVEAL_HLEVEL: 2
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
 #+REVEAL_POSTAMBLE: <p> Created by yjwen. </p>
-#+REVEAL_PLUGINS: (highlight markdown notes)
+#+REVEAL_PLUGINS: (markdown notes)
 #+REVEAL_EXTRA_CSS: ./local.css
+
+[[http://melpa.org/#/ox-reveal][file:http://melpa.org/packages/ox-reveal-badge.svg]]
+[[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
 
 * Reveal.js and Org-Reveal
 
@@ -30,47 +33,57 @@
 * Requirements and Installation
 
   - Reveal.js.
-  - Latest org-mode.
+  - Org-mode.
   - ox-reveal.el.
   - htmlize.el (optional, for syntax highlighting).
   - And, of course, emacs.
 
-** Obtain Reveal.js
+** Install Reveal.js
 
    Download Reveal.js packages from [[https://github.com/hakimel/reveal.js/][here]].
 
    Extract Reveal.js folders from the downloaded zip file.
 
    If you do not wish to download reveal.js yourself and would rather get a copy from a CDN, 
-   see the section /Set the location of Reveal.js/
+   see the section [[Set the location of Reveal.js]]
 
-** Obtain org-mode
+** Install org-reveal from MELPA
 
-   *Note*: Org-reveal relies on the Org-mode 8.0 export frame work.
-   Pre-packaged org-mode may be out-of-date.
+   The easiest way to install org-reveal is to install package
+   ox-reveal from MELPA.
 
-   If in doubt, use the latest development version from the repository.
-#+BEGIN_SRC sh
-$ git clone git://orgmode.org/org-mode.git
-#+END_SRC
+   Please refer to [[http://melpa.org/#/getting-started]] for using MELPA.
 
-    Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] to build and install Org-mode.
+   *Note*: It is suggested to use the [[http://orgmode.org/elpa.html][Org ELPA]] archive in pair
+   with the ox-reveal packages. Emacs builtin Org-mode package may be
+   out of date for MELPA's ox-reveal.
 
-** Obtain Org-reveal
+** Install org-reveal from GitHub
 
-   Download the latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal GitHub page]].
+   You can also install the latest developing version of org-reveal directly
+   from GitHub.
 
-   Or clone the GitHub repository:
-#+BEGIN_SRC sh
-$ git clone https://github.com/yjwen/org-reveal.git
-#+END_SRC
+   Please download the latest Org-reveal package from [[https://github.com/yjwen/org-reveal][the Org-reveal
+   GitHub page]]. Or clone the GitHub repository:
+   #+BEGIN_SRC sh
+   git clone https://github.com/yjwen/org-reveal.git
+   #+END_SRC
 
-   Copy =ox-reveal.el= to the Org-mode installation directory.
+   Copy =ox-reveal.el= to one of your Emacs's ~load-path~, and add the
+   following statement to your =.emacs= file.
+   #+BEGIN_SRC lisp
+   (require 'ox-reveal)
+   #+END_SRC
 
-   Add the following statement to your =.emacs= file.
-#+BEGIN_SRC lisp
-(require 'ox-reveal)
-#+END_SRC
+   *Note*: It is suggested to use the Org-mode git repository in pair
+   with the GitHub org-reveal. Please get the Org-mode git repository
+   by:
+   #+BEGIN_SRC sh
+   $ git clone git://orgmode.org/org-mode.git
+   #+END_SRC
+
+   Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] for building and installing Org-mode.
+
 
 * Configuration
 
@@ -175,7 +188,7 @@ $ git clone https://github.com/yjwen/org-reveal.git
 
     * Setting Org files local HLevel to option =REVEAL_HLEVEL=.
 #+BEGIN_SRC org
-,#+REVEAL_HLEVEL 2
+,#+REVEAL_HLEVEL: 2
 #+END_SRC
 
 ** Force Split
@@ -284,7 +297,18 @@ $ git clone https://github.com/yjwen/org-reveal.git
         ratio.
 
 ** Slide Numbering
-   Activate slide numbers by setting =#+REVEAL_SLIDE_NUMBER:= to =t= (true).
+
+   By default, a flatten slide number is showed at the lower-right corner of each slide.
+
+   To disable slide numbering, please add ~reveal_slide_number:nil~ to
+   ~#+OPTIONS:~ line.
+
+   From Reveal.js 3.1.0, slide numbering can have several custom
+   formats. To choose one format, please set ~reveal_slide_number~ to
+   its proper string. For example, ~reveal_slide_number:h/v~.
+   
+   Supported format string can be found in [[https://github.com/hakimel/reveal.js/#slide-number][Reveal.js manual]].
+   
 
 ** Slide Header/Footer
    Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
@@ -421,21 +445,39 @@ $ git clone https://github.com/yjwen/org-reveal.git
       =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyboard=, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
-** Source Codes
+** Highlight Source Code
 
-   Org-reveal use Org-Babel to highlight source codes.
+   There are two ways to highlight source code.
+   1. Use your Emacs theme
+   2. Use highlight.js
 
-   Codes copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
-#+BEGIN_SRC haskell
+      
+   To Use your Emacs theme, please make sure ~htmlize.el~ is
+   installed. Then no more setup is necessary.  
 
-fibs = 0 : 1 : next fibs
+   Below is an example. Codes are copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
+   #+BEGIN_SRC haskell
+   fibs = 0 : 1 : next fibs
        where next (a : t@(b:_)) = (a+b) : next t
-#+END_SRC
+   #+END_SRC
 
    If you saw odd indentation, please set variable =org-html-indent=
    to =nil= and export again.
 
-   If code is not highlighted, please make sure =htmlize.el= is installed.
+*** Using highlight.js
+
+    You can also use [[http://hightlightjs.org][highlight.js]], by adding ~highlight~ to the Reveal.js
+    plugin list. 
+    #+BEGIN_SRC org
+      ,#+REVEAL_PLUGINS: (highlight)
+    #+END_SRC
+
+    The default highlighting theme is ~zenburn.css~ brought with
+    Reveal.js. To use other themes, please specify the CSS file name by
+    ~#+REVEAL_HIGHLIGHT_CSS~ or the variable ~org-reveal-highlight-css~.
+    
+    The "%r" in the given CSS file name will be replaced by Reveal.js'
+    URL.
 
 ** MathJax
   :PROPERTIES:

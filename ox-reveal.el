@@ -83,18 +83,16 @@
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
+    (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     )
 
   :translate-alist
-  '((export-block . org-reveal-export-block)
-    (headline . org-reveal-headline)
+  '((headline . org-reveal-headline)
     (inner-template . org-reveal-inner-template)
     (item . org-reveal-item)
     (keyword . org-reveal-keyword)
     (link . org-reveal-link)
-    (latex-environment . (lambda (latex-env contents info)
-                           (setq info (plist-put info :reveal-mathjax t))
-                           (org-html-latex-environment latex-env contents info)))
+    (latex-environment . org-reveal-latex-environment)
     (latex-fragment . (lambda (frag contents info)
                         (setq info (plist-put info :reveal-mathjax t))
                         (org-html-latex-fragment frag contents info)))
@@ -102,10 +100,10 @@
     (quote-block . org-reveal-quote-block)
     (section . org-reveal-section)
     (src-block . org-reveal-src-block)
+    (special-block . org-reveal-special-block)
     (template . org-reveal-template))
 
   :filters-alist '((:filter-parse-tree . org-reveal-filter-parse-tree))
-  :export-block '("REVEAL" "NOTES")
   )
 
 (defcustom org-reveal-root "./reveal.js"
@@ -226,10 +224,10 @@ can contain the following escaping elements:
   :group 'org-export-reveal
   :type 'boolean)
 
-(defcustom org-reveal-slide-number t
+(defcustom org-reveal-slide-number "c"
   "Reveal showing slide numbers."
   :group 'org-export-reveal
-  :type 'boolean)
+  :type 'string)
 
 (defcustom org-reveal-keyboard t
   "Reveal use keyboard navigation."
@@ -333,6 +331,11 @@ content."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-highlight-css "%r/lib/css/zenburn.css"
+  "Hightlight.js CSS file."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-note-key-char "n"
   "If not nil, org-reveal-note-key-char's value is registered as
   the key character to Org-mode's structure completion for
@@ -366,16 +369,18 @@ holding contextual information."
   (and frag
        (format " class=\"%s\"" (frag-style frag info))))
 
-(defun org-reveal-export-block (export-block contents info)
-  "Transocde a EXPORT-BLOCK element from Org to Reveal.
-CONTENTS is nil. INFO is a plist holding contextual information."
-  (let ((block-type (org-element-property :type export-block))
-        (block-string (org-element-property :value export-block)))
-    (cond ((string= block-type "NOTES")
-           (format "<aside class=\"notes\">\n%s\n</aside>\n"
-                   (org-export-string-as block-string 'html 'body-only)))
-          ((string= block-type "HTML")
-           (org-remove-indentation block-string)))))
+(defun org-reveal-special-block (special-block contents info)
+  "Transcode a SPECIAL-BLOCK element from Org to Reveal.
+CONTENTS holds the contents of the block. INFO is a plist
+holding contextual information.
+
+If the block type is 'NOTES', transcode the block into a
+Reveal.js slide note. Otherwise, export the block as by the HTML
+exporter."
+  (let ((block-type (org-element-property :type special-block)))
+    (if (string= block-type "NOTES")
+        (format "<aside class=\"notes\">\n%s\n</aside>\n" contents)
+      (org-html-special-block special-block contents info))))
 
 ;; Copied from org-html-headline and modified to embed org-reveal
 ;; specific attributes.
@@ -477,6 +482,11 @@ using custom variable `org-reveal-root'."
          (local-theme-css (concat local-root "css/theme/" theme ".css"))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
+     ;; Default embedded style sheets
+     "<style type=\"text/css\">
+.underline { text-decoration: underline; }
+</style>
+"
      ;; stylesheets
      (if (and in-single-file
               (file-readable-p local-reveal-css)
@@ -500,7 +510,13 @@ using custom variable `org-reveal-root'."
                "<link rel=\"stylesheet\" href=\"" theme-css "\" id=\"theme\"/>\n"))
      ;; extra css
      (let ((extra-css (plist-get info :reveal-extra-css)))
-       (if extra-css (format "<link rel=\"stylesheet\" href=\"%s\"/>" extra-css) ""))
+       (if (string= extra-css "") ""
+         (format "<link rel=\"stylesheet\" href=\"%s\"/>\n" extra-css)))
+     ;; Include CSS for highlight.js if necessary
+     (if (org-reveal--using-highlight.js info)
+         (format "<link rel=\"stylesheet\" href=\"%s\"/>" 
+                 (format-spec (plist-get info :reveal-highlight-css)
+                              `((?r . ,(directory-file-name root-path))))))
      ;; print-pdf
      (if in-single-file ""
        (format "
@@ -579,7 +595,9 @@ overview: %s,
             (if (plist-get info :reveal-progress) "true" "false")
             (if (plist-get info :reveal-history) "true" "false")
             (if (plist-get info :reveal-center) "true" "false")
-            (if (plist-get info :reveal-slide-number) "true" "false")
+            (let ((slide-number (plist-get info :reveal-slide-number)))
+              (if slide-number (format "'%s'" slide-number)
+                "false"))
             (if (plist-get info :reveal-rolling-links) "true" "false")
             (if (plist-get info :reveal-keyboard) "true" "false")
             (if (plist-get info :reveal-overview) "true" "false"))
@@ -656,11 +674,12 @@ dependencies: [
                 (mapcar
                  (lambda (p)
                    (eval (plist-get builtins p)))
-                 (let ((buffer-plugins (plist-get info :reveal-plugins)))
-                   (cond
-                    ((string= buffer-plugins "") ())
-                    (buffer-plugins (car (read-from-string buffer-plugins)))
-                    (t org-reveal-plugins)))))
+                 (let ((buffer-plugins (condition-case e
+                                           (car (read-from-string (plist-get info :reveal-plugins)))
+                                         (end-of-file nil)
+                                         (wrong-type-argument nil))))
+                   (or (and buffer-plugins (listp buffer-plugins) buffer-plugins)
+                       org-reveal-plugins))))
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
                 (if (string= "" extra-codes) builtin-codes
@@ -739,7 +758,7 @@ holding export options."
 	  ;; Check-boxes in descriptive lists are associated to tag.
 	  (concat (format "<dt%s>%s</dt>"
 			  attr-html (concat checkbox term))
-		  "<dd>"))))
+		 (format "<dd%s>" attr-html)))))
      (unless (eq type 'descriptive) checkbox)
      (and contents (org-trim contents))
      (case type
@@ -833,6 +852,16 @@ the result is the Data URIs of the referenced image."
         (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
                                   (org-html-link link desc info))))))
 
+(defun org-reveal-latex-environment (latex-env contents info)
+  "Transcode a LaTeX environment from Org to Reveal.
+
+LATEX-ENV is the Org element. CONTENTS is the contents of the environment. INFO is a plist holding contextual information "
+  (setq info (plist-put info :reveal-mathjax t))
+  (let ((attrs (org-export-read-attribute :attr_html latex-env)))
+    (format "<div%s>\n%s\n</div>\n"
+            (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
+            (org-html-latex-environment latex-env contents info))))
+
 (defun org-reveal-plain-list (plain-list contents info)
   "Transcode a PLAIN-LIST element from Org to Reveal.
 
@@ -871,18 +900,22 @@ holding contextual information."
   ;; Just return the contents. No "<div>" tags.
   contents)
 
+(defun org-reveal--using-highlight.js (info)
+  "Check whether highlight.js plugin is enabled."
+  (let ((reveal-plugins (condition-case e
+                            (car (read-from-string (plist-get info :reveal-plugins)))
+                          (end-of-file nil)
+                          (wrong-type-argument nil))))
+    (memq 'highlight (or (and reveal-plugins (listp reveal-plugins) reveal-plugins)
+                         org-reveal-plugins))))
+
 (defun org-reveal-src-block (src-block contents info)
   "Transcode a SRC-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
-    (let* ((buffer-plugins (plist-get info :reveal-plugins))
-           (use-highlight (memq 'highlight
-                                (cond
-                                 ((string= buffer-plugins "") nil)
-                                 (buffer-plugins (car (read-from-string buffer-plugins)))
-                                 (t org-reveal-plugins))))
+    (let* ((use-highlight (org-reveal--using-highlight.js info))
            (lang (org-element-property :language src-block))
            (caption (org-export-get-caption src-block))
            (code (if (not use-highlight)
