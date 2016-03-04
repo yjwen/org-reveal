@@ -417,14 +417,19 @@ holding contextual information."
 		  "</section>\n")))
          (if (<= level hlevel)
              ;; Add an extra "<section>" to group following slides
-             ;; into vertical slide group.
-             "<section>\n")
+             ;; into vertical slide group. Transition override
+             ;; attributes are attached at this level, too.
+             (let ((attrs
+                    (org-html--make-attribute-string
+                     `(:data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)))))
+               (if (string-empty-p attrs)
+                   "<section>\n"
+                 (format "<section %s>\n" attrs))))
          ;; Start a new slide.
          (format "<section %s%s>\n"
                  (org-html--make-attribute-string
                   `(:id ,(format "slide-%s" preferred-id)
                         :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
-                        :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
                         :data-background ,(org-element-property :REVEAL_BACKGROUND headline)
                         :data-background-size ,(org-element-property :REVEAL_BACKGROUND_SIZE headline)
                         :data-background-repeat ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline)
