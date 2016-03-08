@@ -422,7 +422,7 @@ holding contextual information."
              (let ((attrs
                     (org-html--make-attribute-string
                      `(:data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)))))
-               (if (string-empty-p attrs)
+               (if (string= attrs "")
                    "<section>\n"
                  (format "<section %s>\n" attrs))))
          ;; Start a new slide.
