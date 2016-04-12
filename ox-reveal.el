@@ -474,6 +474,25 @@ holding contextual information."
    (if (string-equal system-type "windows-nt") "^file:///" "^file://")
    "" url))
 
+(defun org-reveal--css-label (in-single-file file-name style-id)
+  "Generate an HTML label for including a CSS file, if
+  IN-SINGLE-FILE is t, the content of FILE-NAME is embedded,
+  otherwise, a `<link>' label is generated."
+  (when (and file-name (not (string= file-name "")))
+    (if in-single-file
+        ;; Single-file
+        (let ((local-file-name (org-reveal--file-url-to-path file-name)))
+          (if (file-readable-p local-file-name)
+              (concat "<style type=\"text/css\">\n"
+                      (org-reveal--read-file local-file-name)
+                      "\n</style>\n")
+            ;; But file is not readable.
+            (error "Cannot read %s" file-name)))
+      ;; Not in-single-file
+      (concat "<link rel=\"stylesheet\" href=\"" file-name "\""
+              (if style-id  (format " id=\"%s\"" style-id))
+              "/>\n"))))
+
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
@@ -481,10 +500,7 @@ using custom variable `org-reveal-root'."
          (reveal-css (concat root-path "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
          (theme-css (concat root-path "css/theme/" theme ".css"))
-         ;; Local file names.
-         (local-root (org-reveal--file-url-to-path root-path))
-         (local-reveal-css (concat local-root "css/reveal.css"))
-         (local-theme-css (concat local-root "css/theme/" theme ".css"))
+         (extra-css (plist-get info :reveal-extra-css))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; Default embedded style sheets
@@ -493,30 +509,12 @@ using custom variable `org-reveal-root'."
 </style>
 "
      ;; stylesheets
-     (if (and in-single-file
-              (file-readable-p local-reveal-css)
-              (file-readable-p local-theme-css))
-         ;; CSS files exist and are readable. Embed them.
-         (concat "<style type=\"text/css\">\n"
-                 (org-reveal--read-file local-reveal-css)
-                 "\n"
-                 (org-reveal--read-file local-theme-css)
-                 "</style>\n")
-       ;; Fall-back to external CSS links.
-       (if in-single-file
-           ;; Tried to embed CSS files but failed. Print a message about possible errors.
-           (error (concat "Cannot read "
-                            (mapconcat 'identity
-                                       (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
-                                                         (list local-reveal-css local-theme-css)))
-                                       ", "))))
-       ;; Create links to CSS files.
-       (concat "<link rel=\"stylesheet\" href=\"" reveal-css "\"/>\n"
-               "<link rel=\"stylesheet\" href=\"" theme-css "\" id=\"theme\"/>\n"))
-     ;; extra css
-     (let ((extra-css (plist-get info :reveal-extra-css)))
-       (if (string= extra-css "") ""
-         (format "<link rel=\"stylesheet\" href=\"%s\"/>\n" extra-css)))
+     (mapconcat (lambda (elem) (org-reveal--css-label in-single-file (car elem) (cdr elem)))
+                (list (cons reveal-css nil)
+                      (cons theme-css "theme")
+                      (cons extra-css nil))
+                "\n")
+
      ;; Include CSS for highlight.js if necessary
      (if (org-reveal--using-highlight.js info)
          (format "<link rel=\"stylesheet\" href=\"%s\"/>" 
