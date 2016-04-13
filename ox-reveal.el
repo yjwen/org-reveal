@@ -64,7 +64,6 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
-    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template space)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
@@ -125,27 +124,22 @@ else get value from custom variable `org-reveal-hlevel'."
     (if hlevel-str (string-to-number hlevel-str)
       org-reveal-hlevel)))
 
-(defcustom org-reveal-title-slide t
-  "Include a title slide."
-  :group 'org-export-reveal
-  :type 'boolean)
+(defcustom org-reveal-title-slide 'auto
+  "Non-nil means insert a title slide.
 
-(defcustom org-reveal-title-slide-template
-  "<h1>%t</h1>
-<h2>%a</h2>
-<h2>%e</h2>
-<h2>%d</h2>"
-  "Format template to specify title page slide. The format string
-can contain the following escaping elements:
+When set to `auto', an automatic title slide is generated. When
+set to a string, use this string as a format string for title
+slide, where the following escaping elements are allowed:
 
-  %s stands for the title.
+  %s stands for the title
   %a stands for the author's name.
   %e stands for the author's email.
-  %d stands for the date.
-  %% stands for a literal %.
-"
+  %d stands for the data.
+  %% stands for a literal %."
   :group 'org-export-reveal
-  :type 'string)
+  :type '(choice (const :tag "No title slide" nil)
+                 (const :tag "Auto title slide" 'auto)
+                 (string :tag "Custom title slide")))
 
 (defcustom org-reveal-transition
   "default"
@@ -958,6 +952,35 @@ contextual information."
           contents))
 
 
+(defun org-reveal--auto-title-slide-template (info)
+  "Generate the automatic title slide template."
+  (let* ((spec (org-html-format-spec info))
+         (title (org-export-data (plist-get info :title) info))
+         (author (cdr (assq ?a spec)))
+         (email (cdr (assq ?e spec)))
+         (date (cdr (assq ?d spec))))
+    (message "date=%s" date)
+    (concat
+     (when (and (plist-get info :with-title)
+                (org-string-nw-p title))
+       (concat "<h1 class=\"title\">" title "</h1>"))
+     (when (and (plist-get info :with-author)
+                (org-string-nw-p author))
+       (concat "<h2 class=\"author\">" author "</h2>"))
+     (when (and (plist-get info :with-email)
+                (org-string-nw-p email))
+       (concat "<h2 class=\"email\">" email "</h2>"))
+     (when (and (plist-get info :with-date)
+                (org-string-nw-p date))
+       (concat "<h2 class=\"date\">" date "</h2>"))
+     (when (plist-get info :time-stamp-file)
+       (concat "<p class=\"date\">"
+               (org-html--translate "Created" info)
+               ": "
+               (format-time-string
+                (plist-get info :html-metadata-timestamp-format))
+               "</p>")))))
+
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
 contents is the transcoded contents string.
@@ -978,21 +1001,27 @@ info is a plist holding export options."
    (org-reveal--build-pre/postamble 'preamble info)
    "<div class=\"reveal\">
 <div class=\"slides\">\n"
-   (if (and (plist-get info :reveal-title-slide)
-            (not (plist-get info :reveal-subtree)))
-       (concat
-        (format "<section id=\"sec-title-slide\"%s%s%s%s>\n"
-                (if-format " data-background=\"%s\""
-                           (plist-get info :reveal-title-slide-background))
-                (if-format " data-background-size=\"%s\""
-                           (plist-get info :reveal-title-slide-background-size))
-                (if-format " data-background-repeat=\"%s\""
-                           (plist-get info :reveal-title-slide-background-repeat))
-                (if-format " data-background-transition=\"%s\""
-                           (plist-get info :reveal-title-slide-background-transition)))
-        (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
-        "\n</section>\n")
-     "")
+   ;; Title slides
+   (let ((title-slide (plist-get info :reveal-title-slide)))
+     (when (and title-slide (not (plist-get info :reveal-subtree)))
+       (let ((title-slide-background (plist-get info :reveal-title-slide-background))
+             (title-slide-background-size (plist-get info :reveal-title-slide-background-size))
+             (title-slide-background-repeat (plist-get info :reveal-title-slide-background-repeat))
+             (title-slide-background-transition (plist-get info :reveal-title-slide-background-transition)))
+         (concat "<section id=\"sec-title-slide\""
+                 (when title-slide-background
+                   (concat " data-background=\"" title-slide-background "\""))
+                 (when title-slide-background-size
+                   (concat " data-background-size=\"" title-slide-background-size "\""))
+                 (when title-slide-background-repeat
+                   (concat " data-background-repeat=\"" title-slide-background-repeat "\""))
+                 (when title-slide-background-transition
+                   (concat " data-background-transition=\"" title-slide-background-transition "\""))
+                 ">"
+                 (cond ((eq title-slide nil) nil)
+                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec)))
+                       ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
+                 "\n</section>\n"))))
    contents
    "</div>
 </div>\n"
