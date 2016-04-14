@@ -134,7 +134,7 @@ slide, where the following escaping elements are allowed:
   %s stands for the title
   %a stands for the author's name.
   %e stands for the author's email.
-  %d stands for the data.
+  %d stands for the date.
   %% stands for a literal %."
   :group 'org-export-reveal
   :type '(choice (const :tag "No title slide" nil)

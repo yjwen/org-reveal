@@ -214,6 +214,28 @@
     Available themes can be found in "css/theme/" in the reveal.js directory.
 
     Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
+** Set The Title Slide
+   By default, Org-reveal generates a title slide displaying the
+   title, the author, the Email, the date and the time-stamp of the
+   Org document, controlled by Org's [[http://orgmode.org/org.html#Export-settings][export settings]].
+
+   To avoid a title slide, please set variable
+   ~org-reveal-title-slide~ to ~nil~, or add ~reveal_title_slide:nil~ to
+   ~#+OPTIONS:~ line.
+
+   To restore the default title slide, please set variable
+   ~org-reveal-title-slide~ to ~'auto~.
+
+*** Customize the Title Slide
+
+    To customize the title slide, please set ~org-reveal-title-slide~
+    to a string of HTML markups. The following escaping character can
+    be used to retrieve document information:
+    | ~%s~ | Title     |
+    | ~%a~ | Author    |
+    | ~%e~ | Email     |
+    | ~%d~ | Date      |
+    | ~%%~ | Literal % |
 
 ** Set Slide Background
 
