@@ -423,6 +423,7 @@ holding contextual information."
          (format "<section %s%s>\n"
                  (org-html--make-attribute-string
                   `(:id ,(format "slide-%s" preferred-id)
+                        :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
                         :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                         :data-background ,(org-element-property :REVEAL_BACKGROUND headline)
                         :data-background-size ,(org-element-property :REVEAL_BACKGROUND_SIZE headline)
