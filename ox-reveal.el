@@ -64,7 +64,6 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
-    (:reveal-title-slide-template "REVEAL_TITLE_SLIDE_TEMPLATE" nil org-reveal-title-slide-template space)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
@@ -125,27 +124,22 @@ else get value from custom variable `org-reveal-hlevel'."
     (if hlevel-str (string-to-number hlevel-str)
       org-reveal-hlevel)))
 
-(defcustom org-reveal-title-slide t
-  "Include a title slide."
-  :group 'org-export-reveal
-  :type 'boolean)
+(defcustom org-reveal-title-slide 'auto
+  "Non-nil means insert a title slide.
 
-(defcustom org-reveal-title-slide-template
-  "<h1>%t</h1>
-<h2>%a</h2>
-<h2>%e</h2>
-<h2>%d</h2>"
-  "Format template to specify title page slide. The format string
-can contain the following escaping elements:
+When set to `auto', an automatic title slide is generated. When
+set to a string, use this string as a format string for title
+slide, where the following escaping elements are allowed:
 
-  %s stands for the title.
+  %s stands for the title
   %a stands for the author's name.
   %e stands for the author's email.
   %d stands for the date.
-  %% stands for a literal %.
-"
+  %% stands for a literal %."
   :group 'org-export-reveal
-  :type 'string)
+  :type '(choice (const :tag "No title slide" nil)
+                 (const :tag "Auto title slide" 'auto)
+                 (string :tag "Custom title slide")))
 
 (defcustom org-reveal-transition
   "default"
@@ -417,14 +411,20 @@ holding contextual information."
 		  "</section>\n")))
          (if (<= level hlevel)
              ;; Add an extra "<section>" to group following slides
-             ;; into vertical slide group.
-             "<section>\n")
+             ;; into vertical slide group. Transition override
+             ;; attributes are attached at this level, too.
+             (let ((attrs
+                    (org-html--make-attribute-string
+                     `(:data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)))))
+               (if (string= attrs "")
+                   "<section>\n"
+                 (format "<section %s>\n" attrs))))
          ;; Start a new slide.
          (format "<section %s%s>\n"
                  (org-html--make-attribute-string
                   `(:id ,(format "slide-%s" preferred-id)
-                        :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                         :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
+                        :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                         :data-background ,(org-element-property :REVEAL_BACKGROUND headline)
                         :data-background-size ,(org-element-property :REVEAL_BACKGROUND_SIZE headline)
                         :data-background-repeat ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline)
@@ -469,6 +469,25 @@ holding contextual information."
    (if (string-equal system-type "windows-nt") "^file:///" "^file://")
    "" url))
 
+(defun org-reveal--css-label (in-single-file file-name style-id)
+  "Generate an HTML label for including a CSS file, if
+  IN-SINGLE-FILE is t, the content of FILE-NAME is embedded,
+  otherwise, a `<link>' label is generated."
+  (when (and file-name (not (string= file-name "")))
+    (if in-single-file
+        ;; Single-file
+        (let ((local-file-name (org-reveal--file-url-to-path file-name)))
+          (if (file-readable-p local-file-name)
+              (concat "<style type=\"text/css\">\n"
+                      (org-reveal--read-file local-file-name)
+                      "\n</style>\n")
+            ;; But file is not readable.
+            (error "Cannot read %s" file-name)))
+      ;; Not in-single-file
+      (concat "<link rel=\"stylesheet\" href=\"" file-name "\""
+              (if style-id  (format " id=\"%s\"" style-id))
+              "/>\n"))))
+
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
@@ -476,10 +495,7 @@ using custom variable `org-reveal-root'."
          (reveal-css (concat root-path "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
          (theme-css (concat root-path "css/theme/" theme ".css"))
-         ;; Local file names.
-         (local-root (org-reveal--file-url-to-path root-path))
-         (local-reveal-css (concat local-root "css/reveal.css"))
-         (local-theme-css (concat local-root "css/theme/" theme ".css"))
+         (extra-css (plist-get info :reveal-extra-css))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; Default embedded style sheets
@@ -488,30 +504,12 @@ using custom variable `org-reveal-root'."
 </style>
 "
      ;; stylesheets
-     (if (and in-single-file
-              (file-readable-p local-reveal-css)
-              (file-readable-p local-theme-css))
-         ;; CSS files exist and are readable. Embed them.
-         (concat "<style type=\"text/css\">\n"
-                 (org-reveal--read-file local-reveal-css)
-                 "\n"
-                 (org-reveal--read-file local-theme-css)
-                 "</style>\n")
-       ;; Fall-back to external CSS links.
-       (if in-single-file
-           ;; Tried to embed CSS files but failed. Print a message about possible errors.
-           (error (concat "Cannot read "
-                            (mapconcat 'identity
-                                       (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
-                                                         (list local-reveal-css local-theme-css)))
-                                       ", "))))
-       ;; Create links to CSS files.
-       (concat "<link rel=\"stylesheet\" href=\"" reveal-css "\"/>\n"
-               "<link rel=\"stylesheet\" href=\"" theme-css "\" id=\"theme\"/>\n"))
-     ;; extra css
-     (let ((extra-css (plist-get info :reveal-extra-css)))
-       (if (string= extra-css "") ""
-         (format "<link rel=\"stylesheet\" href=\"%s\"/>\n" extra-css)))
+     (mapconcat (lambda (elem) (org-reveal--css-label in-single-file (car elem) (cdr elem)))
+                (list (cons reveal-css nil)
+                      (cons theme-css "theme")
+                      (cons extra-css nil))
+                "\n")
+
      ;; Include CSS for highlight.js if necessary
      (if (org-reveal--using-highlight.js info)
          (format "<link rel=\"stylesheet\" href=\"%s\"/>" 
@@ -955,6 +953,35 @@ contextual information."
           contents))
 
 
+(defun org-reveal--auto-title-slide-template (info)
+  "Generate the automatic title slide template."
+  (let* ((spec (org-html-format-spec info))
+         (title (org-export-data (plist-get info :title) info))
+         (author (cdr (assq ?a spec)))
+         (email (cdr (assq ?e spec)))
+         (date (cdr (assq ?d spec))))
+    (message "date=%s" date)
+    (concat
+     (when (and (plist-get info :with-title)
+                (org-string-nw-p title))
+       (concat "<h1 class=\"title\">" title "</h1>"))
+     (when (and (plist-get info :with-author)
+                (org-string-nw-p author))
+       (concat "<h2 class=\"author\">" author "</h2>"))
+     (when (and (plist-get info :with-email)
+                (org-string-nw-p email))
+       (concat "<h2 class=\"email\">" email "</h2>"))
+     (when (and (plist-get info :with-date)
+                (org-string-nw-p date))
+       (concat "<h2 class=\"date\">" date "</h2>"))
+     (when (plist-get info :time-stamp-file)
+       (concat "<p class=\"date\">"
+               (org-html--translate "Created" info)
+               ": "
+               (format-time-string
+                (plist-get info :html-metadata-timestamp-format))
+               "</p>")))))
+
 (defun org-reveal-template (contents info)
   "Return complete document string after HTML conversion.
 contents is the transcoded contents string.
@@ -975,21 +1002,27 @@ info is a plist holding export options."
    (org-reveal--build-pre/postamble 'preamble info)
    "<div class=\"reveal\">
 <div class=\"slides\">\n"
-   (if (and (plist-get info :reveal-title-slide)
-            (not (plist-get info :reveal-subtree)))
-       (concat
-        (format "<section id=\"sec-title-slide\"%s%s%s%s>\n"
-                (if-format " data-background=\"%s\""
-                           (plist-get info :reveal-title-slide-background))
-                (if-format " data-background-size=\"%s\""
-                           (plist-get info :reveal-title-slide-background-size))
-                (if-format " data-background-repeat=\"%s\""
-                           (plist-get info :reveal-title-slide-background-repeat))
-                (if-format " data-background-transition=\"%s\""
-                           (plist-get info :reveal-title-slide-background-transition)))
-        (format-spec (plist-get info :reveal-title-slide-template) (org-html-format-spec info))
-        "\n</section>\n")
-     "")
+   ;; Title slides
+   (let ((title-slide (plist-get info :reveal-title-slide)))
+     (when (and title-slide (not (plist-get info :reveal-subtree)))
+       (let ((title-slide-background (plist-get info :reveal-title-slide-background))
+             (title-slide-background-size (plist-get info :reveal-title-slide-background-size))
+             (title-slide-background-repeat (plist-get info :reveal-title-slide-background-repeat))
+             (title-slide-background-transition (plist-get info :reveal-title-slide-background-transition)))
+         (concat "<section id=\"sec-title-slide\""
+                 (when title-slide-background
+                   (concat " data-background=\"" title-slide-background "\""))
+                 (when title-slide-background-size
+                   (concat " data-background-size=\"" title-slide-background-size "\""))
+                 (when title-slide-background-repeat
+                   (concat " data-background-repeat=\"" title-slide-background-repeat "\""))
+                 (when title-slide-background-transition
+                   (concat " data-background-transition=\"" title-slide-background-transition "\""))
+                 ">"
+                 (cond ((eq title-slide nil) nil)
+                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec)))
+                       ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
+                 "\n</section>\n"))))
    contents
    "</div>
 </div>\n"
