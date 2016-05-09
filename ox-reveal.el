@@ -789,7 +789,8 @@ CONTENTS is nil. INFO is a plist holding contextual information."
         (value (org-element-property :value keyword)))
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
-      (REVEAL_HTML value))))
+      (REVEAL_HTML value)
+      (HTML value))))
 (defun org-reveal-embedded-svg (path)
   "Embed the SVG content into Reveal HTML."
   (with-temp-buffer
