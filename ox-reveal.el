@@ -1021,7 +1021,7 @@ info is a plist holding export options."
                    (concat " data-background-transition=\"" title-slide-background-transition "\""))
                  ">"
                  (cond ((eq title-slide nil) nil)
-                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec)))
+                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec info)))
                        ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
                  "\n</section>\n"))))
    contents
