@@ -923,6 +923,8 @@ contextual information."
                               #'buffer-substring))
                      (org-html-format-code src-block info))))
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
+	   (code-attribs (or (org-export-read-attribute
+			 :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl)))))
@@ -937,9 +939,9 @@ contextual information."
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
          (if use-highlight
-             (format "\n<pre%s%s><code class=\"%s\">%s</code></pre>"
+             (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
                      (or (frag-class frag info) "")
-                     label lang code)
+                     label lang code-attribs code)
            (format "\n<pre %s%s>%s</pre>"
                    (or (frag-class frag info)
                        (format " class=\"src src-%s\"" lang))
