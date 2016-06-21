@@ -684,9 +684,9 @@ dependencies: [
                   (append (list extra-codes) builtin-codes))))
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
+         ))
         (let ((init-script (plist-get info :reveal-init-script)))
-          (if init-script (concat "," init-script)))
-        ))
+          (if init-script (concat (if in-single-file "" ",") init-script)))
      "});\n</script>\n")))
 
 (defun org-reveal-toc (depth info)
