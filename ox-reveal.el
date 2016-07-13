@@ -70,7 +70,7 @@
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
-    (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble t)
+    (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble newline)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
     (:reveal-multiplex-id "REVEAL_MULTIPLEX_ID" nil org-reveal-multiplex-id nil)
     (:reveal-multiplex-secret "REVEAL_MULTIPLEX_SECRET" nil org-reveal-multiplex-secret nil)
@@ -684,9 +684,9 @@ dependencies: [
                   (append (list extra-codes) builtin-codes))))
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
+         ))
         (let ((init-script (plist-get info :reveal-init-script)))
-          (if init-script (concat "," init-script)))
-        ))
+          (if init-script (concat (if in-single-file "" ",") init-script)))
      "});\n</script>\n")))
 
 (defun org-reveal-toc (depth info)
@@ -789,7 +789,8 @@ CONTENTS is nil. INFO is a plist holding contextual information."
         (value (org-element-property :value keyword)))
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
-      (REVEAL_HTML value))))
+      (REVEAL_HTML value)
+      (HTML value))))
 (defun org-reveal-embedded-svg (path)
   "Embed the SVG content into Reveal HTML."
   (with-temp-buffer
@@ -922,6 +923,8 @@ contextual information."
                               #'buffer-substring))
                      (org-html-format-code src-block info))))
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
+	   (code-attribs (or (org-export-read-attribute
+			 :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl)))))
@@ -936,9 +939,9 @@ contextual information."
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
          (if use-highlight
-             (format "\n<pre%s%s><code class=\"%s\">%s</code></pre>"
+             (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
                      (or (frag-class frag info) "")
-                     label lang code)
+                     label lang code-attribs code)
            (format "\n<pre %s%s>%s</pre>"
                    (or (frag-class frag info)
                        (format " class=\"src src-%s\"" lang))
@@ -1020,7 +1023,7 @@ info is a plist holding export options."
                    (concat " data-background-transition=\"" title-slide-background-transition "\""))
                  ">"
                  (cond ((eq title-slide nil) nil)
-                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec)))
+                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec info)))
                        ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
                  "\n</section>\n"))))
    contents
