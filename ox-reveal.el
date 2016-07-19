@@ -838,6 +838,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 the result is the Data URIs of the referenced image."
   (let* ((want-embed-image (and (plist-get info :reveal-single-file)
                                 (plist-get info :html-inline-images)
+                                (string= "file" (org-element-property :type link))
                                 (org-export-inline-image-p
                                  link (plist-get info :html-inline-image-rules))))
          (raw-path (org-element-property :path link))
