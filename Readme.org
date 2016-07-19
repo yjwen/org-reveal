@@ -662,7 +662,10 @@
 
    By setting option =reveal_single_file= to ~t~, images and necessary
    Reveal.js scripts will be embedded into the exported HTML file, to make
-   an portable HTML.
+   a portable HTML. Please note that remote images will /not/ be included in the
+   single file, so presentations with remote images will still require an Internet
+   connection. 
+
    Attention: This needs locally available reveal.js files!
 
    #+BEGIN_SRC org
