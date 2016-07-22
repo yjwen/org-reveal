@@ -66,6 +66,7 @@
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
+    (:reveal-title-slide-background-position "REVEAL_TITLE_SLIDE_BACKGROUND_POSITION" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
@@ -427,6 +428,7 @@ holding contextual information."
                         :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                         :data-background ,(org-element-property :REVEAL_BACKGROUND headline)
                         :data-background-size ,(org-element-property :REVEAL_BACKGROUND_SIZE headline)
+                        :data-background-position ,(org-element-property :REVEAL_BACKGROUND_POSITION headline)
                         :data-background-repeat ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline)
                         :data-background-transition ,(org-element-property :REVEAL_BACKGROUND_TRANS headline)))
                  (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
@@ -1011,6 +1013,7 @@ info is a plist holding export options."
      (when (and title-slide (not (plist-get info :reveal-subtree)))
        (let ((title-slide-background (plist-get info :reveal-title-slide-background))
              (title-slide-background-size (plist-get info :reveal-title-slide-background-size))
+             (title-slide-background-position (plist-get info :reveal-title-slide-background-position))
              (title-slide-background-repeat (plist-get info :reveal-title-slide-background-repeat))
              (title-slide-background-transition (plist-get info :reveal-title-slide-background-transition)))
          (concat "<section id=\"sec-title-slide\""
@@ -1018,6 +1021,8 @@ info is a plist holding export options."
                    (concat " data-background=\"" title-slide-background "\""))
                  (when title-slide-background-size
                    (concat " data-background-size=\"" title-slide-background-size "\""))
+                 (when title-slide-background-position
+                   (concat " data-background-position=\"" title-slide-background-position "\""))
                  (when title-slide-background-repeat
                    (concat " data-background-repeat=\"" title-slide-background-repeat "\""))
                  (when title-slide-background-transition
