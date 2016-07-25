@@ -802,7 +802,6 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 (defun org-reveal--format-image-data-uri (link path info)
   "Generate the data URI for the image referenced by LINK."
   (let* ((ext (downcase (file-name-extension path))))
-    (message "link=%s" link)
     (if (string= ext "svg")
         (org-reveal-embedded-svg path)
       (org-html-close-tag
@@ -964,7 +963,6 @@ contextual information."
          (author (cdr (assq ?a spec)))
          (email (cdr (assq ?e spec)))
          (date (cdr (assq ?d spec))))
-    (message "date=%s" date)
     (concat
      (when (and (plist-get info :with-title)
                 (org-string-nw-p title))
@@ -1051,12 +1049,14 @@ Each `attr_reveal' attribute is mapped to corresponding
   ;; Return the updated tree.
   tree)
 
-(defun org-reveal--update-attr-html (elem frag &optional frag-index)
+(defun org-reveal--update-attr-html (elem frag default-style &optional frag-index)
   "Update ELEM's attr_html atrribute with reveal's
 fragment attributes."
   (let ((attr-html (org-element-property :attr_html elem)))
     (when (and frag (not (string= frag "none")))
-      (push (cond ((string= frag t) ":class fragment")
+      (push (cond ((string= frag t)
+                   (if default-style (format ":class fragment %s" default-style)
+                     ":class fragment"))
                   (t (format ":class fragment %s" frag)))
             attr-html)
       (when frag-index
@@ -1082,11 +1082,11 @@ transformed fragment attribute to ELEM's attr_html plist."
                       (items (org-element-contents elem)))
                  (if frag-index
                      (mapcar* 'org-reveal--update-attr-html
-                              items frag-list (car (read-from-string frag-index)))
+                              items frag-list default-style (car (read-from-string frag-index)))
                    ;; Make frag-list tail circular
                    (nconc frag-list (last frag-list))
-                   (mapcar* 'org-reveal--update-attr-html items frag-list))))
-              (t (org-reveal--update-attr-html elem frag frag-index))))
+                   (mapcar* 'org-reveal--update-attr-html items frag-list default-style))))
+              (t (org-reveal--update-attr-html elem frag default-style frag-index))))
     elem))
 
 (defvar client-multiplex nil
