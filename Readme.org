@@ -488,7 +488,7 @@
 
 *** Using highlight.js
 
-    You can also use [[http://hightlightjs.org][highlight.js]], by adding ~highlight~ to the Reveal.js
+    You can also use [[https://highlightjs.org][highlight.js]], by adding ~highlight~ to the Reveal.js
     plugin list. 
     #+BEGIN_SRC org
       ,#+REVEAL_PLUGINS: (highlight)
