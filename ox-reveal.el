@@ -1088,11 +1088,17 @@ transformed fragment attribute to ELEM's attr_html plist."
                  (if frag-index
                      (mapcar* 'org-reveal--update-attr-html
                               items frag-list default-style (car (read-from-string frag-index)))
-                   ;; Make frag-list tail circular
-                   (nconc frag-list (last frag-list))
-                   (mapcar* 'org-reveal--update-attr-html items frag-list default-style))))
-              (t (org-reveal--update-attr-html elem frag default-style frag-index))))
-    elem))
+                   (let* ((last-frag (car (last frag-list)))
+                          (tail-list (mapcar (lambda (a) last-frag)
+                                             (number-sequence (+ (length frag-list) 1)
+                                                              (length items))))
+                          (default-style-list
+                            (mapcar (lambda (a) default-style)
+                                    (number-sequence 1 (length items)))))
+                     (nconc frag-list tail-list)
+                     (mapcar* 'org-reveal--update-attr-html items frag-list default-style-list)))))
+              (t (org-reveal--update-attr-html elem frag default-style frag-index)))
+      elem)))
 
 (defvar client-multiplex nil
   "used to cause generation of client html file for multiplex")
