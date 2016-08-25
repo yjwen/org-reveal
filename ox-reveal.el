@@ -60,7 +60,7 @@
     (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
     (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
-    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css nil)
+    (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css newline)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide nil "reveal_title_slide" org-reveal-title-slide t)
@@ -507,9 +507,10 @@ using custom variable `org-reveal-root'."
 "
      ;; stylesheets
      (mapconcat (lambda (elem) (org-reveal--css-label in-single-file (car elem) (cdr elem)))
-                (list (cons reveal-css nil)
-                      (cons theme-css "theme")
-                      (cons extra-css nil))
+                (append (list (cons reveal-css nil)
+                              (cons theme-css "theme"))
+                        (mapcar (lambda (a) (cons a nil))
+                                (split-string extra-css "\n")))
                 "\n")
 
      ;; Include CSS for highlight.js if necessary
