@@ -231,7 +231,7 @@
     To customize the title slide, please set ~org-reveal-title-slide~
     to a string of HTML markups. The following escaping character can
     be used to retrieve document information:
-    | ~%s~ | Title     |
+    | ~%t~ | Title     |
     | ~%a~ | Author    |
     | ~%e~ | Email     |
     | ~%d~ | Date      |
