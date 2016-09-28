@@ -69,6 +69,11 @@
     (:reveal-title-slide-background-position "REVEAL_TITLE_SLIDE_BACKGROUND_POSITION" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
+    (:reveal-default-slide-background "REVEAL_DEFAULT_SLIDE_BACKGROUND" nil nil t)
+    (:reveal-default-slide-background-size "REVEAL_DEFAULT_SLIDE_BACKGROUND_SIZE" nil nil t)
+    (:reveal-default-slide-background-position "REVEAL_DEFAULT_SLIDE_BACKGROUND_POSITION" nil nil t)
+    (:reveal-default-slide-background-repeat "REVEAL_DEFAULT_SLIDE_BACKGROUND_REPEAT" nil nil t)
+    (:reveal-default-slide-background-transition "REVEAL_DEFAULT_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble newline)
@@ -343,6 +348,9 @@ content."
   :group 'org-export-reveal
   :type 'string)
 
+(defvar org-reveal--last-slide-section-tag ""
+  "Variable to cache the section tag from the last slide. ")
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -398,61 +406,78 @@ holding contextual information."
 	     (footer (plist-get info :reveal-slide-footer))
 	     (footer-div (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer)))
 	     (first-sibling (org-export-first-sibling-p headline info))
-	     (last-sibling (org-export-last-sibling-p headline info)))
-        (concat
-         (if (or (/= level 1) (not first-sibling))
-             ;; Not the first heading. Close previou slide.
-             (concat
-              ;; Slide footer if any
-              footer-div
-              ;; Close previous slide
-              "</section>\n"
-              (if (<= level hlevel)
-		  ;; Close previous vertical slide group.
-		  "</section>\n")))
-         (if (<= level hlevel)
-             ;; Add an extra "<section>" to group following slides
-             ;; into vertical slide group. Transition override
-             ;; attributes are attached at this level, too.
-             (let ((attrs
-                    (org-html--make-attribute-string
-                     `(:data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)))))
-               (if (string= attrs "")
-                   "<section>\n"
-                 (format "<section %s>\n" attrs))))
-         ;; Start a new slide.
-         (format "<section %s%s>\n"
-                 (org-html--make-attribute-string
-                  `(:id ,(format "slide-%s" preferred-id)
-                        :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
-                        :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
-                        :data-background ,(org-element-property :REVEAL_BACKGROUND headline)
-                        :data-background-size ,(org-element-property :REVEAL_BACKGROUND_SIZE headline)
-                        :data-background-position ,(org-element-property :REVEAL_BACKGROUND_POSITION headline)
-                        :data-background-repeat ,(org-element-property :REVEAL_BACKGROUND_REPEAT headline)
-                        :data-background-transition ,(org-element-property :REVEAL_BACKGROUND_TRANS headline)))
-                 (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
-                   (if extra-attrs (format " %s" extra-attrs) "")))
-         ;; Slide header if any.
-         header-div
-         ;; The HTML content of the headline
-         ;; Strip the <div> tags, if any
-         (let ((html (org-html-headline headline contents info)))
-           (if (string-prefix-p "<div" html)
-               ;; Remove the first <div> and the last </div> tags from html
-               (concat "<"
-                       (mapconcat 'identity
-                                  (butlast (cdr (split-string html "<" t)))
-                                  "<"))
-             ;; Return the HTML content unchanged
-             html))
-         (if (and (= level 1)
-                  (org-export-last-sibling-p headline info))
-             ;; Last head 1. Close all slides.
-             (concat
-              ;; Slide footer if any
-              footer-div
-              "</section>\n</section>\n")))))))
+	     (last-sibling (org-export-last-sibling-p headline info))
+             (default-slide-background (plist-get info :reveal-default-slide-background))
+             (default-slide-background-size (plist-get info :reveal-default-slide-background-size))
+             (default-slide-background-position (plist-get info :reveal-default-slide-background-position))
+             (default-slide-background-repeat (plist-get info :reveal-default-slide-background-repeat))
+             (default-slide-background-transition (plist-get info :reveal-default-slide-background-transition))
+             (slide-section-tag (format "<section %s%s>\n"
+                                        (org-html--make-attribute-string
+                                         `(:id ,(format "slide-%s" preferred-id)
+                                           :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
+                                           :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
+                                           :data-background ,(or (org-element-property :REVEAL_BACKGROUND headline)
+                                                                 default-slide-background)
+                                           :data-background-size ,(or (org-element-property :REVEAL_BACKGROUND_SIZE headline)
+                                                                      default-slide-background-size)
+                                           :data-background-position ,(or (org-element-property :REVEAL_BACKGROUND_POSITION headline)
+                                                                          default-slide-background-position)
+                                           :data-background-repeat ,(or (org-element-property :REVEAL_BACKGROUND_REPEAT headline)
+                                                                        default-slide-background-repeat)
+                                           :data-background-transition ,(or (org-element-property :REVEAL_BACKGROUND_TRANS headline)
+                                                                            default-slide-background-transition)))
+                                        (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
+                                          (if extra-attrs (format " %s" extra-attrs) ""))))
+             (ret (concat
+                   (if (or (/= level 1) (not first-sibling))
+                       ;; Not the first heading. Close previou slide.
+                       (concat
+                        ;; Slide footer if any
+                        footer-div
+                        ;; Close previous slide
+                        "</section>\n"
+                        (if (<= level hlevel)
+                            ;; Close previous vertical slide group.
+                            "</section>\n")))
+                   (if (<= level hlevel)
+                       ;; Add an extra "<section>" to group following slides
+                       ;; into vertical slide group. Transition override
+                       ;; attributes are attached at this level, too.
+                       (let ((attrs
+                              (org-html--make-attribute-string
+                               `(:data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)))))
+                         (if (string= attrs "")
+                             "<section>\n"
+                           (format "<section %s>\n" attrs))))
+                   ;; Start a new slide.
+                   (prog1
+                       slide-section-tag
+                     ;; Cache the current slide's section tag, except the id attr
+                     (setq org-reveal--last-slide-section-tag
+                           (replace-regexp-in-string "id\\s-*=\\s-*[\][\"].*?[\][\"]"
+                                                     "" slide-section-tag)))
+                   ;; Slide header if any.
+                   header-div
+                   ;; The HTML content of the headline
+                   ;; Strip the <div> tags, if any
+                   (let ((html (org-html-headline headline contents info)))
+                     (if (string-prefix-p "<div" html)
+                         ;; Remove the first <div> and the last </div> tags from html
+                         (concat "<"
+                                 (mapconcat 'identity
+                                            (butlast (cdr (split-string html "<" t)))
+                                            "<"))
+                       ;; Return the HTML content unchanged
+                       html))
+                   (if (and (= level 1)
+                            (org-export-last-sibling-p headline info))
+                       ;; Last head 1. Close all slides.
+                       (concat
+                        ;; Slide footer if any
+                        footer-div
+                        "</section>\n</section>\n")))))
+        ret))))
 
 (defgroup org-export-reveal nil
   "Options for exporting Orgmode files to reveal.js HTML pressentations."
@@ -713,9 +738,10 @@ holding export options."
    contents))
 
 (defun org-reveal-parse-token (key &optional value)
-  "Return HTML tags or perform SIDE EFFECT according to key"
+  "Return HTML tags or perform SIDE EFFECT according to key.
+Use the previous section tag as the tag of the split section. "
   (case (intern key)
-    (split "</section>\n<section>")))
+    (split (format "</section>\n%s" org-reveal--last-slide-section-tag ""))))
 
 (defun org-reveal-parse-keyword-value (value)
   "According to the value content, return HTML tags to split slides."
