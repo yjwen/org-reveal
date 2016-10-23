@@ -512,9 +512,9 @@
    LateX equation are rendered in native HTML5 contents.
 
    *IMPORTANT*: Displaying equations requires internet connection to
-   [[http://mathjax.org/][mathjax.org]] or local MathJax installation. For local MathJax
-   installation, set option =REVEAL_MATHJAX_URL= to the URL pointing
-   to the local MathJax location.
+   [[http://mathjax.org/][mathjax.org]] or local MathJax installation. 
+   
+   For local MathJax installation, download the MathJax repo and place it in the root folder. Set option =REVEAL_MATH_JAX_URL= to the URL pointing to the local MathJax.js location in the downloaded repository.
 
    *Note*: Option ~reveal_mathjax~ is obsolete now. Org-reveal
    exports necessary MathJax configurations when there is Latex
