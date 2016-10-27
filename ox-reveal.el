@@ -1030,6 +1030,8 @@ info is a plist holding export options."
    (org-reveal-stylesheets info)
    (org-reveal-mathjax-scripts info)
    (org-reveal--build-pre/postamble 'head-preamble info)
+   (org-element-normalize-string (plist-get info :html-head))
+   (org-element-normalize-string (plist-get info :html-head-extra))
    "</head>
 <body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
