@@ -107,17 +107,6 @@
    option =REVEAL_ROOT=, the location is only affected within the Org
    file.
 
-** Url form for file location
-
-   For example if you cloned this repository to your home directory,
-   this file in Mac OS X would be referred to as
-   "file:///Users/username/org-reveal/readme.org".  This file in
-   Ubuntu would be "file:///home/username/org-reveal/readme.org" and
-   in Windows this file would be
-   "file:///c:/Users/username/org-reveal/readme.org".  For more detail
-   on this standard please refer to
-   [[http://en.wikipedia.org/wiki/File_URI_scheme]]
-
    #+BEGIN_SRC org
    ,#+REVEAL_ROOT: file:///d:/reveal.js
    #+END_SRC
@@ -129,6 +118,17 @@
    ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
    #+END_SRC
 
+
+*** Url form for file location
+
+    For example if you cloned this repository to your home directory,
+    this file in Mac OS X would be referred to as
+    "file:///Users/username/org-reveal/readme.org".  This file in
+    Ubuntu would be "file:///home/username/org-reveal/readme.org" and
+    in Windows this file would be
+    "file:///c:/Users/username/org-reveal/readme.org".  For more
+    detail on this standard please refer to
+    [[http://en.wikipedia.org/wiki/File_URI_scheme]]
 
 ** First Try
 
