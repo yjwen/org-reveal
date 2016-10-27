@@ -902,11 +902,13 @@ Extract and set `attr_html' to plain-list tag attributes."
                (unordered "ul")
                (descriptive "dl")))
         (attrs (org-export-read-attribute :attr_html plain-list)))
-    (format "<%s%s>\n%s\n</%s>"
+    (format "%s<%s%s>\n%s\n</%s>%s"
+            (if (string= org-html-checkbox-type 'html) "<form>" "")
             tag
             (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
             contents
-            tag)))
+            tag
+            (if (string= org-html-checkbox-type 'html) "</form>" ""))))
 
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
