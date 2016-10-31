@@ -1086,7 +1086,7 @@ Each `attr_reveal' attribute is mapped to corresponding
   tree)
 
 (defun org-reveal--update-attr-html (elem frag default-style &optional frag-index)
-  "Update ELEM's attr_html atrribute with reveal's
+  "Update ELEM's attr_html attribute with reveal's
 fragment attributes."
   (let ((attr-html (org-element-property :attr_html elem)))
     (when (and frag (not (string= frag "none")))
