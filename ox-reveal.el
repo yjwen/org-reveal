@@ -741,7 +741,7 @@ holding export options."
   "Return HTML tags or perform SIDE EFFECT according to key.
 Use the previous section tag as the tag of the split section. "
   (case (intern key)
-    (split (format "</section>\n%s" org-reveal--last-slide-section-tag ""))))
+    (split (format "</section>\n%s" org-reveal--last-slide-section-tag))))
 
 (defun org-reveal-parse-keyword-value (value)
   "According to the value content, return HTML tags to split slides."
