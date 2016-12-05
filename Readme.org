@@ -44,7 +44,7 @@
 
    Extract Reveal.js folders from the downloaded zip file.
 
-   If you do not wish to download reveal.js yourself and would rather get a copy from a CDN, 
+   If you do not wish to download reveal.js yourself and would rather get a copy from a CDN,
    see the section [[Set the location of Reveal.js]]
 
 ** Install org-reveal from MELPA
@@ -296,7 +296,7 @@
 #+END_SRC
 
 *** Title Slide Background Image
-    
+
     To set the title slide's background image, please specify the
     following options:
 
@@ -328,15 +328,19 @@
    From Reveal.js 3.1.0, slide numbering can have several custom
    formats. To choose one format, please set ~reveal_slide_number~ to
    its proper string. For example, ~reveal_slide_number:h/v~.
-   
+
    Supported format string can be found in [[https://github.com/hakimel/reveal.js/#slide-number][Reveal.js manual]].
-   
+
 
 ** Slide Header/Footer
    Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
    =#+REVEAL_SLIDE_FOOTER:=. The option content will be put into
    divisions of class =slide-header= and =slide-footer=, so you can
    control their appearance in custom CSS file(see [[Extra Stylesheets]]).
+   By default header/footer content will only display on content
+   slides. To show them also on the title and toc slide you can add
+   ~reveal_global_header:t~ and ~reveal_global_footer:t~ to
+   ~#+OPTIONS:~ line.
 
 ** Fragmented Contents
 
@@ -348,7 +352,7 @@
     Paragraphs can be fragmented.
 
 #+ATTR_REVEAL: :frag roll-in
-    - Lists can 
+    - Lists can
     - be fragmented.
 
 #+ATTR_REVEAL: :frag roll-in
@@ -366,7 +370,7 @@
     * highlight-blue
     * appear
 
-    Setting ~:frag t~ will use Reveal.js default fragment style, which 
+    Setting ~:frag t~ will use Reveal.js default fragment style, which
     can be overridden by local option ~#+REVEAL_DEFAULT_FRAG_STYLE~ or
     global variable ~org-reveal-default-frag-style~.
 
@@ -473,9 +477,9 @@
    1. Use your Emacs theme
    2. Use highlight.js
 
-      
+
    To Use your Emacs theme, please make sure ~htmlize.el~ is
-   installed. Then no more setup is necessary.  
+   installed. Then no more setup is necessary.
 
    Below is an example. Codes are copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
    #+BEGIN_SRC haskell
@@ -489,7 +493,7 @@
 *** Using highlight.js
 
     You can also use [[https://highlightjs.org][highlight.js]], by adding ~highlight~ to the Reveal.js
-    plugin list. 
+    plugin list.
     #+BEGIN_SRC org
       ,#+REVEAL_PLUGINS: (highlight)
     #+END_SRC
@@ -497,7 +501,7 @@
     The default highlighting theme is ~zenburn.css~ brought with
     Reveal.js. To use other themes, please specify the CSS file name by
     ~#+REVEAL_HIGHLIGHT_CSS~ or the variable ~org-reveal-highlight-css~.
-    
+
     The "%r" in the given CSS file name will be replaced by Reveal.js'
     URL.
 
@@ -663,7 +667,7 @@
    Reveal.js scripts will be embedded into the exported HTML file, to make
    a portable HTML. Please note that remote images will /not/ be included in the
    single file, so presentations with remote images will still require an Internet
-   connection. 
+   connection.
 
    Attention: This needs locally available reveal.js files!
 
