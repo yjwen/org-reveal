@@ -334,6 +334,15 @@ content."
           (const remotes)
           (const multiplex)))
 
+(defcustom org-reveal-external-plugins nil
+  "Additional third-party Plugins to load with reveal. Each entry
+  should contain a name and an expression of the form 
+  \"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
+  Note that some plugins have dependencies such as jquery; these must be included here as well, 
+  BEFORE the plugins that depend on them."
+  :group 'org-rexport-reveal
+  :type 'plist)
+
 (defcustom org-reveal-single-file nil
   "Export presentation into one single HTML file, which embedded
   JS scripts and pictures."
