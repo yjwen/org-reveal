@@ -1192,6 +1192,12 @@ contextual information."
                       (format " id=\"%s\"" lbl))))
            (klipsify  (and (assoc 'klipse org-reveal-external-plugins)
                            (member lang '("javascript" "ruby" "scheme" "clojure" "php"))))
+           (langselector (cond ((string= lang "javascript") "selector_eval_js")
+                               ((string= lang "clojure") "selector")
+                               ((string= lang "python") "selector_eval_python_client")
+                               ((string= lang "scheme") "selector_eval_scheme")
+                               ((string= lang "ruby") "selector_eval_ruby"))
+                         )
            ;;(klipse-hidden (if (assoc 'klipse org-reveal-external-plugins) " style=\"display:hidden;\"") nil)
                       )
       (if (not lang)
@@ -1199,6 +1205,7 @@ contextual information."
                   (or (frag-class frag info) " class=\"example\"")
                   label
                   code)
+        (cond ((eq lang "javascript ")))
         (format
          "<div %sclass=\"org-src-container\">\n%s%s\n</div>%s"
          (if klipsify "style=\"display:none;\" " "")
@@ -1216,8 +1223,22 @@ contextual information."
                    (or (frag-index findex) "")
                    label code)
            )
-         (if klipsify (format "<klipse-snippet data-language=\"%s\">%s</klipse-snippet>"
-                              lang code) ""))))))
+         ;; (if klipsify (format "<klipse-snippet data-language=\"%s\">%s</klipse-snippet>"
+         ;;                      lang code) "")
+         (if klipsify (concat  "<iframe height=\"500px\" width= \"100%\" srcdoc='
+<pre><code class= \"klipse\">
+" code  "
+</code></pre>
+<link rel= \"stylesheet\" type= \"text/css\" href=\"" org-reveal-klipse-css "\">
+<style>
+.CodeMirror { font-size: 2em; }
+</style>
+<script>
+window.klipse_settings = { " langselector  ": \".klipse\" };
+</script>
+<script src= \"" org-reveal-klipse-js "\"></script>
+'>
+</iframe>") "") )))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
