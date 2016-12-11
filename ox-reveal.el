@@ -441,6 +441,21 @@ included here as well, BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-klipsify-src nil
+  "Set to non-nil if you would like to make source code blocks editable in exported presentation."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-klipse-css "https://storage.googleapis.com/app.klipse.tech/css/codemirror.css"
+  "Location of the codemirror css file for use with klipse."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-klipse-css "https://storage.googleapis.com/app.klipse.tech/js/klipse_plugin.js"
+  "location of the klipse js source code."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defvar org-reveal--last-slide-section-tag ""
   "Variable to cache the section tag from the last slide. ")
 
@@ -1190,7 +1205,7 @@ contextual information."
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl))))
-           (klipsify  (and (assoc 'klipse org-reveal-external-plugins)
+           (klipsify  (and  org-reveal-klipsify-src ;;(assoc 'klipse org-reveal-external-plugins)
                            (member lang '("javascript" "ruby" "scheme" "clojure" "php"))))
            (langselector (cond ((string= lang "javascript") "selector_eval_js")
                                ((string= lang "clojure") "selector")
