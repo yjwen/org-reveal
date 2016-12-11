@@ -994,14 +994,19 @@ contextual information."
 			 :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
-                      (format " id=\"%s\"" lbl)))))
+                      (format " id=\"%s\"" lbl))))
+           (klipsify  (and (assoc 'klipse org-reveal-external-plugins)
+                           (member lang '("javascript" "ruby" "scheme" "clojure" "php"))))
+           ;;(klipse-hidden (if (assoc 'klipse org-reveal-external-plugins) " style=\"display:hidden;\"") nil)
+                      )
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
                   label
                   code)
         (format
-         "<div class=\"org-src-container\">\n%s%s\n</div>"
+         "<div %sclass=\"org-src-container\">\n%s%s\n</div>%s"
+         (if klipsify "style=\"display:none;\" " "")
          (if (not caption) ""
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
@@ -1012,7 +1017,10 @@ contextual information."
            (format "\n<pre %s%s>%s</pre>"
                    (or (frag-class frag info)
                        (format " class=\"src src-%s\"" lang))
-                   label code)))))))
+                   label code)
+           )
+         (if klipsify (format "<klipse-snippet data-language=\"%s\">%s</klipse-snippet>"
+                              lang code) ""))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
