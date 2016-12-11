@@ -511,6 +511,13 @@ Store the names and loading instructions for each plugin in the defcustom ~org-r
     The "%r" in the given CSS file name will be replaced by Reveal.js'
     URL.
 
+** Editable Source Code
+It is now possible to embed code blocks in a codemirror instance in order to edit code during a presentation.  At present, this capacity is turned on or off at time export using these defcustoms:
+- ~org-reveal-klipsify-src~
+- ~org-reveal-klipse-css~
+- ~org-reveal-klipse-js~
+TThis feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present couce editing is supported in javacript, clojure, php, ruby, scheme, and pyhton only.  
+
 ** MathJax
   :PROPERTIES:
   :CUSTOM_ID: my-heading
