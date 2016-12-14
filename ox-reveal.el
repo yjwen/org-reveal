@@ -451,7 +451,7 @@ included here as well, BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-klipse-css "https://storage.googleapis.com/app.klipse.tech/js/klipse_plugin.js"
+(defcustom org-reveal-klipse-js "https://storage.googleapis.com/app.klipse.tech/plugin_prod/js/klipse_plugin.min.js"
   "location of the klipse js source code."
   :group 'org-export-reveal
   :type 'string)
@@ -1188,6 +1188,9 @@ holding contextual information."
   "Transcode a SRC-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
+  (message  "%s" (plist-get (cadr src-block) :attr_html))
+  (if (org-export-read-attribute :attr_html src-block :data-library)
+      (message "could do something useful here with the data-library element"))
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
     (let* ((use-highlight (org-reveal--using-highlight.js info))
@@ -1205,44 +1208,46 @@ contextual information."
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl))))
-           (klipsify  (and  org-reveal-klipsify-src ;;(assoc 'klipse org-reveal-external-plugins)
-                           (member lang '("javascript" "ruby" "scheme" "clojure" "php"))))
-           (langselector (cond ((string= lang "javascript") "selector_eval_js")
+           (klipsify  (and  org-reveal-klipsify-src
+                           (member lang '("javascript" "js" "ruby" "scheme" "clojure" "php" "html"))))
+           (langselector (cond ((or (string= lang "js") (string= lang "javascript")) "selector_eval_js")
                                ((string= lang "clojure") "selector")
                                ((string= lang "python") "selector_eval_python_client")
                                ((string= lang "scheme") "selector_eval_scheme")
-                               ((string= lang "ruby") "selector_eval_ruby"))
+                               ((string= lang "ruby") "selector_eval_ruby")
+                               ((string= lang "html") "selector_eval_html"))
                          )
-           ;;(klipse-hidden (if (assoc 'klipse org-reveal-external-plugins) " style=\"display:hidden;\"") nil)
-                      )
+           (attributes  (org-export-read-attribute :attr_html src-block))
+           ;; this was an idea to collect attributes -- doesn't seem to make sense.
+           ;; (extra-atts (if klipsify
+           ;;                 ;; (cl-loop for (key  value) in attributes
+           ;;                 ;;          collect (format "%s=\"%s\"" key value))
+           ;;                 ;; (message "oops not klipsify")
+           ;;                 ""
+           ;;               ""))
+               )
+      ;; debugging messages, no longer necessary
+      ;; (message "html attributes=%s" attributes)
+      ;; (message "html code attribsis a %s" (stringp (org-export-read-attribute :attr_html src-block :class)))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
                   label
                   code)
-        (cond ((eq lang "javascript ")))
-        (format
-         "<div %sclass=\"org-src-container\">\n%s%s\n</div>%s"
-         (if klipsify "style=\"display:none;\" " "")
-         (if (not caption) ""
-           (format "<label class=\"org-src-name\">%s</label>"
-                   (org-export-data caption info)))
-         (if use-highlight
-             (format "\n<pre%s%s><code class=\"%s\" %s %s>%s</code></pre>"
-                     (or (frag-class frag info) "")
-                     (or (frag-index findex) "")
-                     label lang code-attribs code)
-           (format "\n<pre %s%s%s>%s</pre>"
-                   (or (frag-class frag info)
-                       (format " class=\"src src-%s\"" lang))
-                   (or (frag-index findex) "")
-                   label code)
-           )
-         ;; (if klipsify (format "<klipse-snippet data-language=\"%s\">%s</klipse-snippet>"
-         ;;                      lang code) "")
-         (if klipsify (concat  "<iframe height=\"500px\" width= \"100%\" srcdoc='
-<pre><code class= \"klipse\">
-" code  "
+        (if klipsify
+            (concat
+             "<iframe style=\"background-color:white;\" height=\"500px\" width= \"100%\" srcdoc='<html><body><pre><code "
+             (if (string= lang "html" )"data-editor-type=\"html\"  "  "") "class=\"klipse\" "code-attribs ">
+" (if (string= lang "html")
+      (replace-regexp-in-string "'" "&#39;"
+                                (replace-regexp-in-string "&" "&amp;"
+                                                          (replace-regexp-in-string "<" "&lt;"
+                                                                                    (replace-regexp-in-string ">" "&gt;"
+                                                                                                              (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
+                                                                                                                         #'buffer-substring))
+                                                                                                                (org-html-format-code src-block info))))))
+    (replace-regexp-in-string "'" "&#39;"
+                              code))  "
 </code></pre>
 <link rel= \"stylesheet\" type= \"text/css\" href=\"" org-reveal-klipse-css "\">
 <style>
@@ -1251,9 +1256,26 @@ contextual information."
 <script>
 window.klipse_settings = { " langselector  ": \".klipse\" };
 </script>
-<script src= \"" org-reveal-klipse-js "\"></script>
+<script src= \"" org-reveal-klipse-js "\"></script></body></html>
 '>
-</iframe>") "") )))))
+</iframe>")
+          (format
+            "<div class=\"org-src-container\">\n%s%s\n</div>"
+            (if (not caption) ""
+              (format "<label class=\"org-src-name\">%s</label>"
+                      (org-export-data caption info)))
+            (if use-highlight
+		(format "\n<pre%s%s><code class=\"%s\" %s %s>%s</code></pre>"
+			(or (frag-class frag info) "")
+			(or (frag-index findex) "")
+			label lang code-attribs code)
+              (format "\n<pre %s%s%s>%s</pre>"
+                      (or (frag-class frag info)
+			  (format " class=\"src src-%s\"" lang))
+                      (or (frag-index findex) "")
+                      label code)
+              )
+         ))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
