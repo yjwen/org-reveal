@@ -994,9 +994,6 @@ holding contextual information."
   "Transcode a SRC-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the item.  INFO is a plist holding
 contextual information."
-  (message  "%s" (plist-get (cadr src-block) :attr_html))
-  (if (org-export-read-attribute :attr_html src-block :data-library)
-      (message "could do something useful here with the data-library element"))
   (if (org-export-read-attribute :attr_html src-block :textarea)
       (org-html--textarea-block src-block)
     (let* ((use-highlight (org-reveal--using-highlight.js info))
@@ -1022,18 +1019,7 @@ contextual information."
                                ((string= lang "ruby") "selector_eval_ruby")
                                ((string= lang "html") "selector_eval_html"))
                          )
-           (attributes  (org-export-read-attribute :attr_html src-block))
-           ;; this was an idea to collect attributes -- doesn't seem to make sense.  
-           ;; (extra-atts (if klipsify
-           ;;                 ;; (cl-loop for (key  value) in attributes
-           ;;                 ;;          collect (format "%s=\"%s\"" key value))
-           ;;                 ;; (message "oops not klipsify")
-           ;;                 ""
-           ;;               ""))
-               )
-      ;; debugging messages, no longer necessary
-      ;; (message "html attributes=%s" attributes)
-      ;; (message "html code attribsis a %s" (stringp (org-export-read-attribute :attr_html src-block :class)))
+)
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
