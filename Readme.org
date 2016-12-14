@@ -803,7 +803,7 @@ TThis feature is turned off by default and needs to be switched on with ~org-rev
    custom-id, as the examples below:
 
    * [[Tips]].
-   * [[#my-heading][Heading]] with a =CUSTOM_ID= property.
+   * [[#my-heading][Heading]] with a =CUSTOM_ID= property.q
 
    If you add =reveal_inter_presentation_links:t= to =#+OPTIONS=, such
    links also work between presentations on the same server, e.g.,
@@ -827,6 +827,25 @@ TThis feature is turned off by default and needs to be switched on with ~org-rev
    ~#+REVEAL_INIT_SCRIPT~ (multiple statements are concatenated) or by
    custom variable ~org-reveal-init-script~.
 
+** Executable Source Blocks
+To allow live execution of code in some languages, enable the klipsify plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.  
+
+*** HTML Src Block
+#+BEGIN_SRC html
+<h1 class="whatever">hello, what's your name</h1>
+#+END_SRC
+
+*** Javascript Src Block
+#+BEGIN_SRC js
+console.log("success");
+var x='string using single quote';
+x
+#+END_SRC
+
+*** Perl Src Block (not klipsified)
+#+BEGIN_SRC perl
+I don't know perl!
+#+END_SRC
 * Thanks
 
   Courtesy to:
