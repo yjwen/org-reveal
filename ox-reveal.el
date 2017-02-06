@@ -340,7 +340,7 @@ Each entry should contain a name and an expression of the form
 \"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
 Note that some plugins have dependencies such as jquery; these must be included here as well, 
 BEFORE the plugins that depend on them."
-  :group 'org-rexport-reveal
+  :group 'org-export-reveal
   :type 'alist)
 
 (defcustom org-reveal-single-file nil
@@ -736,7 +736,6 @@ dependencies: [
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
                 (if (string= "" extra-codes) all-plugins (append (list extra-codes) all-plugins))                ))
-          (message "external-plugins= %s" external-plugins)
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
          ))
