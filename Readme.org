@@ -45,7 +45,7 @@
    Extract Reveal.js folders from the downloaded zip file.
 
    If you do not wish to download reveal.js yourself and would rather get a copy from a CDN,
-   see the section [[Set the location of Reveal.js]]
+   see the section [[https://github.com/yjwen/org-reveal#set-the-location-of-revealjs][Set the location of Reveal.js]]
 
 ** Install org-reveal from MELPA
 
