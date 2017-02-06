@@ -471,6 +471,12 @@
       =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyboard=, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
+
+** Third-Party Plugins
+Reveal.js is also extensible through third-party plugins. Org-reveal now includes a mechanism to load these as well. It's a little more complicated, because we need to store the specific javascript loading code in a defcustom.
+
+Store the names and loading instructions for each plugin in the defcustom ~org-reveal-external-plugins~. This defcustom is an associative list. The first element of each Assoc cell is a symbol -- the name of the plugin -- and the second is a string that will be expanded by the ~format~ function when the plugin is loaded. So, this second element should have the form ~" {src: \"%srelative/path/toplugin/from/reveal/root.js\"}'.  If you need the async or callback parameters, include those too.  Ox-reveal will add the plugin to the dependencies parameter when Reveal is initialized.  
+
 ** Highlight Source Code
 
    There are two ways to highlight source code.

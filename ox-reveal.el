@@ -334,6 +334,15 @@ content."
           (const remotes)
           (const multiplex)))
 
+(defcustom org-reveal-external-plugins nil
+  "Additional third-party Plugins to load with reveal. 
+Each entry should contain a name and an expression of the form 
+\"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
+Note that some plugins have dependencies such as jquery; these must be included here as well, 
+BEFORE the plugins that depend on them."
+  :group 'org-rexport-reveal
+  :type 'alist)
+
 (defcustom org-reveal-single-file nil
   "Export presentation into one single HTML file, which embedded
   JS scripts and pictures."
@@ -720,10 +729,14 @@ dependencies: [
                                          (wrong-type-argument nil))))
                    (or (and buffer-plugins (listp buffer-plugins) buffer-plugins)
                        org-reveal-plugins))))
+               (external-plugins
+                (cl-loop for (key . value) in org-reveal-external-plugins
+                         collect (format  value root-path )) )
+               (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
-                (if (string= "" extra-codes) builtin-codes
-                  (append (list extra-codes) builtin-codes))))
+                (if (string= "" extra-codes) all-plugins (append (list extra-codes) all-plugins))                ))
+          (message "external-plugins= %s" external-plugins)
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
          ))
