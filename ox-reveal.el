@@ -67,10 +67,13 @@
     (:reveal-slide-global-header nil "reveal_global_header" org-reveal-global-header t)
     (:reveal-slide-global-footer nil "reveal_global_footer" org-reveal-global-footer t)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
+    (:reveal-title-slide-state "REVEAL_TITLE_SLIDE_STATE" nil nil t)
     (:reveal-title-slide-background-size "REVEAL_TITLE_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-title-slide-background-position "REVEAL_TITLE_SLIDE_BACKGROUND_POSITION" nil nil t)
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
+    (:reveal-toc-slide-state "REVEAL_TOC_SLIDE_STATE" nil nil t)
+    (:reveal-toc-slide-class "REVEAL_TOC_SLIDE_CLASS" nil nil t)
     (:reveal-default-slide-background "REVEAL_DEFAULT_SLIDE_BACKGROUND" nil nil t)
     (:reveal-default-slide-background-size "REVEAL_DEFAULT_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-default-slide-background-position "REVEAL_DEFAULT_SLIDE_BACKGROUND_POSITION" nil nil t)
@@ -749,12 +752,23 @@ dependencies: [
   (let ((toc (org-html-toc depth info)))
     (when toc
       (let ((toc-slide-with-header (plist-get info :reveal-slide-global-header))
-            (toc-slide-with-footer (plist-get info :reveal-slide-global-footer)))
-        (concat "<section id=\"table-of-contents\">\n"
+            (toc-slide-with-footer (plist-get info :reveal-slide-global-footer))
+	    (toc-slide-state (plist-get info :reveal-toc-slide-state))
+	    (toc-slide-class (plist-get info :reveal-toc-slide-class))
+	    (toc (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" toc)))
+        (concat "<section id=\"table-of-contents\""
+		(when toc-slide-state
+		  (format " data-state=\"%s\"" toc-slide-state))
+		">\n"
                 (when toc-slide-with-header
                    (let ((header (plist-get info :reveal-slide-header)))
                      (when header (format "<div class=\"slide-header\">%s</div>\n" header))))
-                (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" toc)
+                (if toc-slide-class
+		    (replace-regexp-in-string
+		     "<h\\([1-3]\\)>"
+		     (format "<h\\1 class=\"%s\">" toc-slide-class)
+		     toc)
+		  toc)
                 (when toc-slide-with-footer
                    (let ((footer (plist-get info :reveal-slide-footer)))
                      (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer))))
@@ -1081,6 +1095,7 @@ info is a plist holding export options."
              (title-slide-background-position (plist-get info :reveal-title-slide-background-position))
              (title-slide-background-repeat (plist-get info :reveal-title-slide-background-repeat))
              (title-slide-background-transition (plist-get info :reveal-title-slide-background-transition))
+             (title-slide-state (plist-get info :reveal-title-slide-state))
              (title-slide-with-header (plist-get info :reveal-slide-global-header))
              (title-slide-with-footer (plist-get info :reveal-slide-global-footer)))
          (concat "<section id=\"sec-title-slide\""
@@ -1094,6 +1109,8 @@ info is a plist holding export options."
                    (concat " data-background-repeat=\"" title-slide-background-repeat "\""))
                  (when title-slide-background-transition
                    (concat " data-background-transition=\"" title-slide-background-transition "\""))
+		 (when title-slide-state
+		  (concat " data-state=\"" title-slide-state "\""))
                  ">"
                  (when title-slide-with-header
                    (let ((header (plist-get info :reveal-slide-header)))

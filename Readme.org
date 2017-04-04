@@ -443,7 +443,7 @@
    * I appear.
 
 
-** Data State
+** Data State and Class for TOC slide
    :PROPERTIES:
    :reveal_data_state: alert
    :END:
@@ -452,6 +452,16 @@
    display style, as illustrated above.
 
    Available data states are: alert|blackout|soothe.
+
+   To add a ~data-state~ attribute to a generated title slide or
+   table of contents slide, you can use the following options:
+
+   * =REVEAL_TITLE_SLIDE_STATE=
+   * =REVEAL_TOC_SLIDE_STATE=
+
+   To add a ~class~ attribute to a generated table of contents slide,
+   you can use the option =REVEAL_TOC_SLIDE_CLASS=.
+
 
 ** Plug-ins
 
