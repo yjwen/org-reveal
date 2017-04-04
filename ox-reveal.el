@@ -1099,7 +1099,15 @@ info is a plist holding export options."
                    (let ((header (plist-get info :reveal-slide-header)))
                      (when header (format "<div class=\"slide-header\">%s</div>\n" header))))
                  (cond ((eq title-slide nil) nil)
-                       ((stringp title-slide) (format-spec title-slide (org-html-format-spec info)))
+                       ((stringp title-slide)
+			(let ((title-string
+			       (if (file-readable-p title-slide)
+				   (with-temp-buffer
+				     (insert-file-contents-literally title-slide)
+				     (buffer-string))
+				 title-slide)))
+			  (format-spec title-string
+				       (org-html-format-spec info))))
                        ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
                  "\n"
                  (when title-slide-with-footer

@@ -229,13 +229,18 @@
 *** Customize the Title Slide
 
     To customize the title slide, please set ~org-reveal-title-slide~
-    to a string of HTML markups. The following escaping character can
+    to a string of HTML markups. The following escape sequences can
     be used to retrieve document information:
     | ~%t~ | Title     |
+    | ~%s~ | Subtitle  |
     | ~%a~ | Author    |
     | ~%e~ | Email     |
     | ~%d~ | Date      |
     | ~%%~ | Literal % |
+
+    Alternatively, you can also write the title slide's HTML code
+    (containing the above escape sequences) into a separate file and
+    set ~org-reveal-title-slide~ to the name of that file.
 
 ** Set Slide Background
 
@@ -475,7 +480,7 @@
 ** Third-Party Plugins
 Reveal.js is also extensible through third-party plugins. Org-reveal now includes a mechanism to load these as well. It's a little more complicated, because we need to store the specific javascript loading code in a defcustom.
 
-Store the names and loading instructions for each plugin in the defcustom ~org-reveal-external-plugins~. This defcustom is an associative list. The first element of each Assoc cell is a symbol -- the name of the plugin -- and the second is a string that will be expanded by the ~format~ function when the plugin is loaded. So, this second element should have the form ~" {src: \"%srelative/path/toplugin/from/reveal/root.js\"}'.  If you need the async or callback parameters, include those too.  Ox-reveal will add the plugin to the dependencies parameter when Reveal is initialized.  
+Store the names and loading instructions for each plugin in the defcustom ~org-reveal-external-plugins~. This defcustom is an associative list. The first element of each Assoc cell is a symbol -- the name of the plugin -- and the second is a string that will be expanded by the ~format~ function when the plugin is loaded. So, this second element should have the form ~" {src: \"%srelative/path/toplugin/from/reveal/root.js\"}'.  If you need the async or callback parameters, include those too.  Ox-reveal will add the plugin to the dependencies parameter when Reveal is initialized.
 
 ** Highlight Source Code
 
