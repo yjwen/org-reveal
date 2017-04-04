@@ -139,7 +139,8 @@ When set to `auto', an automatic title slide is generated. When
 set to a string, use this string as a format string for title
 slide, where the following escaping elements are allowed:
 
-  %s stands for the title
+  %t stands for the title.
+  %s stands for the subtitle.
   %a stands for the author's name.
   %e stands for the author's email.
   %d stands for the date.
@@ -335,10 +336,10 @@ content."
           (const multiplex)))
 
 (defcustom org-reveal-external-plugins nil
-  "Additional third-party Plugins to load with reveal. 
-Each entry should contain a name and an expression of the form 
+  "Additional third-party Plugins to load with reveal.
+Each entry should contain a name and an expression of the form
 \"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
-Note that some plugins have dependencies such as jquery; these must be included here as well, 
+Note that some plugins have dependencies such as jquery; these must be included here as well,
 BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'alist)
