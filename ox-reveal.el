@@ -1155,50 +1155,83 @@ Each `attr_reveal' attribute is mapped to corresponding
   ;; Return the updated tree.
   tree)
 
-(defun org-reveal--update-attr-html (elem frag default-style &optional frag-index)
+(defun org-reveal--update-attr-html (elem frag default-style
+					  &optional frag-index frag-audio)
   "Update ELEM's attr_html attribute with reveal's
 fragment attributes."
   (let ((attr-html (org-element-property :attr_html elem)))
     (when (and frag (not (string= frag "none")))
-      (push (cond ((string= frag t)
-                   (if default-style (format ":class fragment %s" default-style)
-                     ":class fragment"))
-                  (t (format ":class fragment %s" frag)))
-            attr-html)
+      (push (if (string= frag t)
+		(if default-style (format ":class fragment %s" default-style)
+		  ":class fragment")
+	      (format ":class fragment %s" frag))
+	    attr-html)
       (when frag-index
-        (push (format ":data-fragment-index %s" frag-index) attr-html)))
+	;; Index positions should be numbers or the minus sign.
+	(assert (or (integerp frag-index)
+		    (eq frag-index '-)
+		    (and (not (listp frag-index))
+			 (not (char-equal (string-to-char frag-index) ?\())))
+		nil "Index cannot be a list: %s" frag-index)
+        (push (format ":data-fragment-index %s" frag-index) attr-html))
+      (when (and frag-audio (not (string= frag-audio "none")))
+        (push (format ":data-audio-src %s" frag-audio) attr-html)))
     (org-element-put-property elem :attr_html attr-html)))
 
 (defun org-reveal-append-frag (elem default-style)
   "Read org-reveal's fragment attribute from ELEM and append
 transformed fragment attribute to ELEM's attr_html plist."
   (let ((frag (org-export-read-attribute :attr_reveal elem :frag))
-        (frag-index (org-export-read-attribute :attr_reveal elem :frag_idx)))
-    (if frag
-        (cond ((and (string= (org-element-type elem) 'plain-list)
-                    (char-equal (string-to-char frag) ?\())
-               (let* ((frag-list (car (read-from-string frag)))
-                      (frag-list (if default-style
-                                     (mapcar (lambda (s)
-                                               "Replace t with default-style"
-                                               (if (string= s t) default-style
-                                                 s))
-                                             frag-list)
-                                   frag-list))
-                      (items (org-element-contents elem)))
-                 (if frag-index
-                     (mapcar* 'org-reveal--update-attr-html
-                              items frag-list default-style (car (read-from-string frag-index)))
-                   (let* ((last-frag (car (last frag-list)))
-                          (tail-list (mapcar (lambda (a) last-frag)
-                                             (number-sequence (+ (length frag-list) 1)
-                                                              (length items))))
-                          (default-style-list
-                            (mapcar (lambda (a) default-style)
-                                    (number-sequence 1 (length items)))))
-                     (nconc frag-list tail-list)
-                     (mapcar* 'org-reveal--update-attr-html items frag-list default-style-list)))))
-              (t (org-reveal--update-attr-html elem frag default-style frag-index)))
+        (frag-index (org-export-read-attribute :attr_reveal elem :frag_idx))
+	(frag-audio (org-export-read-attribute :attr_reveal elem :audio)))
+    (when frag
+      (if (and (string= (org-element-type elem) 'plain-list)
+	       (char-equal (string-to-char frag) ?\())
+	  (let* ((items (org-element-contents elem))
+		 (frag-list (car (read-from-string frag)))
+		 (frag-list (if default-style
+				(mapcar (lambda (s)
+					  "Replace t with default-style"
+					  (if (string= s t) default-style
+					    s))
+					frag-list)
+			      frag-list))
+		 (itemno (length items))
+		 (style-list (make-list itemno default-style))
+		 ;; Make sure that we have enough fragments.  Duplicate the
+		 ;; last element of frag-list so that frag-list and items
+		 ;; have the same length.
+		 (last-frag (car (last frag-list)))
+		 (tail-list (make-list
+			     (- itemno (length frag-list)) last-frag))
+		 (frag-list (append frag-list tail-list))
+		 ;; Concerning index positions and audio files, check later
+		 ;; that their number is OK.
+		 (frag-index (if frag-index
+				 (car (read-from-string frag-index))
+			       (make-list itemno nil)))
+		 (frag-audio (when frag-audio
+			       (car (read-from-string frag-audio)))))
+	    ;; As we are looking at fragments in lists, we make sure
+	    ;; that other specs are lists of proper length.
+	    (assert (listp frag-index) t
+		    "Must use list for index positions, not: %s")
+	    (when frag-index
+	      (assert (= (length frag-index) itemno) nil
+		      "Use one index per item!  %s has %d, need %d"
+		      frag-index (length frag-index) (length items)))
+	    (assert (listp frag-audio) t "Must use list for audio files! %s")
+	    (when frag-audio
+	      (assert (= (length frag-audio) itemno) nil
+		      "Use one audio file per item!  %s has %d, need %d"
+		      frag-audio (length frag-index) itemno))
+	    (if frag-audio
+		(mapcar* 'org-reveal--update-attr-html
+			 items frag-list style-list frag-index frag-audio)
+	      (mapcar* 'org-reveal--update-attr-html
+		       items frag-list style-list frag-index)))
+	(org-reveal--update-attr-html
+	 elem frag default-style frag-index frag-audio))
       elem)))
 
 (defvar client-multiplex nil

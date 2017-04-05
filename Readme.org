@@ -238,6 +238,7 @@
     | ~%d~ | Date      |
     | ~%%~ | Literal % |
 
+#+REVEAL: split
     Alternatively, you can also write the title slide's HTML code
     (containing the above escape sequences) into a separate file and
     set ~org-reveal-title-slide~ to the name of that file.
@@ -442,6 +443,26 @@
    * I appear.
    * I appear.
 
+*** List Fragments with Audio
+
+You can also use Org-Reveal in combination with the audio-slideshow
+plugin of [[https://github.com/rajgoel/reveal.js-plugins][reveal.js-plugins]].  For example, when the audio-slideshow
+plugin is configured properly, the following plays
+~1.ogg~ when the first list item appears, ~2.ogg~ for the
+second list item, and no audio for the third.  (You need to add
+suitable audio files to the current directory first.)
+
+#+BEGIN_SRC org
+,#+ATTR_REVEAL: :frag (appear) :audio (1.ogg 2.ogg none)
+   * I appear with audio 1.ogg.
+   * I appear with audio 2.ogg.
+   * I appear without audio.
+#+END_SRC
+
+#+ATTR_REVEAL: :frag (appear) :audio (1.ogg 2.ogg none)
+   * I appear with audio 1.ogg.
+   * I appear with audio 2.ogg.
+   * I appear without audio.
 
 ** Data State and Class for TOC slide
    :PROPERTIES:
