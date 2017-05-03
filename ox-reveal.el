@@ -74,6 +74,7 @@
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-toc-slide-state "REVEAL_TOC_SLIDE_STATE" nil nil t)
     (:reveal-toc-slide-class "REVEAL_TOC_SLIDE_CLASS" nil nil t)
+    (:reveal-toc-slide-title "REVEAL_TOC_SLIDE_TITLE" nil org-reveal-toc-slide-title t)
     (:reveal-default-slide-background "REVEAL_DEFAULT_SLIDE_BACKGROUND" nil nil t)
     (:reveal-default-slide-background-size "REVEAL_DEFAULT_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-default-slide-background-position "REVEAL_DEFAULT_SLIDE_BACKGROUND_POSITION" nil nil t)
@@ -316,6 +317,11 @@ content."
 
 (defcustom org-reveal-slide-footer nil
   "HTML content used as Reveal.js slide footer"
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-toc-slide-title "Table of Contents"
+  "String to display as title of toc slide."
   :group 'org-export-reveal
   :type 'string)
 
@@ -750,29 +756,38 @@ dependencies: [
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
   (let ((toc (org-html-toc depth info)))
-    (when toc
-      (let ((toc-slide-with-header (plist-get info :reveal-slide-global-header))
-            (toc-slide-with-footer (plist-get info :reveal-slide-global-footer))
-	    (toc-slide-state (plist-get info :reveal-toc-slide-state))
-	    (toc-slide-class (plist-get info :reveal-toc-slide-class))
-	    (toc (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" toc)))
-        (concat "<section id=\"table-of-contents\""
-		(when toc-slide-state
-		  (format " data-state=\"%s\"" toc-slide-state))
-		">\n"
-                (when toc-slide-with-header
-                   (let ((header (plist-get info :reveal-slide-header)))
-                     (when header (format "<div class=\"slide-header\">%s</div>\n" header))))
-                (if toc-slide-class
-		    (replace-regexp-in-string
-		     "<h\\([1-3]\\)>"
-		     (format "<h\\1 class=\"%s\">" toc-slide-class)
-		     toc)
-		  toc)
-                (when toc-slide-with-footer
-                   (let ((footer (plist-get info :reveal-slide-footer)))
-                     (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer))))
-                "</section>\n")))))
+    (org-reveal-toc-1 toc info)))
+
+(defun org-reveal-toc-1 (toc info)
+  "Build toc. TODO"
+  (when toc
+    (let* ((toc-slide-with-header (plist-get info :reveal-slide-global-header))
+	   (toc-slide-with-footer (plist-get info :reveal-slide-global-footer))
+	   (toc-slide-state (plist-get info :reveal-toc-slide-state))
+	   (toc-slide-class (plist-get info :reveal-toc-slide-class))
+	   (toc-slide-title (plist-get info :reveal-toc-slide-title))
+	   (toc (replace-regexp-in-string
+		 "<a href=\"#" "<a href=\"#/slide-" toc))
+	   (toc (replace-regexp-in-string
+		 (org-html--translate "Table of Contents" info)
+		 toc-slide-title toc)))
+      (concat "<section id=\"table-of-contents\""
+	      (when toc-slide-state
+		(format " data-state=\"%s\"" toc-slide-state))
+	      ">\n"
+	      (when toc-slide-with-header
+		(let ((header (plist-get info :reveal-slide-header)))
+		  (when header (format "<div class=\"slide-header\">%s</div>\n" header))))
+	      (if toc-slide-class
+		  (replace-regexp-in-string
+		   "<h\\([1-3]\\)>"
+		   (format "<h\\1 class=\"%s\">" toc-slide-class)
+		   toc)
+		toc)
+	      (when toc-slide-with-footer
+		(let ((footer (plist-get info :reveal-slide-footer)))
+		  (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer))))
+	      "</section>\n"))))
 
 (defun org-reveal-inner-template (contents info)
   "Return body of document string after HTML conversion.
@@ -869,7 +884,13 @@ CONTENTS is nil. INFO is a plist holding contextual information."
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value))
       (REVEAL_HTML value)
-      (HTML value))))
+      (HTML value)
+      (TOC (concat "</section>\n"
+		   (replace-regexp-in-string
+		    "<section>\\|</section>" ""
+		    (org-reveal-toc-1 (org-html-keyword keyword contents info) info))))
+      )))
+
 (defun org-reveal-embedded-svg (path)
   "Embed the SVG content into Reveal HTML."
   (with-temp-buffer
