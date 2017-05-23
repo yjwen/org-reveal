@@ -948,8 +948,9 @@ the result is the Data URIs of the referenced image."
         (org-reveal--format-image-data-uri link clean-path info)
       (if want-embed-image
           (error "Cannot embed image %s" raw-path)
-        (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-"
-                                  (org-html-link link desc info))))))
+        (replace-regexp-in-string
+	 "<a href=\"\\([^#]*\\)#" "<a href=\"\\1#/slide-"
+         (org-html-link link desc info))))))
 
 (defun org-reveal-latex-environment (latex-env contents info)
   "Transcode a LaTeX environment from Org to Reveal.
