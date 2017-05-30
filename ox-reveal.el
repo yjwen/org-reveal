@@ -50,6 +50,7 @@
     (:reveal-rolling-links nil "reveal_rolling_links" org-reveal-rolling-links t)
     (:reveal-slide-number nil "reveal_slide_number" org-reveal-slide-number t)
     (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
+    (:reveal-mousewheel nil "reveal_mousewheel" org-reveal-mousewheel t)
     (:reveal-overview nil "reveal_overview" org-reveal-overview t)
     (:reveal-width nil "reveal_width" org-reveal-width t)
     (:reveal-height nil "reveal_height" org-reveal-height)
@@ -237,6 +238,11 @@ slide, where the following escaping elements are allowed:
   :type 'string)
 
 (defcustom org-reveal-keyboard t
+  "Reveal use keyboard navigation."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-mousewheel nil
   "Reveal use keyboard navigation."
   :group 'org-export-reveal
   :type 'boolean)
@@ -648,6 +654,7 @@ center: %s,
 slideNumber: %s,
 rollingLinks: %s,
 keyboard: %s,
+mouseWheel: %s,
 overview: %s,
 "
             (if (plist-get info :reveal-control) "true" "false")
@@ -659,6 +666,7 @@ overview: %s,
                 "false"))
             (if (plist-get info :reveal-rolling-links) "true" "false")
             (if (plist-get info :reveal-keyboard) "true" "false")
+            (if (plist-get info :reveal-mousewheel) "true" "false")
             (if (plist-get info :reveal-overview) "true" "false"))
 
      ;; slide width
