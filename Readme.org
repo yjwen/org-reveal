@@ -501,10 +501,13 @@ suitable audio files to the current directory first.)
 
     - =#+OPTIONS= tags:\\
       =reveal_control=, =reveal_progress=, =reveal_history=,
-      =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=, =reveal_overview=
+      =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=,
+      =reveal_mousewheel=, =reveal_overview=
     - Custom variables:\\
       =org-reveal-control=, =org-reveal-progress=,
-      =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyboard=, =org-reveal-overview=
+      =org-reveal-history=, =org-reveal-center=,
+      =org-reveal-rolling-links=, =org-reveal-keyboard=,
+      =org-reveal-mousewheel=, =org-reveal-overview=
 
     For an example, please refer to the heading part of this document.
 
