@@ -371,6 +371,9 @@ BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
+(defvar org-reveal--slide-counter 0
+  "Count of the slides exported so far for use as a slide ID.")
+
 (defvar org-reveal--last-slide-section-tag ""
   "Variable to cache the section tag from the last slide. ")
 
@@ -421,8 +424,7 @@ holding contextual information."
       ;; Standard headline.  Export it as a slide
       (let* ((level (org-export-get-relative-level headline info))
 	     (preferred-id (or (org-element-property :CUSTOM_ID headline)
-			       (org-export-get-reference headline info)
-			       (org-element-property :ID headline)))
+                               (incf org-reveal--slide-counter)))
 	     (hlevel (org-reveal--get-hlevel info))
 	     (header (plist-get info :reveal-slide-header))
 	     (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
@@ -1186,7 +1188,7 @@ transformed fragment attribute to ELEM's attr_html plist."
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
          (clientfile (org-export-output-file-name (concat "_client" extension) subtreep)))
-
+    (setq org-reveal--slide-counter 0)
     ; export filename_client HTML file if multiplexing
     (setq client-multiplex nil)
     (setq retfile (org-export-to-file 'reveal file
