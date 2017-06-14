@@ -322,7 +322,7 @@
 
    By default, a flatten slide number is showed at the lower-right corner of each slide.
 
-   To disable slide numbering, please add ~reveal_slide_number:nil~ to
+   To disable slide numbering, please add ~num:nil~ to
    ~#+OPTIONS:~ line.
 
    From Reveal.js 3.1.0, slide numbering can have several custom
@@ -695,13 +695,6 @@ Store the names and loading instructions for each plugin in the defcustom ~org-r
   of your current edition.
 
 * Tips
-
-** Disable Heading Numbers
-
-   Add =num:nil= to =#+OPTIONS=
-#+BEGIN_SRC org
-,#+OPTIONS: num:nil
-#+END_SRC
 
 ** Internal Links
 
