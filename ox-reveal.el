@@ -33,6 +33,7 @@
 
 (require 'ox-html)
 (require 'cl)
+(require 'url-parse)
 
 (org-export-define-derived-backend 'reveal 'html
 
@@ -94,6 +95,7 @@
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
+    (:reveal-inter-presentation-links nil "reveal_inter_presentation_links" org-reveal-inter-presentation-links t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     )
@@ -362,6 +364,11 @@ BEFORE the plugins that depend on them."
 (defcustom org-reveal-single-file nil
   "Export presentation into one single HTML file, which embedded
   JS scripts and pictures."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-inter-presentation-links nil
+  "If non nil, try to convert links between presentations."
   :group 'org-export-reveal
   :type 'boolean)
 
@@ -939,6 +946,23 @@ CONTENTS is nil. INFO is a plist holding contextual information."
                 (org-export-read-attribute :attr_html parent)))))
        info))))
 
+(defun org-reveal--maybe-replace-in-link (link allow-inter-link)
+  "Replace hash sign in LINK, affected by ALLOW-INTER-LINK.
+
+If ALLOW-INTER-LINK is nil, only replace hash signs if URL in LINK starts
+with it.  Otherwise, also replace if the URL does not contain a hostname;
+such links are assumed to point into other presentations."
+  (if (and allow-inter-link
+	   (string-match "<a href=\"\\([^\"]*\\)\"" link))
+      (let* ((url (match-string 1 link))
+	     (obj (url-generic-parse-url url))
+	     (host (url-host obj)))
+	(if host
+	    link
+	  (replace-regexp-in-string
+	   "<a href=\"\\([^#]*\\)#" "<a href=\"\\1#/slide-" link)))
+    (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" link)))
+
 (defun org-reveal-link (link desc info)
   "Transcode a LINK object from Org to Reveal. The result is
   identical to ox-html expect for image links. When `org-reveal-single-file' is t,
@@ -948,6 +972,7 @@ the result is the Data URIs of the referenced image."
                                 (string= "file" (org-element-property :type link))
                                 (org-export-inline-image-p
                                  link (plist-get info :html-inline-image-rules))))
+	 (allow-inter-link (plist-get info :reveal-inter-presentation-links))
          (raw-path (org-element-property :path link))
          (clean-path (org-reveal--file-url-to-path raw-path))
          (can-embed-image (and want-embed-image
@@ -956,9 +981,8 @@ the result is the Data URIs of the referenced image."
         (org-reveal--format-image-data-uri link clean-path info)
       (if want-embed-image
           (error "Cannot embed image %s" raw-path)
-        (replace-regexp-in-string
-	 "<a href=\"\\([^#]*\\)#" "<a href=\"\\1#/slide-"
-         (org-html-link link desc info))))))
+        (org-reveal--maybe-replace-in-link (org-html-link link desc info)
+					   allow-inter-link)))))
 
 (defun org-reveal-latex-environment (latex-env contents info)
   "Transcode a LaTeX environment from Org to Reveal.

@@ -502,12 +502,14 @@ suitable audio files to the current directory first.)
     - =#+OPTIONS= tags:\\
       =reveal_control=, =reveal_progress=, =reveal_history=,
       =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=,
-      =reveal_mousewheel=, =reveal_overview=
+      =reveal_mousewheel=, =reveal_overview=,
+      =reveal_inter_presentation_links=
     - Custom variables:\\
       =org-reveal-control=, =org-reveal-progress=,
       =org-reveal-history=, =org-reveal-center=,
       =org-reveal-rolling-links=, =org-reveal-keyboard=,
-      =org-reveal-mousewheel=, =org-reveal-overview=
+      =org-reveal-mousewheel=, =org-reveal-overview=,
+      =reveal_inter_presentation_links=
 
     For an example, please refer to the heading part of this document.
 
@@ -753,6 +755,10 @@ Store the names and loading instructions for each plugin in the defcustom ~org-r
 
    * [[Tips]].
    * [[#my-heading][Heading]] with a =CUSTOM_ID= property.
+
+   If you add =reveal_inter_presentation_links:t= to =#+OPTIONS=, such
+   links also work between presentations on the same server, e.g.,
+   =[[file:somefile.org::#anchor][link text]]=.
 
 ** Custom JS
 
