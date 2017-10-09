@@ -307,7 +307,8 @@
 ** Slide Size
 
    Reveal.js scales slides to best fit the display resolution, but you can
-   also specify the desired size by settings the option tags =width= and =height=.
+   also specify the desired size by settings the option tags =reveal_width=
+   and =reveal_height=.
 
    The scaling behavior can also be constrained by setting following
    options:
