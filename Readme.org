@@ -1,3 +1,4 @@
+# Local IspellDict: en
 #+Title: Introduction to Org-Reveal
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
@@ -17,8 +18,25 @@
 #+REVEAL_PLUGINS: (markdown notes)
 #+REVEAL_EXTRA_CSS: ./local.css
 
-[[http://melpa.org/#/ox-reveal][file:http://melpa.org/packages/ox-reveal-badge.svg]]
 [[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
+
+*Note*: This fork of Org-Reveal is /not/ available on MELPA.  Thus,
+contrary to the installation instructions below (which I keep here in
+the hope that Org-Reveal will be maintained again), you need to clone my
+repository:
+#+BEGIN_SRC sh
+git clone https://github.com/lechten/org-reveal.git
+#+END_SRC
+
+Actually, if you are interested in my version, I suggest that you take
+a look at [[https://gitlab.com/oer/emacs-reveal][emacs-reveal]], which
+embeds this repository, reveal.js, and useful plugins as submodules,
+combined with suitable Emacs configuration.
+A [[https://gitlab.com/oer/emacs-reveal-howto][Howto for the generation of reveal.js presentations (slides with audio) with emacs-reveal]]
+exists as well.
+
+I use emacs-reveal to generate Open Educational Resources (OER):
+[[https://oer.gitlab.io/OS/][OER presentations for a course on operating systems]]
 
 * Reveal.js and Org-Reveal
 
