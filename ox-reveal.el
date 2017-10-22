@@ -418,6 +418,11 @@ holding contextual information."
   (and frag
        (format " class=\"%s\"" (frag-style frag info))))
 
+(defun frag-index (index)
+  "Return a attribute string for fragment index if set."
+  (and index
+       (format " data-fragment-index=\"%s\"" index)))
+
 (defun org-reveal-special-block (special-block contents info)
   "Transcode a SPECIAL-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the block. INFO is a plist
@@ -1058,6 +1063,7 @@ contextual information."
                               #'buffer-substring))
                      (org-html-format-code src-block info))))
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
+           (findex (org-export-read-attribute :attr_reveal src-block :frag_idx))
 	   (code-attribs (or (org-export-read-attribute
 			 :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
@@ -1074,12 +1080,14 @@ contextual information."
            (format "<label class=\"org-src-name\">%s</label>"
                    (org-export-data caption info)))
          (if use-highlight
-             (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
+             (format "\n<pre%s%s><code class=\"%s\" %s %s>%s</code></pre>"
                      (or (frag-class frag info) "")
+                     (or (frag-index findex) "")
                      label lang code-attribs code)
-           (format "\n<pre %s%s>%s</pre>"
+           (format "\n<pre %s%s%s>%s</pre>"
                    (or (frag-class frag info)
                        (format " class=\"src src-%s\"" lang))
+                   (or (frag-index findex) "")
                    label code)))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
