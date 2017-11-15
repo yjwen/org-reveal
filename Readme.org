@@ -20,7 +20,9 @@
 
 [[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
 
-*Note*: This fork of Org-Reveal is /not/ available on MELPA.  Thus,
+* Note
+
+This fork of Org-Reveal is /not/ available on MELPA.  Thus,
 contrary to the installation instructions below (which I keep here in
 the hope that Org-Reveal will be maintained again), you need to clone my
 repository:
