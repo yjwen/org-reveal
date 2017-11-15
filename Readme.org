@@ -534,9 +534,16 @@ suitable audio files to the current directory first.)
     For an example, please refer to the heading part of this document.
 
 ** Third-Party Plugins
-Reveal.js is also extensible through third-party plugins. Org-reveal now includes a mechanism to load these as well. It's a little more complicated, because we need to store the specific javascript loading code in a defcustom.
+Reveal.js is also extensible through third-party plugins, which can be loaded with Org-Reveal. The paths to javascript loading code need to be customized in the variable ~org-reveal-external-plugins~. This variable can be an associative list or a file. If it is an associative list the first element of each Assoc cell is a symbol -- the name of the plugin -- and the second is a string that will be expanded by the ~format~ function when the plugin is loaded. So, this second element should have the form: ~" {src: \"%srelative/path/toplugin/from/reveal/root.js\"}"~
+If you need the async or callback parameters, include those too.
 
-Store the names and loading instructions for each plugin in the defcustom ~org-reveal-external-plugins~. This defcustom is an associative list. The first element of each Assoc cell is a symbol -- the name of the plugin -- and the second is a string that will be expanded by the ~format~ function when the plugin is loaded. So, this second element should have the form ~" {src: \"%srelative/path/toplugin/from/reveal/root.js\"}'.  If you need the async or callback parameters, include those too.  Ox-reveal will add the plugin to the dependencies parameter when Reveal is initialized.
+#+REVEAL: split
+
+If ~org-reveal-external-plugins~ is a filename, that file must contain strings of the above format, one per line (without names of plugins, just the ~src~ information embedded in braces); this can also be configured within your org presentation with a line like this:
+
+=#+REVEAL_EXTERNAL_PLUGINS: external_plugins.js=
+
+In any case, Org-Reveal will add the plugins to the dependencies parameter when Reveal is initialized.
 
 ** Highlight Source Code
 

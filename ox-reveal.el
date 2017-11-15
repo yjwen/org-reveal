@@ -93,6 +93,7 @@
     (:reveal-slide-header "REVEAL_SLIDE_HEADER" nil org-reveal-slide-header t)
     (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
+    (:reveal-external-plugins "REVEAL_EXTERNAL_PLUGINS" nil org-reveal-external-plugins t)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-inter-presentation-links nil "reveal_inter_presentation_links" org-reveal-inter-presentation-links t)
@@ -353,13 +354,16 @@ content."
           (const multiplex)))
 
 (defcustom org-reveal-external-plugins nil
-  "Additional third-party Plugins to load with reveal.
-Each entry should contain a name and an expression of the form
+  "Additional third-party plugins to load with reveal.js.
+This is either an alist or a filename.
+In case of an alist, each entry should contain a name and an expression
+of the following form:
 \"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
-Note that some plugins have dependencies such as jquery; these must be included here as well,
-BEFORE the plugins that depend on them."
+In case of a file, its lines must be expressions of the above form.
+Note that some plugins have dependencies such as jquery; these must be
+included here as well, BEFORE the plugins that depend on them."
   :group 'org-export-reveal
-  :type 'alist)
+  :type '(choice alist file))
 
 (defcustom org-reveal-single-file nil
   "Export presentation into one single HTML file, which embedded
@@ -617,6 +621,26 @@ using custom variable `org-reveal-root'."
       (format "<script type=\"text/javascript\" src=\"%s\"></script>\n"
               (plist-get info :reveal-mathjax-url))))
 
+(defun org-reveal--read-file-as-string (filename)
+  "If FILENAME exists as file, return its contents as string.
+Otherwise, return nil."
+  (when (and (stringp filename) (file-readable-p filename))
+    (with-temp-buffer
+      (insert-file-contents-literally filename)
+      (buffer-string))))
+
+(defun org-reveal--external-plugin-init (info root-path)
+  "Build initialization strings for plugins of INFO under ROOT-PATH.
+Parameter INFO determines plugins and their initializations
+based on `org-reveal-external-plugins'."
+  (let* ((external-plugins (plist-get info :reveal-external-plugins))
+	 (file-contents (org-reveal--read-file-as-string external-plugins)))
+    (if file-contents
+	(cl-loop for value in (split-string (string-trim file-contents) "\n")
+		 collect (format value root-path))
+      (cl-loop for (key . value) in external-plugins
+               collect (format value root-path)))))
+
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
@@ -760,8 +784,7 @@ dependencies: [
                    (or (and buffer-plugins (listp buffer-plugins) buffer-plugins)
                        org-reveal-plugins))))
                (external-plugins
-                (cl-loop for (key . value) in org-reveal-external-plugins
-                         collect (format  value root-path )) )
+		(org-reveal--external-plugin-init info root-path))
                (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
@@ -1179,12 +1202,9 @@ info is a plist holding export options."
                      (when header (format "<div class=\"slide-header\">%s</div>\n" header))))
                  (cond ((eq title-slide nil) nil)
                        ((stringp title-slide)
-			(let ((title-string
-			       (if (file-readable-p title-slide)
-				   (with-temp-buffer
-				     (insert-file-contents-literally title-slide)
-				     (buffer-string))
-				 title-slide)))
+			(let* ((file-contents
+				(org-reveal--read-file-as-string title-slide))
+			       (title-string (or file-contents title-slide)))
 			  (format-spec title-string
 				       (org-html-format-spec info))))
                        ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
