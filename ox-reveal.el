@@ -814,7 +814,7 @@ dependencies: [
 	   (toc (replace-regexp-in-string
 		 (org-html--translate "Table of Contents" info)
 		 toc-slide-title toc)))
-      (concat "<section id=\"table-of-contents\""
+      (concat "<section id=\"table-of-contents-section\""
 	      (when toc-slide-state
 		(format " data-state=\"%s\"" toc-slide-state))
 	      ">\n"
