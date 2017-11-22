@@ -1117,8 +1117,12 @@ contextual information."
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the block INFO is a plist holding
 contextual information."
-  (format "<blockquote %s>\n%s</blockquote>"
-          (frag-class (org-export-read-attribute :attr_reveal quote-block :frag) info)
+  (format "<blockquote%s>\n%s</blockquote>"
+	  (let ((frag (frag-class (org-export-read-attribute
+				   :attr_reveal quote-block :frag) info)))
+	    (if frag
+		(concat " " frag)
+	      ""))
           contents))
 
 
