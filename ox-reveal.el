@@ -983,11 +983,12 @@ contextual information."
     (let* ((use-highlight (org-reveal--using-highlight.js info))
            (lang (org-element-property :language src-block))
            (caption (org-export-get-caption src-block))
-           (code (if (not use-highlight)
+           (not-escaped-code (if (not use-highlight)
                      (org-html-format-code src-block info)
                    (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
                               #'buffer-substring))
                      (org-html-format-code src-block info))))
+           (code ( org-html-encode-plain-text not-escaped-code))
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
 	   (code-attribs (or (org-export-read-attribute
 			 :attr_reveal src-block :code_attribs) ""))
