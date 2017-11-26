@@ -246,7 +246,7 @@ slide, where the following escaping elements are allowed:
   :type 'boolean)
 
 (defcustom org-reveal-mousewheel nil
-  "Reveal use keyboard navigation."
+  "Reveal use mousewheel navigation."
   :group 'org-export-reveal
   :type 'boolean)
 
