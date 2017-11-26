@@ -52,6 +52,7 @@
     (:reveal-slide-number nil "reveal_slide_number" org-reveal-slide-number t)
     (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
     (:reveal-mousewheel nil "reveal_mousewheel" org-reveal-mousewheel t)
+    (:reveal-defaulttiming nil "reveal_defaulttiming" org-reveal-defaulttiming t)
     (:reveal-overview nil "reveal_overview" org-reveal-overview t)
     (:reveal-width nil "reveal_width" org-reveal-width t)
     (:reveal-height nil "reveal_height" org-reveal-height)
@@ -249,6 +250,11 @@ slide, where the following escaping elements are allowed:
   "Reveal use mousewheel navigation."
   :group 'org-export-reveal
   :type 'boolean)
+
+(defcustom org-reveal-defaulttiming nil
+  "Reveal use defaultTiming for speaker notes view."
+  :group 'org-export-reveal
+  :type '(choice integer (const nil)))
 
 (defcustom org-reveal-overview t
   "Reveal show overview."
@@ -691,6 +697,7 @@ slideNumber: %s,
 rollingLinks: %s,
 keyboard: %s,
 mouseWheel: %s,
+%s
 overview: %s,
 "
             (if (plist-get info :reveal-control) "true" "false")
@@ -703,6 +710,9 @@ overview: %s,
             (if (plist-get info :reveal-rolling-links) "true" "false")
             (if (plist-get info :reveal-keyboard) "true" "false")
             (if (plist-get info :reveal-mousewheel) "true" "false")
+            (let ((timing (plist-get info :reveal-defaulttiming)))
+	      (if timing (format "defaultTiming: %s," timing)
+		""))
             (if (plist-get info :reveal-overview) "true" "false"))
 
      ;; slide width
