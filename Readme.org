@@ -522,14 +522,14 @@ suitable audio files to the current directory first.)
     - =#+OPTIONS= tags:\\
       =reveal_control=, =reveal_progress=, =reveal_history=,
       =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=,
-      =reveal_mousewheel=, =reveal_overview=,
+      =reveal_mousewheel=, =reveal_defaulttiming=, =reveal_overview=,
       =reveal_inter_presentation_links=
     - Custom variables:\\
       =org-reveal-control=, =org-reveal-progress=,
       =org-reveal-history=, =org-reveal-center=,
       =org-reveal-rolling-links=, =org-reveal-keyboard=,
-      =org-reveal-mousewheel=, =org-reveal-overview=,
-      =reveal_inter_presentation_links=
+      =org-reveal-mousewheel=, =org-reveal-defaulttiming=,
+      =org-reveal-overview=, =reveal_inter_presentation_links=
 
     For an example, please refer to the heading part of this document.
 
