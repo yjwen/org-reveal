@@ -67,6 +67,8 @@
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide "REVEAL_TITLE_SLIDE" nil org-reveal-title-slide t)
+    (:reveal-academic-title "REVEAL_ACADEMIC_TITLE" nil nil t)
+    (:reveal-miscinfo "REVEAL_MISCINFO" nil nil t)
     (:reveal-slide-global-header nil "reveal_global_header" org-reveal-global-header t)
     (:reveal-slide-global-footer nil "reveal_global_footer" org-reveal-global-footer t)
     (:reveal-title-slide-background "REVEAL_TITLE_SLIDE_BACKGROUND" nil nil t)
@@ -1053,10 +1055,20 @@ Extract and set `attr_html' to plain-list tag attributes."
             tag
             (if (string= org-html-checkbox-type 'html) "</form>" ""))))
 
+(defun org-reveal-format-spec (info)
+  "Return format specification with INFO.
+Formatting extends `org-html-format-spec' with elements for
+misc information and academic title."
+  (append (org-html-format-spec info)
+	  `((?A . ,(org-export-data
+		    (plist-get info :reveal-academic-title) info))
+	    (?m . ,(org-export-data
+		    (plist-get info :reveal-miscinfo) info)))))
+
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
   (let ((section (plist-get info (intern (format ":reveal-%s" type))))
-        (spec (org-html-format-spec info)))
+        (spec (org-reveal-format-spec info)))
     (when section
       (let ((section-contents
              (if (functionp (intern section)) (funcall (intern section) info)
@@ -1139,7 +1151,7 @@ contextual information."
 
 (defun org-reveal--auto-title-slide-template (info)
   "Generate the automatic title slide template."
-  (let* ((spec (org-html-format-spec info))
+  (let* ((spec (org-reveal-format-spec info))
          (title (org-export-data (plist-get info :title) info))
          (author (cdr (assq ?a spec)))
          (email (cdr (assq ?e spec)))
@@ -1224,7 +1236,7 @@ info is a plist holding export options."
 				(org-reveal--read-file-as-string title-slide))
 			       (title-string (or file-contents title-slide)))
 			  (format-spec title-string
-				       (org-html-format-spec info))))
+				       (org-reveal-format-spec info))))
                        ((eq title-slide 'auto) (org-reveal--auto-title-slide-template info)))
                  "\n"
                  (when title-slide-with-footer
