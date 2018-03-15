@@ -366,7 +366,8 @@ I use emacs-reveal to generate Open Educational Resources (OER):
    By default header/footer content will only display on content
    slides. To show them also on the title and toc slide you can add
    ~reveal_global_header:t~ and ~reveal_global_footer:t~ to
-   ~#+OPTIONS:~ line.
+   ~#+OPTIONS:~ line. To show the footer on the toc slide but not on
+   the title slide, use option ~reveal_toc_footer:t~.
 
 ** Fragmented Contents
 
