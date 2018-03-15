@@ -877,19 +877,23 @@ holding export options."
    ;; Document contents.
    contents))
 
-(defun org-reveal-parse-token (key &optional value)
-  "Return HTML tags or perform SIDE EFFECT according to key.
-Use the previous section tag as the tag of the split section. "
+(defun org-reveal-parse-token (footer key &optional value)
+  "Return HTML tags or perform SIDE EFFECT according to KEY.
+Currently, only splitting of slides/sections is implemented.
+The current section is closed by FOOTER, which may be nil.
+use the previous section tag as the tag of the split section. "
   (case (intern key)
-    (split (format "</section>\n%s" org-reveal--last-slide-section-tag))))
+    (split (format "%s</section>\n%s"
+		   footer org-reveal--last-slide-section-tag))))
 
-(defun org-reveal-parse-keyword-value (value)
-  "According to the value content, return HTML tags to split slides."
+(defun org-reveal-parse-keyword-value (value footer)
+  "According to the VALUE content, return HTML tags to split slides.
+The possibly empty FOOTER is inserted at the end of the slide."
   (let ((tokens (mapcar
                  (lambda (x) (split-string x ":"))
                  (split-string value))))
     (mapconcat
-     (lambda (x) (apply 'org-reveal-parse-token x))
+     (lambda (x) (apply 'org-reveal-parse-token footer x))
      tokens
      "")))
 
@@ -962,7 +966,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 	 (footer-div (when footer
 		       (format org-reveal-slide-footer-html footer))))
     (case (intern key)
-      (REVEAL (org-reveal-parse-keyword-value value))
+      (REVEAL (org-reveal-parse-keyword-value value footer-div))
       (REVEAL_HTML value)
       (HTML value)
       ;; Handling of TOC at arbitrary position is a hack.
