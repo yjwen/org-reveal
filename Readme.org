@@ -375,16 +375,16 @@
     global variable ~org-reveal-default-frag-style~.
 
 *** Fragment Index
-    Fragment sequence can be changed by assigning adding ~:frag_idx~
+    Fragment sequence can be changed by assigning adding ~:frag-idx~
     property to each fragmented element.
 
-#+ATTR_REVEAL: :frag t :frag_idx 3
+#+ATTR_REVEAL: :frag t :frag-idx 3
     And, this paragraph shows at last.
 
-#+ATTR_REVEAL: :frag t :frag_idx 2
+#+ATTR_REVEAL: :frag t :frag-idx 2
     This paragraph shows secondly.
 
-#+ATTR_REVEAL: :frag t :frag_idx 1
+#+ATTR_REVEAL: :frag t :frag-idx 1
     This paragraph shows at first.
 
 *** List Fragments
@@ -408,7 +408,7 @@
     An example:
 
 #+BEGIN_SRC org
-,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)
+,#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag-idx (4 3 2 1 -)
    * I will grow.
    * I will shrink.
    * I rolled in.
@@ -416,14 +416,14 @@
    * I don't fragment.
 #+END_SRC
 
-#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag_idx (4 3 2 1 -)
+#+ATTR_REVEAL: :frag (grow shrink roll-in fade-out none) :frag-idx (4 3 2 1 -)
    * I will grow.
    * I will shrink.
    * I rolled in.
    * I will fade out.
    * I don't fragment.
 #+REVEAL: split
-   When there is ~:frag_idx~ specified, insufficient fragment style
+   When there is ~:frag-idx~ specified, insufficient fragment style
    list will be extended by its last element. So a ~:frag (appear)~
    assigns each item of a list the ~appear~ fragment style.
 #+BEGIN_SRC org
