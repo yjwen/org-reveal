@@ -589,7 +589,7 @@ It is now possible to embed code blocks in a codemirror instance in order to edi
 - ~org-reveal-klipsify-src~
 - ~org-reveal-klipse-css~
 - ~org-reveal-klipse-js~
-TThis feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present couce editing is supported in javacript, clojure, php, ruby, scheme, and pyhton only.  
+This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javacript, clojure, php, ruby, scheme, and python only.  
 
 ** MathJax
   :PROPERTIES:
@@ -803,7 +803,7 @@ TThis feature is turned off by default and needs to be switched on with ~org-rev
    custom-id, as the examples below:
 
    * [[Tips]].
-   * [[#my-heading][Heading]] with a =CUSTOM_ID= property.q
+   * [[#my-heading][Heading]] with a =CUSTOM_ID= property.
 
    If you add =reveal_inter_presentation_links:t= to =#+OPTIONS=, such
    links also work between presentations on the same server, e.g.,
@@ -828,7 +828,7 @@ TThis feature is turned off by default and needs to be switched on with ~org-rev
    custom variable ~org-reveal-init-script~.
 
 ** Executable Source Blocks
-To allow live execution of code in some languages, enable the klipsify plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.  
+To allow live execution of code in some languages, enable the klipse plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.  
 
 *** HTML Src Block
 #+BEGIN_SRC html
