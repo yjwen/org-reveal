@@ -371,6 +371,21 @@ BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-klipsify-src nil
+  "Set to non-nil if you would like to make source code blocks editable in exported presentation."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-klipse-css "https://storage.googleapis.com/app.klipse.tech/css/codemirror.css"
+  "Location of the codemirror css file for use with klipse."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-klipse-js "https://storage.googleapis.com/app.klipse.tech/plugin_prod/js/klipse_plugin.min.js"
+  "location of the klipse js source code."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defvar org-reveal--last-slide-section-tag ""
   "Variable to cache the section tag from the last slide. ")
 
@@ -993,25 +1008,61 @@ contextual information."
 			 :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
-                      (format " id=\"%s\"" lbl)))))
+                      (format " id=\"%s\"" lbl))))
+           (klipsify  (and  org-reveal-klipsify-src 
+                           (member lang '("javascript" "js" "ruby" "scheme" "clojure" "php" "html"))))
+           (langselector (cond ((or (string= lang "js") (string= lang "javascript")) "selector_eval_js")
+                               ((string= lang "clojure") "selector")
+                               ((string= lang "python") "selector_eval_python_client")
+                               ((string= lang "scheme") "selector_eval_scheme")
+                               ((string= lang "ruby") "selector_eval_ruby")
+                               ((string= lang "html") "selector_eval_html"))
+                         )
+)
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
                   label
                   code)
-        (format
-         "<div class=\"org-src-container\">\n%s%s\n</div>"
-         (if (not caption) ""
-           (format "<label class=\"org-src-name\">%s</label>"
-                   (org-export-data caption info)))
-         (if use-highlight
-             (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
-                     (or (frag-class frag info) "")
-                     label lang code-attribs code)
-           (format "\n<pre %s%s>%s</pre>"
-                   (or (frag-class frag info)
-                       (format " class=\"src src-%s\"" lang))
-                   label code)))))))
+        (if klipsify
+            (concat
+             "<iframe style=\"background-color:white;\" height=\"500px\" width= \"100%\" srcdoc='<html><body><pre><code "
+             (if (string= lang "html" )"data-editor-type=\"html\"  "  "") "class=\"klipse\" "code-attribs ">
+" (if (string= lang "html")
+      (replace-regexp-in-string "'" "&#39;"
+                                (replace-regexp-in-string "&" "&amp;"
+                                                          (replace-regexp-in-string "<" "&lt;"
+                                                                                    (replace-regexp-in-string ">" "&gt;"
+                                                                                                              (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
+                                                                                                                         #'buffer-substring))
+                                                                                                                (org-html-format-code src-block info))))))
+    (replace-regexp-in-string "'" "&#39;"
+                              code))  "
+</code></pre>
+<link rel= \"stylesheet\" type= \"text/css\" href=\"" org-reveal-klipse-css "\">
+<style>
+.CodeMirror { font-size: 2em; }
+</style>
+<script>
+window.klipse_settings = { " langselector  ": \".klipse\" };
+</script>
+<script src= \"" org-reveal-klipse-js "\"></script></body></html>
+'>
+</iframe>")
+          (format
+            "<div class=\"org-src-container\">\n%s%s\n</div>"
+            (if (not caption) ""
+              (format "<label class=\"org-src-name\">%s</label>"
+                      (org-export-data caption info)))
+            (if use-highlight
+                (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
+                        (or (frag-class frag info) "")
+                        label lang code-attribs code)
+              (format "\n<pre %s%s>%s</pre>"
+                      (or (frag-class frag info)
+                          (format " class=\"src src-%s\"" lang))
+                      label code)
+              )))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
