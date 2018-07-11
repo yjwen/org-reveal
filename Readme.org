@@ -710,6 +710,16 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 ,#+OPTIONS: num:nil
 #+END_SRC
 
+** Disable Table of Contents
+
+   Add =toc:nil= to =#+OPTIONS=
+#+BEGIN_SRC org
+,#+OPTIONS: toc:nil
+#+END_SRC
+
+   This is actually an option recognized by =org-export=. It is only mentioned
+   here because slide decks often do not need a TOC.
+
 ** Internal Links
 
    Reveal.js supports only jump between slides, but not between
