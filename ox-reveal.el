@@ -435,8 +435,11 @@ holding contextual information."
         (org-html-headline headline contents info)
       ;; Standard headline.  Export it as a slide
       (let* ((level (org-export-get-relative-level headline info))
+	     (section-number (mapconcat #'number-to-string
+					(org-export-get-headline-number headline info)
+					"-"))
 	     (preferred-id (or (org-element-property :CUSTOM_ID headline)
-			       (org-export-get-reference headline info)
+			       section-number
 			       (org-element-property :ID headline)))
 	     (hlevel (org-reveal--get-hlevel info))
 	     (header (plist-get info :reveal-slide-header))
@@ -812,7 +815,7 @@ Use the previous section tag as the tag of the split section. "
   (let ((attr-html (cond (attributes (format " %s" (org-html--make-attribute-string attributes)))
                          (checkbox (format " class=\"%s\"" (symbol-name checkbox)))
                          (t "")))
-	(checkbox (concat (org-html-checkbox checkbox info)
+	(checkbox (concat (org-html-checkbox checkbox)
 			  (and checkbox " ")))
 	(br (org-html-close-tag "br" nil info)))
     (concat
@@ -952,13 +955,12 @@ Extract and set `attr_html' to plain-list tag attributes."
                (unordered "ul")
                (descriptive "dl")))
         (attrs (org-export-read-attribute :attr_html plain-list)))
-    (format "%s<%s%s>\n%s\n</%s>%s"
-            (if (string= org-html-checkbox-type 'html) "<form>" "")
+    (format "<%s%s>\n%s\n</%s>"
             tag
             (if attrs (concat " " (org-html--make-attribute-string attrs)) "")
             contents
             tag
-            (if (string= org-html-checkbox-type 'html) "</form>" ""))))
+            )))
 
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
@@ -1097,8 +1099,7 @@ contextual information."
        (concat "<p class=\"date\">"
                (org-html--translate "Created" info)
                ": "
-               (format-time-string
-                (plist-get info :html-metadata-timestamp-format))
+               (format-time-string org-html-metadata-timestamp-format)
                "</p>")))))
 
 (defun org-reveal-template (contents info)
