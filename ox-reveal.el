@@ -455,7 +455,7 @@ holding contextual information."
              (default-slide-background-transition (plist-get info :reveal-default-slide-background-transition))
              (slide-section-tag (format "<section %s%s>\n"
                                         (org-html--make-attribute-string
-                                         `(:id ,(format "slide-%s" preferred-id)
+                                         `(:id ,(format "slide-sec-%s" preferred-id)
                                            :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
                                            :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                                            :data-background ,(or (org-element-property :REVEAL_BACKGROUND headline)
