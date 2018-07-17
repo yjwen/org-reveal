@@ -808,43 +808,46 @@ Use the previous section tag as the tag of the split section. "
 
 ;; Copied from org-html-format-list-item. Overwrite HTML class
 ;; attribute when there is attr_html attributes.
-(defun org-reveal-format-list-item (contents type checkbox attributes info
-					     &optional term-counter-id
-					     headline)
+(defun org-reveal-format-list-item (contents type checkbox info
+					   &optional term-counter-id
+					   headline)
   "Format a list item into HTML."
-  (let ((attr-html (cond (attributes (format " %s" (org-html--make-attribute-string attributes)))
-                         (checkbox (format " class=\"%s\"" (symbol-name checkbox)))
-                         (t "")))
-	(checkbox (concat (org-html-checkbox checkbox)
+  (let ((class (if checkbox
+		   (format " class=\"%s\""
+			   (symbol-name checkbox)) ""))
+	(checkbox (concat (org-html-checkbox checkbox info)
 			  (and checkbox " ")))
-	(br (org-html-close-tag "br" nil info)))
+	(br (org-html-close-tag "br" nil info))
+	(extra-newline (if (and (org-string-nw-p contents) headline) "\n" "")))
     (concat
-     (case type
-       (ordered
+     (pcase type
+       (`ordered
 	(let* ((counter term-counter-id)
 	       (extra (if counter (format " value=\"%s\"" counter) "")))
 	  (concat
-	   (format "<li%s%s>" attr-html extra)
+	   (format "<li%s%s>" class extra)
 	   (when headline (concat headline br)))))
-       (unordered
+       (`unordered
 	(let* ((id term-counter-id)
 	       (extra (if id (format " id=\"%s\"" id) "")))
 	  (concat
-	   (format "<li%s%s>" attr-html extra)
+	   (format "<li%s%s>" class extra)
 	   (when headline (concat headline br)))))
-       (descriptive
+       (`descriptive
 	(let* ((term term-counter-id))
 	  (setq term (or term "(no term)"))
 	  ;; Check-boxes in descriptive lists are associated to tag.
 	  (concat (format "<dt%s>%s</dt>"
-			  attr-html (concat checkbox term))
-		 (format "<dd%s>" attr-html)))))
+			  class (concat checkbox term))
+		  "<dd>"))))
      (unless (eq type 'descriptive) checkbox)
-     (and contents (org-trim contents))
-     (case type
-       (ordered "</li>")
-       (unordered "</li>")
-       (descriptive "</dd>")))))
+     extra-newline
+     (and (org-string-nw-p contents) (org-trim contents))
+     extra-newline
+     (pcase type
+       (`ordered "</li>")
+       (`unordered "</li>")
+       (`descriptive "</dd>")))))
 
 ;; Copied from org-html-item, changed to call
 ;; org-reveal-format-list-item.
@@ -855,13 +858,13 @@ contextual information."
   (let* ((plain-list (org-export-get-parent item))
 	 (type (org-element-property :type plain-list))
 	 (counter (org-element-property :counter item))
-         (attributes (org-export-read-attribute :attr_html item))
+         ; (attributes (org-export-read-attribute :attr_html item))
          ; (attributes (org-html--make-attribute-string (org-export-read-attribute :attr_html item)))
 	 (checkbox (org-element-property :checkbox item))
 	 (tag (let ((tag (org-element-property :tag item)))
 		(and tag (org-export-data tag info)))))
     (org-reveal-format-list-item
-     contents type checkbox attributes info (or tag counter))))
+     contents type checkbox info (or tag counter))))
 
 (defun org-reveal-keyword (keyword contents info)
   "Transcode a KEYWORD element from Org to Reveal,
