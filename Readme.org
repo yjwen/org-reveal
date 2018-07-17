@@ -703,11 +703,11 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 
 * Tips
 
-** Disable Heading Numbers
-
-   Add =num:nil= to =#+OPTIONS=
+** Enable Heading Numbers
+Heading numbers are disabled by default for org-reveal exports. 
+For enabling them, add =num:t= to =#+OPTIONS=
 #+BEGIN_SRC org
-,#+OPTIONS: num:nil
+,#+OPTIONS: num:t
 #+END_SRC
 
 ** Disable Table of Contents
