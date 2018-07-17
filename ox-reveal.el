@@ -815,7 +815,7 @@ Use the previous section tag as the tag of the split section. "
   (let ((attr-html (cond (attributes (format " %s" (org-html--make-attribute-string attributes)))
                          (checkbox (format " class=\"%s\"" (symbol-name checkbox)))
                          (t "")))
-	(checkbox (concat (org-html-checkbox checkbox)
+	(checkbox (concat (org-html-checkbox checkbox info)
 			  (and checkbox " ")))
 	(br (org-html-close-tag "br" nil info)))
     (concat
