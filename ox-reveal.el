@@ -1211,17 +1211,17 @@ transformed fragment attribute to ELEM's attr_html plist."
                                                  s))
                                              frag-list)
                                    frag-list))
-                      (items (org-element-contents elem)))
+                      (items (org-element-contents elem))
+		      (default-style-list
+                            (mapcar (lambda (a) default-style)
+                                    (number-sequence 1 (length items)))))
                  (if frag-index
                      (mapcar* 'org-reveal--update-attr-html
-                              items frag-list default-style (car (read-from-string frag-index)))
+                              items frag-list default-style-list (car (read-from-string frag-index)))
                    (let* ((last-frag (car (last frag-list)))
                           (tail-list (mapcar (lambda (a) last-frag)
                                              (number-sequence (+ (length frag-list) 1)
-                                                              (length items))))
-                          (default-style-list
-                            (mapcar (lambda (a) default-style)
-                                    (number-sequence 1 (length items)))))
+                                                              (length items)))))
                      (nconc frag-list tail-list)
                      (mapcar* 'org-reveal--update-attr-html items frag-list default-style-list)))))
               (t (org-reveal--update-attr-html elem frag default-style frag-index)))
