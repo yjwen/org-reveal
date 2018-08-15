@@ -52,6 +52,8 @@
     (:reveal-slide-number nil "reveal_slide_number" org-reveal-slide-number t)
     (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
     (:reveal-mousewheel nil "reveal_mousewheel" org-reveal-mousewheel t)
+    (:reveal-fragmentinurl nil "reveal_fragmentinurl" org-reveal-fragmentinurl t)
+    (:reveal-pdfseparatefragments nil "reveal_pdfseparatefragments" org-reveal-pdfseparatefragments t)
     (:reveal-defaulttiming nil "reveal_defaulttiming" org-reveal-defaulttiming t)
     (:reveal-overview nil "reveal_overview" org-reveal-overview t)
     (:reveal-width nil "reveal_width" org-reveal-width t)
@@ -252,6 +254,16 @@ slide, where the following escaping elements are allowed:
 
 (defcustom org-reveal-mousewheel nil
   "Reveal use mousewheel navigation."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-fragmentinurl nil
+  "Reveal use fragmentInURL setting."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defcustom org-reveal-pdfseparatefragments t
+  "Reveal disable pdfSeparateFragments setting."
   :group 'org-export-reveal
   :type 'boolean)
 
@@ -717,6 +729,8 @@ slideNumber: %s,
 rollingLinks: %s,
 keyboard: %s,
 mouseWheel: %s,
+fragmentInURL: %s,
+pdfSeparateFragments: %s,
 %s
 overview: %s,
 "
@@ -730,6 +744,8 @@ overview: %s,
             (if (plist-get info :reveal-rolling-links) "true" "false")
             (if (plist-get info :reveal-keyboard) "true" "false")
             (if (plist-get info :reveal-mousewheel) "true" "false")
+            (if (plist-get info :reveal-fragmentinurl) "true" "false")
+            (if (plist-get info :reveal-pdfseparatefragments) "true" "false")
             (let ((timing (plist-get info :reveal-defaulttiming)))
 	      (if timing (format "defaultTiming: %s," timing)
 		""))
