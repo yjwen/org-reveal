@@ -740,7 +740,7 @@ In any case, Org-Reveal will add the plugins to the dependencies parameter when 
 
 ** Export into Single File
 
-   By setting option =reveal_single_file= to ~t~, images and necessary
+   By setting option =reveal_single_file= to ~t~, images and basic
    Reveal.js scripts will be embedded into the exported HTML file, to make
    a portable HTML. Please note that remote images will /not/ be included in the
    single file, so presentations with remote images will still require an Internet
@@ -752,12 +752,22 @@ In any case, Org-Reveal will add the plugins to the dependencies parameter when 
    ,#+OPTIONS: reveal_single_file:t
    #+END_SRC
 
-   When exporting into single file, functions provided by Reveal.js
-   libraries will be disabled due to limitation, including PDF export,
-   Markdown support, zooming, speaker notes and remote control.
+#+REVEAL: split
 
-   Code highlight by highlight.js is also disabled. But *code
-   highlight by Emacs is not effected.*
+   *Limitations* of single file export
+   * Some functions provided by Reveal.js libraries will be
+     *disabled*, including PDF export, Markdown support, zooming,
+     speaker notes, and remote control.
+     * Code highlighting by highlight.js is also disabled, but *code
+       highlighting by Emacs is not affected.*
+   * Plugins are *not* enabled.
+   * CSS needs to be *self-contained*.  Neither ~@import~ rules nor
+     other forms of URLs work (images need to be embedded as
+     data URIs).
+   * If you use ~org-reveal-title-slide~ with custom HTML code and
+     images, you need to embed images in the form of data URIs
+     yourself.
+
 
 ** Export Current Subtree
 
