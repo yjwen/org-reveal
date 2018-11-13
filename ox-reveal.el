@@ -671,11 +671,15 @@ overview: %s,
 
      ;; slide width
      (let ((width (plist-get info :reveal-width)))
-       (if (> width 0) (format "width: %d,\n" width) ""))
+       (cond ((and (integerp width) (> width 0)) (format "width: %d,\n" width))
+             ((stringp width) (format "width: '%s',\n" width))
+             (t "")))
 
      ;; slide height
      (let ((height (plist-get info :reveal-height)))
-       (if (> height 0) (format "height: %d,\n" height) ""))
+       (cond ((and (integerp height) (> height 0)) (format "height: %d,\n" height))
+             ((stringp height) (format "height: '%s',\n" height))
+             (t "")))
 
      ;; slide margin
      (let ((margin (string-to-number (plist-get info :reveal-margin))))
