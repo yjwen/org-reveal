@@ -159,7 +159,10 @@ slide, where the following escaping elements are allowed:
   %a stands for the author's name.
   %e stands for the author's email.
   %d stands for the date.
-  %% stands for a literal %."
+  %% stands for a literal %.
+
+Alternatively, the string can also be the name of a file with the title
+slide's HTML code (containing the above escape sequences)."
   :group 'org-export-reveal
   :type '(choice (const :tag "No title slide" nil)
                  (const :tag "Auto title slide" 'auto)
