@@ -157,8 +157,10 @@ slide, where the following escaping elements are allowed:
   %t stands for the title.
   %s stands for the subtitle.
   %a stands for the author's name.
+  %A stands for the author's academic title.
   %e stands for the author's email.
   %d stands for the date.
+  %m stands for misc information.
   %% stands for a literal %.
 
 Alternatively, the string can also be the name of a file with the title
@@ -442,6 +444,16 @@ included here as well, BEFORE the plugins that depend on them."
 (defvar org-reveal--last-slide-section-tag ""
   "Variable to cache the section tag from the last slide. ")
 
+(defvar org-reveal--slide-id-prefix "slide-"
+  "Prefix to use in ID attributes of slide elements.")
+
+(defvar org-reveal--href-fragment-prefix
+  (concat "/" org-reveal--slide-id-prefix)
+  "Prefix to use when linking to specific slides.
+The default uses a slash between hash sign and slide ID,
+which leads to broken links that are not understood outside reveal.js.
+See there: https://github.com/hakimel/reveal.js/issues/2276")
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -510,7 +522,7 @@ holding contextual information."
              (default-slide-background-transition (plist-get info :reveal-default-slide-background-transition))
              (slide-section-tag (format "<section %s%s>\n"
                                         (org-html--make-attribute-string
-                                         `(:id ,(format "slide-%s" preferred-id)
+                                         `(:id ,(format "%s%s" org-reveal--slide-id-prefix preferred-id)
                                            :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
                                            :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                                            :data-background ,(or (org-element-property :REVEAL_BACKGROUND headline)
@@ -861,7 +873,8 @@ dependencies: [
 	   (toc-slide-class (plist-get info :reveal-toc-slide-class))
 	   (toc-slide-title (plist-get info :reveal-toc-slide-title))
 	   (toc (replace-regexp-in-string
-		 "<a href=\"#" "<a href=\"#/slide-" toc))
+		 "<a href=\"#"
+		 (concat "<a href=\"#" org-reveal--href-fragment-prefix) toc))
 	   (toc (replace-regexp-in-string
 		 (org-html--translate "Table of Contents" info)
 		 toc-slide-title toc)))
@@ -1058,8 +1071,13 @@ such links are assumed to point into other presentations."
 	(if host
 	    link
 	  (replace-regexp-in-string
-	   "<a href=\"\\([^#]*\\)#" "<a href=\"\\1#/slide-" link)))
-    (replace-regexp-in-string "<a href=\"#" "<a href=\"#/slide-" link)))
+	   "<a href=\"\\([^#]*\\)#"
+	   (concat "<a href=\"\\1#" org-reveal--href-fragment-prefix)
+	   link)))
+    (replace-regexp-in-string
+     "<a href=\"#"
+     (concat "<a href=\"#" org-reveal--href-fragment-prefix)
+     link)))
 
 (defun org-reveal-link (link desc info)
   "Transcode a LINK object from Org to Reveal. The result is

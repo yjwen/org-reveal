@@ -251,12 +251,14 @@ I use emacs-reveal to generate Open Educational Resources (OER):
     To customize the title slide, please set ~org-reveal-title-slide~
     to a string of HTML markups. The following escape sequences can
     be used to retrieve document information:
-    | ~%t~ | Title     |
-    | ~%s~ | Subtitle  |
-    | ~%a~ | Author    |
-    | ~%e~ | Email     |
-    | ~%d~ | Date      |
-    | ~%%~ | Literal % |
+    | ~%t~ | Title            |
+    | ~%s~ | Subtitle         |
+    | ~%a~ | Author           |
+    | ~%A~ | Academic title   |
+    | ~%e~ | Email            |
+    | ~%d~ | Date             |
+    | ~%m~ | Misc information |
+    | ~%%~ | Literal %        |
 
 #+REVEAL: split
     Alternatively, you can also write the title slide's HTML code
@@ -799,6 +801,18 @@ In any case, Org-Reveal will add the plugins to the dependencies parameter when 
    If you add =reveal_inter_presentation_links:t= to =#+OPTIONS=, such
    links also work between presentations on the same server, e.g.,
    =[[file:somefile.org::#anchor][link text]]=.
+
+   Reveal.js [[https://github.com/hakimel/reveal.js#internal-links][advertises]]
+   to use broken internal links, which are used in Org-Reveal by
+   default.  (Those links work with reveal.js, but are not understood
+   by search engines.)  If you change ~org-reveal--href-fragment-prefix~
+   from its default to the value of ~org-reveal--slide-id-prefix~,
+   valid links are generated:
+   #+BEGIN_SRC lisp
+   (setq org-reveal--href-fragment-prefix org-reveal--slide-id-prefix)
+   #+END_SRC
+   Whether this change is a good idea might be discussed under this
+   [[https://github.com/hakimel/reveal.js/issues/2276][reveal.js issue]].
 
 ** Custom JS
 
