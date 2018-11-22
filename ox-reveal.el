@@ -1261,7 +1261,7 @@ info is a plist holding export options."
            (if-format " lang=\"%s\"" (plist-get info :language)))
    "<meta charset=\"utf-8\"/>\n"
    (if-format "<title>%s</title>\n" (org-export-data (plist-get info :title) info))
-   (if-format "<meta name=\"author\" content=\"%s\"/>\n" (plist-get info :author))
+   (if-format "<meta name=\"author\" content=\"%s\"/>\n" (org-element-interpret-data (plist-get info :author)))
    (if-format "<meta name=\"description\" content=\"%s\"/>\n" (plist-get info :description))
    (if-format "<meta name=\"keywords\" content=\"%s\"/>\n" (plist-get info :keywords))
    (org-reveal-stylesheets info)
