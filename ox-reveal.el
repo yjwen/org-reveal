@@ -1010,8 +1010,8 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 	 (toc-html (org-reveal-toc-1
 		    (org-html-keyword keyword contents info) info))
 	 (footer (plist-get info :reveal-slide-footer))
-	 (footer-div (when footer
-		       (format org-reveal-slide-footer-html footer))))
+	 (footer-div (if footer
+		       (format org-reveal-slide-footer-html footer) "")))
     (case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value footer-div))
       (REVEAL_HTML value)
