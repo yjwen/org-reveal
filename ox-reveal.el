@@ -68,7 +68,7 @@
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css newline)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
-    (:reveal-title-slide "REVEAL_TITLE_SLIDE" nil org-reveal-title-slide t)
+    (:reveal-title-slide "REVEAL_TITLE_SLIDE" nil org-reveal-title-slide newline)
     (:reveal-academic-title "REVEAL_ACADEMIC_TITLE" nil nil t)
     (:reveal-miscinfo "REVEAL_MISCINFO" nil nil t)
     (:reveal-slide-global-header nil "reveal_global_header" org-reveal-global-header t)
