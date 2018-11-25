@@ -57,7 +57,7 @@
     (:reveal-defaulttiming nil "reveal_defaulttiming" org-reveal-defaulttiming t)
     (:reveal-overview nil "reveal_overview" org-reveal-overview t)
     (:reveal-width nil "reveal_width" org-reveal-width t)
-    (:reveal-height nil "reveal_height" org-reveal-height)
+    (:reveal-height nil "reveal_height" org-reveal-height t)
     (:reveal-margin "REVEAL_MARGIN" nil org-reveal-margin t)
     (:reveal-min-scale "REVEAL_MIN_SCALE" nil org-reveal-min-scale t)
     (:reveal-max-scale "REVEAL_MAX_SCALE" nil org-reveal-max-scale t)
