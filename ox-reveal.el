@@ -33,6 +33,7 @@
 
 (require 'ox-html)
 (require 'cl)
+(require 'cl-extra)
 (require 'url-parse)
 
 (org-export-define-derived-backend 'reveal 'html
@@ -131,7 +132,15 @@
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
   within which js/reveal.js is."
-  :group 'org-export-reveal)
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-script-files '("lib/js/head.min.js" "js/reveal.js")
+  "Files to load for reveal.js.  On 2018-10-04, head.min.js was removed
+on the dev branch of reveal.js.  If you are using a version including that
+removal, customize this variable to remove the first file name."
+  :group 'org-export-reveal
+  :type '(repeat string))
 
 (defcustom org-reveal-hlevel 1
   "The minimum level of headings that should be grouped into
@@ -713,36 +722,34 @@ based on `org-reveal-external-plugins'."
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
-         (head-min-js (concat root-path "lib/js/head.min.js"))
-         (reveal-js (concat root-path "js/reveal.js"))
+	 (root-libs (mapcar (lambda (file) (concat root-path file))
+			    org-reveal-script-files))
          ;; Local files
          (local-root-path (org-reveal--file-url-to-path root-path))
-         (local-head-min-js (concat local-root-path "lib/js/head.min.js"))
-         (local-reveal-js (concat local-root-path "js/reveal.js"))
+	 (local-libs (mapcar (lambda (file) (concat local-root-path file))
+			     org-reveal-script-files))
+	 (local-libs-exist-p (cl-every #'file-readable-p local-libs))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; reveal.js/lib/js/head.min.js
      ;; reveal.js/js/reveal.js
      (if (and in-single-file
-              (file-readable-p local-head-min-js)
-              (file-readable-p local-reveal-js))
+	      local-libs-exist-p)
          ;; Embed scripts into HTML
          (concat "<script>\n"
-                 (org-reveal--read-file local-head-min-js)
-                 "\n"
-                 (org-reveal--read-file local-reveal-js)
+		 (mapconcat #'org-reveal--read-file local-libs "\n")
                  "\n</script>")
        ;; Fall-back to extern script links
        (if in-single-file
            ;; Tried to embed scripts but failed. Print a message about possible errors.
            (error (concat "Cannot read "
-                            (mapconcat 'identity
-                                       (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
-                                                         (list local-head-min-js local-reveal-js)))
-                                       ", "))))
-       (concat
-        "<script src=\"" head-min-js "\"></script>\n"
-        "<script src=\"" reveal-js "\"></script>\n"))
+                          (mapconcat 'identity
+                                     (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
+                                                       local-libs))
+                                     ", "))))
+       (mapconcat (lambda (file)
+		    (concat "<script src=\"" file "\"></script>"))
+		  root-libs "\n"))
      ;; plugin headings
      "
 <script>
