@@ -487,15 +487,18 @@ suitable audio files to the current directory first.)
    * I appear with audio 2.ogg.
    * I appear without audio.
 
-** Data State and Class for TOC slide
+** Data State and Classes for Headlines and Slides, including generated ones
    :PROPERTIES:
    :reveal_data_state: alert
    :END:
 
-   Set property =reveal_data_state= to headings to change this slide's
-   display style, as illustrated above.
-
-   Available data states are: alert|blackout|soothe.
+   Set property =reveal_data_state= to a headline to change this
+   slide's display style.  (In the past, ~reveal.min.css~ defined
+   classes ~alert~, ~blackout~, ~soothe~, which were activated by the
+   data state.)  In any case, property =reveal_data_state= adds a
+   ~data-state~ attribute to the slide's ~section~ element, which is
+   called “Slide State” by reveal.js; this might also be useful with
+   reveal.js plugins.
 
    To add a ~data-state~ attribute to a generated title slide or
    table of contents slide, you can use the following options:
@@ -503,8 +506,12 @@ suitable audio files to the current directory first.)
    * =REVEAL_TITLE_SLIDE_STATE=
    * =REVEAL_TOC_SLIDE_STATE=
 
-   To add a ~class~ attribute to a generated table of contents slide,
-   you can use the option =REVEAL_TOC_SLIDE_CLASS=.
+   To add a ~class~ attribute to the ~section~ element of a generated
+   table of contents slide, you can use the option
+   =REVEAL_TOC_SLIDE_CLASS=.
+
+   To add a ~class~ attribute to a slide's ~h~-element, add property
+   =html_headline_class= to the headline.
 
 
 ** Plug-ins
@@ -589,7 +596,7 @@ It is now possible to embed code blocks in a codemirror instance in order to edi
 - ~org-reveal-klipsify-src~
 - ~org-reveal-klipse-css~
 - ~org-reveal-klipse-js~
-This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javacript, clojure, php, ruby, scheme, and python only.  
+This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javacript, clojure, php, ruby, scheme, and python only.
 
 ** MathJax
   :PROPERTIES:
@@ -838,7 +845,7 @@ This feature is turned off by default and needs to be switched on with ~org-reve
    custom variable ~org-reveal-init-script~.
 
 ** Executable Source Blocks
-To allow live execution of code in some languages, enable the klipse plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.  
+To allow live execution of code in some languages, enable the klipse plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.
 
 *** HTML Src Block
 #+BEGIN_SRC html
