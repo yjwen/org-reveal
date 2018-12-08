@@ -517,6 +517,44 @@ exporter."
         (format "<aside class=\"notes\">\n%s\n</aside>\n" contents)
       (org-html-special-block special-block contents info))))
 
+(defun org-reveal--add-class (elem value)
+  "Add VALUE as \"class\" attribute in HTML header element ELEM."
+  (let ((match (string-match "^<h[1-9][^>]+>" elem)))
+    (unless match (error "Element no headline: %s" elem))
+    (let ((tag (match-string 0 elem)))
+      (when (string-match "class" tag)
+	(error "Element contains class already: %s" elem))
+      (replace-regexp-in-string "\\(<h[1-9][^>]+\\)>"
+				(format "\\1 class=\"%s\">" value)
+				elem))))
+
+(defun org-reveal--fix-html-headline (headline contents info)
+  "Convert HEADLINE with CONTENTS and INFO to HTML.
+Call `org-html-headline' to generate initial HTML, remove surrounding
+\"div\" tags, and add class attribute to h-element if
+\":HTML_HEADLINE_CLASS\" property is present.
+
+Adding a class attribute in ox-reveal.el is a hack which is only
+necessary until that functionality has arrived in ox-html.el:
+https://lists.gnu.org/archive/html/emacs-orgmode/2018-12/msg00016.html
+As that patch has been accepted, the property is called
+\":HTML_HEADLINE_CLASS\".  Otherwise, \":REVEAL_HEADLINE_CLASS\" would
+have been appropriate..."
+  (let* ((class (org-element-property :HTML_HEADLINE_CLASS headline))
+	 (html (org-html-headline headline contents info))
+	 (nodiv
+	  (if (string-prefix-p "<div" html)
+              ;; Remove the first <div> and the last </div> tags from html
+              (concat "<"
+                      (mapconcat 'identity
+				 (butlast (cdr (split-string html "<" t)))
+				 "<"))
+	    ;; Return the HTML content unchanged
+	    html)))
+    (if class
+	(org-reveal--add-class nodiv class)
+      nodiv)))
+
 ;; Copied from org-html-headline and modified to embed org-reveal
 ;; specific attributes.
 (defun org-reveal-headline (headline contents info)
@@ -592,16 +630,7 @@ holding contextual information."
                    ;; Slide header if any.
                    header-div
                    ;; The HTML content of the headline
-                   ;; Strip the <div> tags, if any
-                   (let ((html (org-html-headline headline contents info)))
-                     (if (string-prefix-p "<div" html)
-                         ;; Remove the first <div> and the last </div> tags from html
-                         (concat "<"
-                                 (mapconcat 'identity
-                                            (butlast (cdr (split-string html "<" t)))
-                                            "<"))
-                       ;; Return the HTML content unchanged
-                       html))
+		   (org-reveal--fix-html-headline headline contents info)
                    (if (and (= level 1)
                             (org-export-last-sibling-p headline info))
                        ;; Last head 1. Close all slides.
