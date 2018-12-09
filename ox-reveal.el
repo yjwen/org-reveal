@@ -1130,6 +1130,35 @@ such links are assumed to point into other presentations."
      (concat "<a href=\"#" org-reveal--href-fragment-prefix)
      link)))
 
+(defun org-reveal--internal-link-class (link info)
+  "Check if LINK is internal, given INFO, and maybe assign class.
+The direction of the link is assigned as class attribute to the link
+and to its parent via \"attr_html\":
+If link points backward (to previous content), class \"backwardlink\"
+is assigned, else \"forwardlink\".
+Assigning the class to \"attr_html\" of parent is based on a hack in
+`org-html-link', while use of \"attr_html\" of the link itself
+requires a version of org-mode as of 2018-12-08 or newer."
+  (let ((target (ignore-errors (org-export-resolve-id-link link info))))
+    (when target
+      (let* ((lbegin (org-element-property :begin link))
+	     (tbegin (org-element-property :begin target))
+	     (direction (if (< tbegin lbegin)
+			    "backwardlink"
+			  "forwardlink"))
+	     (parent (org-export-get-parent-element link))
+	     (attrs (org-combine-plists
+		     (org-export-read-attribute :attr_html parent)
+		     (org-export-read-attribute :attr_html link)))
+	     (class (plist-get attrs :class))
+	     (newclass (if class (concat direction " " class) direction))
+	     (newattrs (mapconcat (lambda (elem) (format "%s" elem))
+	 			  (plist-put attrs :class newclass)
+	 			  " ")))
+	(org-element-put-property parent :attr_html (list newattrs))
+	(org-element-put-property link :attr_html (list newattrs))
+	))))
+
 (defun org-reveal-link (link desc info)
   "Transcode a LINK object from Org to Reveal. The result is
   identical to ox-html expect for image links. When `org-reveal-single-file' is t,
@@ -1148,6 +1177,7 @@ the result is the Data URIs of the referenced image."
         (org-reveal--format-image-data-uri link clean-path info)
       (if want-embed-image
           (error "Cannot embed image %s" raw-path)
+	(org-reveal--internal-link-class link info)
         (org-reveal--maybe-replace-in-link (org-html-link link desc info)
 					   allow-inter-link)))))
 
