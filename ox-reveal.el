@@ -32,8 +32,10 @@
 ;;; Code:
 
 (require 'ox-html)
-(require 'cl)
-(require 'cl-extra)
+(require 'cl-extra) ; cl-every
+(require 'cl-lib)   ; cl-mapcar
+(require 'cl-macs)  ; cl-loop, cl-letf
+(require 'subr-x)   ; string-trim
 (require 'url-parse)
 
 (org-export-define-derived-backend 'reveal 'html
@@ -1531,10 +1533,10 @@ transformed fragment attribute to ELEM's attr_html plist."
 		      "Use one audio file per item!  %s has %d, need %d"
 		      frag-audio (length frag-index) itemno))
 	    (if frag-audio
-		(mapcar* 'org-reveal--update-attr-html
-			 items frag-list style-list frag-index frag-audio)
-	      (mapcar* 'org-reveal--update-attr-html
-		       items frag-list style-list frag-index)))
+		(cl-mapcar 'org-reveal--update-attr-html
+			   items frag-list style-list frag-index frag-audio)
+	      (cl-mapcar 'org-reveal--update-attr-html
+			 items frag-list style-list frag-index)))
 	(org-reveal--update-attr-html
 	 elem frag default-style frag-index frag-audio))
       elem)))
