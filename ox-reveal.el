@@ -35,7 +35,7 @@
 (require 'ox-html)
 (require 'cl-extra) ; cl-every
 (require 'cl-lib)   ; cl-mapcar
-(require 'cl-macs)  ; cl-loop, cl-letf
+(require 'cl-macs)  ; cl-loop, cl-letf, cl-assert
 (require 'subr-x)   ; string-trim
 (require 'url-parse)
 
