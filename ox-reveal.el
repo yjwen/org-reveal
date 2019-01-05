@@ -1,6 +1,7 @@
 ;;; ox-reveal.el --- reveal.js Presentation Back-End for Org Export Engine
 
 ;; Copyright (C) 2013 Yujie Wen
+;; Copyright (C) 2017-2019 Jens Lechtenbörger
 
 ;; Author: Yujie Wen <yjwen.ty at gmail dot com>
 ;; Created: 2013-04-27
