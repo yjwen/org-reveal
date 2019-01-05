@@ -1475,11 +1475,12 @@ fragment attributes."
 	    attr-html)
       (when frag-index
 	;; Index positions should be numbers or the minus sign.
-	(assert (or (integerp frag-index)
-		    (eq frag-index '-)
-		    (and (not (listp frag-index))
-			 (not (char-equal (string-to-char frag-index) ?\())))
-		nil "Index cannot be a list: %s" frag-index)
+	(cl-assert (or (integerp frag-index)
+		       (eq frag-index '-)
+		       (and (not (listp frag-index))
+			    (not (char-equal
+				  (string-to-char frag-index) ?\())))
+		   nil "Index cannot be a list: %s" frag-index)
         (push (format ":data-fragment-index %s" frag-index) attr-html))
       (when (and frag-audio (not (string= frag-audio "none")))
         (push (format ":data-audio-src %s" frag-audio) attr-html)))
@@ -1521,17 +1522,18 @@ transformed fragment attribute to ELEM's attr_html plist."
 			       (car (read-from-string frag-audio)))))
 	    ;; As we are looking at fragments in lists, we make sure
 	    ;; that other specs are lists of proper length.
-	    (assert (listp frag-index) t
-		    "Must use list for index positions, not: %s")
+	    (cl-assert (listp frag-index) t
+		       "Must use list for index positions, not: %s")
 	    (when frag-index
-	      (assert (= (length frag-index) itemno) nil
-		      "Use one index per item!  %s has %d, need %d"
-		      frag-index (length frag-index) (length items)))
-	    (assert (listp frag-audio) t "Must use list for audio files! %s")
+	      (cl-assert (= (length frag-index) itemno) nil
+			 "Use one index per item!  %s has %d, need %d"
+			 frag-index (length frag-index) (length items)))
+	    (cl-assert (listp frag-audio) t
+		       "Must use list for audio files! %s")
 	    (when frag-audio
-	      (assert (= (length frag-audio) itemno) nil
-		      "Use one audio file per item!  %s has %d, need %d"
-		      frag-audio (length frag-index) itemno))
+	      (cl-assert (= (length frag-audio) itemno) nil
+			 "Use one audio file per item!  %s has %d, need %d"
+			 frag-audio (length frag-index) itemno))
 	    (if frag-audio
 		(cl-mapcar 'org-reveal--update-attr-html
 			   items frag-list style-list frag-index frag-audio)
