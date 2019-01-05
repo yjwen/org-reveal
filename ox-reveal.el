@@ -35,7 +35,7 @@
 (require 'ox-html)
 (require 'cl-extra) ; cl-every
 (require 'cl-lib)   ; cl-mapcar
-(require 'cl-macs)  ; cl-loop, cl-letf, cl-assert
+(require 'cl-macs)  ; cl-loop, cl-letf, cl-assert, cl-case
 (require 'subr-x)   ; string-trim
 (require 'url-parse)
 
@@ -968,7 +968,7 @@ holding export options."
 Currently, only splitting of slides/sections is implemented.
 The current section is closed by FOOTER, which may be nil.
 use the previous section tag as the tag of the split section. "
-  (case (intern key)
+  (cl-case (intern key)
     (split (format "%s</section>\n%s"
 		   footer org-reveal--last-slide-section-tag))))
 
@@ -996,7 +996,7 @@ The possibly empty FOOTER is inserted at the end of the slide."
 			  (and checkbox " ")))
 	(br (org-html-close-tag "br" nil info)))
     (concat
-     (case type
+     (cl-case type
        (ordered
 	(let* ((counter term-counter-id)
 	       (extra (if counter (format " value=\"%s\"" counter) "")))
@@ -1018,7 +1018,7 @@ The possibly empty FOOTER is inserted at the end of the slide."
 		 (format "<dd%s>" attr-html)))))
      (unless (eq type 'descriptive) checkbox)
      (and contents (org-trim contents))
-     (case type
+     (cl-case type
        (ordered "</li>")
        (unordered "</li>")
        (descriptive "</dd>")))))
@@ -1051,7 +1051,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
 	 (footer (plist-get info :reveal-slide-footer))
 	 (footer-div (if footer
 		       (format org-reveal-slide-footer-html footer) "")))
-    (case (intern key)
+    (cl-case (intern key)
       (REVEAL (org-reveal-parse-keyword-value value footer-div))
       (REVEAL_HTML value)
       (HTML value)
@@ -1201,7 +1201,7 @@ CONTENTS is the contents of the list. INFO is a plist holding
 contextual information.
 
 Extract and set `attr_html' to plain-list tag attributes."
-  (let ((tag (case (org-element-property :type plain-list)
+  (let ((tag (cl-case (org-element-property :type plain-list)
                (ordered "ol")
                (unordered "ul")
                (descriptive "dl")))
