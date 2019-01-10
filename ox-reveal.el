@@ -526,7 +526,8 @@ Do nothing if \"class\" attribute is alredy present."
   (let ((match (string-match "^<h[1-9][^>]+>" elem)))
     (unless match (error "Element no headline: %s" elem))
     (let ((tag (match-string 0 elem)))
-      (unless (string-match "class" tag)
+      (if (string-match "class" tag)
+	  elem
 	(replace-regexp-in-string "\\(<h[1-9][^>]+\\)>"
 				  (format "\\1 class=\"%s\">" value)
 				  elem)))))
