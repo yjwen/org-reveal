@@ -521,15 +521,15 @@ exporter."
       (org-html-special-block special-block contents info))))
 
 (defun org-reveal--add-class (elem value)
-  "Add VALUE as \"class\" attribute in HTML header element ELEM."
+  "Add VALUE as \"class\" attribute in HTML header element ELEM.
+Do nothing if \"class\" attribute is alredy present."
   (let ((match (string-match "^<h[1-9][^>]+>" elem)))
     (unless match (error "Element no headline: %s" elem))
     (let ((tag (match-string 0 elem)))
-      (when (string-match "class" tag)
-	(error "Element contains class already: %s" elem))
-      (replace-regexp-in-string "\\(<h[1-9][^>]+\\)>"
-				(format "\\1 class=\"%s\">" value)
-				elem))))
+      (unless (string-match "class" tag)
+	(replace-regexp-in-string "\\(<h[1-9][^>]+\\)>"
+				  (format "\\1 class=\"%s\">" value)
+				  elem)))))
 
 (defun org-reveal--fix-html-headline (headline contents info)
   "Convert HEADLINE with CONTENTS and INFO to HTML.
