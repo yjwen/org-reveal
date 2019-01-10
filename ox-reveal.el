@@ -733,7 +733,9 @@ using custom variable `org-reveal-root'."
 (defun org-reveal--read-file-as-string (filename)
   "If FILENAME exists as file, return its contents as string.
 Otherwise, return nil."
-  (when (and (stringp filename) (file-readable-p filename))
+  (when (and (stringp filename)
+	     (file-readable-p filename)
+	     (not (file-directory-p filename)))
     (with-temp-buffer
       (insert-file-contents-literally filename)
       (buffer-string))))
@@ -1422,7 +1424,7 @@ info is a plist holding export options."
 		  (concat " data-state=\"" title-slide-state "\""))
 		 (when title-slide-timing
 		  (concat " data-timing=\"" title-slide-timing "\""))
-                 ">"
+                 ">\n"
                  (when title-slide-with-header
                    (let ((header (plist-get info :reveal-slide-header)))
                      (when header (format org-reveal-slide-header-html header))))
