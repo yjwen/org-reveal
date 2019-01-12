@@ -1285,6 +1285,7 @@ contextual information."
                                ((string= lang "python") "selector_eval_python_client")
                                ((string= lang "scheme") "selector_eval_scheme")
                                ((string= lang "ruby") "selector_eval_ruby")
+                               ((string= lang "php") "selector_eval_php")
                                ((string= lang "html") "selector_eval_html"))
                          )
 )
