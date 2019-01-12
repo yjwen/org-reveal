@@ -1295,7 +1295,10 @@ contextual information."
         (if klipsify
             (concat
              "<iframe style=\"background-color:white;\" height=\"500px\" width= \"100%\" srcdoc='<html><body><pre><code "
-             (if (string= lang "html" )"data-editor-type=\"html\"  "  "") "class=\"klipse\" "code-attribs ">
+             (if (string= lang "html")
+		 "data-editor-type=\"html\" "
+	       "")
+	     "class=\"klipse\" " code-attribs ">
 " (if (string= lang "html")
       (replace-regexp-in-string "'" "&#39;"
                                 (replace-regexp-in-string "&" "&amp;"
