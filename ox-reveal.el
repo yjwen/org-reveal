@@ -464,9 +464,13 @@ included here as well, BEFORE the plugins that depend on them."
   :type 'string)
 
 (defcustom org-reveal-klipse-js "https://storage.googleapis.com/app.klipse.tech/plugin_prod/js/klipse_plugin.min.js"
-  "location of the klipse js source code."
+  "Location of the klipse js source code."
   :group 'org-export-reveal
   :type 'string)
+
+(defconst org-reveal-klipse-languages
+  '("javascript" "js" "ruby" "scheme" "clojure" "php" "html")
+  "List of languages supported by org-reveal.")
 
 (defvar org-reveal--last-slide-section-tag ""
   "Variable to cache the section tag from the last slide. ")
@@ -1278,17 +1282,18 @@ contextual information."
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl))))
-           (klipsify  (and org-reveal-klipsify-src
-                           (member lang '("javascript" "js" "ruby" "scheme" "clojure" "php" "html"))))
-           (langselector (cond ((or (string= lang "js") (string= lang "javascript")) "selector_eval_js")
-                               ((string= lang "clojure") "selector")
-                               ((string= lang "python") "selector_eval_python_client")
-                               ((string= lang "scheme") "selector_eval_scheme")
-                               ((string= lang "ruby") "selector_eval_ruby")
-                               ((string= lang "php") "selector_eval_php")
-                               ((string= lang "html") "selector_eval_html"))
-                         )
-)
+           (klipsify (and org-reveal-klipsify-src
+                          (member lang org-reveal-klipse-languages)))
+           (langselector
+	    (cond ((or (string= lang "js") (string= lang "javascript"))
+		   "selector_eval_js")
+                  ((string= lang "clojure") "selector")
+                  ((string= lang "python") "selector_eval_python_client")
+                  ((string= lang "scheme") "selector_eval_scheme")
+                  ((string= lang "ruby") "selector_eval_ruby")
+                  ((string= lang "php") "selector_eval_php")
+                  ((string= lang "html") "selector_eval_html")
+		  )))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
                   (or (frag-class frag info) " class=\"example\"")
