@@ -469,7 +469,7 @@ included here as well, BEFORE the plugins that depend on them."
   :type 'string)
 
 (defconst org-reveal-klipse-languages
-  '("javascript" "js" "ruby" "scheme" "clojure" "php" "html")
+  '("clojure" "html" "javascript" "js" "php" "python" "ruby" "scheme")
   "List of languages supported by org-reveal.")
 
 (defvar org-reveal--last-slide-section-tag ""
@@ -1288,11 +1288,11 @@ contextual information."
 	    (cond ((or (string= lang "js") (string= lang "javascript"))
 		   "selector_eval_js")
                   ((string= lang "clojure") "selector")
-                  ((string= lang "python") "selector_eval_python_client")
-                  ((string= lang "scheme") "selector_eval_scheme")
-                  ((string= lang "ruby") "selector_eval_ruby")
-                  ((string= lang "php") "selector_eval_php")
                   ((string= lang "html") "selector_eval_html")
+                  ((string= lang "php") "selector_eval_php")
+                  ((string= lang "python") "selector_eval_python_client")
+                  ((string= lang "ruby") "selector_eval_ruby")
+                  ((string= lang "scheme") "selector_eval_scheme")
 		  )))
       (if (not lang)
           (format "<pre %s%s>\n%s</pre>"
