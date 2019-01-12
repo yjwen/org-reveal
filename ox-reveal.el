@@ -1267,7 +1267,8 @@ contextual information."
            (caption (org-export-get-caption src-block))
            (code (if (not use-highlight)
                      (org-html-format-code src-block info)
-                   (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
+                   (cl-letf (((symbol-function
+			       'org-html-htmlize-region-for-paste)
                               #'buffer-substring))
                      (org-html-format-code src-block info))))
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
@@ -1277,7 +1278,7 @@ contextual information."
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl))))
-           (klipsify  (and  org-reveal-klipsify-src
+           (klipsify  (and org-reveal-klipsify-src
                            (member lang '("javascript" "js" "ruby" "scheme" "clojure" "php" "html"))))
            (langselector (cond ((or (string= lang "js") (string= lang "javascript")) "selector_eval_js")
                                ((string= lang "clojure") "selector")
@@ -1299,23 +1300,29 @@ contextual information."
 		 "data-editor-type=\"html\" "
 	       "")
 	     "class=\"klipse\" " code-attribs ">
-" (if (string= lang "html")
-      (replace-regexp-in-string "'" "&#39;"
-                                (replace-regexp-in-string "&" "&amp;"
-                                                          (replace-regexp-in-string "<" "&lt;"
-                                                                                    (replace-regexp-in-string ">" "&gt;"
-                                                                                                              (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
-                                                                                                                         #'buffer-substring))
-                                                                                                                (org-html-format-code src-block info))))))
-    (replace-regexp-in-string "'" "&#39;"
-                              code))  "
+"
+	     (if (string= lang "html")
+		 (replace-regexp-in-string
+		  "'" "&#39;"
+                  (replace-regexp-in-string
+		   "&" "&amp;"
+                   (replace-regexp-in-string
+		    "<" "&lt;"
+                    (replace-regexp-in-string
+		     ">" "&gt;"
+                     (cl-letf (((symbol-function
+				 'org-html-htmlize-region-for-paste)
+                                #'buffer-substring))
+                       (org-html-format-code src-block info))))))
+	       (replace-regexp-in-string "'" "&#39;" code))
+	     "
 </code></pre>
 <link rel= \"stylesheet\" type= \"text/css\" href=\"" org-reveal-klipse-css "\">
 <style>
 .CodeMirror { font-size: 2em; }
 </style>
 <script>
-window.klipse_settings = { " langselector  ": \".klipse\" };
+window.klipse_settings = { " langselector ": \".klipse\" };
 </script>
 <script src= \"" org-reveal-klipse-js "\"></script></body></html>
 '>
