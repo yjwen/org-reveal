@@ -1292,7 +1292,7 @@ Return output file name."
 ;; Register auto-completion for speaker notes.
 (when org-reveal-note-key-char
   (add-to-list 'org-structure-template-alist
-               (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES")))
+               (list org-reveal-note-key-char "NOTES")))
 
 (provide 'ox-reveal)
 
