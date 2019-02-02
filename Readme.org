@@ -22,17 +22,15 @@
 
 * Note
 
-This fork of Org-Reveal is /not/ available on MELPA.  Thus,
-contrary to the installation instructions below (which I keep here in
-the hope that Org-Reveal will be maintained again), you need to clone my
-repository:
-#+BEGIN_SRC sh
-git clone https://github.com/lechten/org-reveal.git
-#+END_SRC
+As of February 2019, this fork of Org-Reveal is /not/ maintained any longer.
+Please check out
+[[https://gitlab.com/oer/org-re-reveal][org-re-reveal]],
+which continues my work and which has been accepted into
+[[https://melpa.org/#/org-re-reveal][MELPA]].
 
 Actually, if you are interested in my version, I suggest that you take
 a look at [[https://gitlab.com/oer/emacs-reveal][emacs-reveal]], which
-embeds this repository, reveal.js, and useful plugins as submodules,
+embeds my fork, reveal.js, and useful plugins as submodules,
 combined with suitable Emacs configuration.
 A [[https://gitlab.com/oer/emacs-reveal-howto][Howto for the generation of reveal.js presentations (slides with audio) with emacs-reveal]]
 exists as well.
