@@ -611,23 +611,17 @@ using custom variable `org-reveal-root'."
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
-         (head-min-js (concat root-path "lib/js/head.min.js"))
          (reveal-js (concat root-path "js/reveal.js"))
          ;; Local files
          (local-root-path (org-reveal--file-url-to-path root-path))
-         (local-head-min-js (concat local-root-path "lib/js/head.min.js"))
          (local-reveal-js (concat local-root-path "js/reveal.js"))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
-     ;; reveal.js/lib/js/head.min.js
      ;; reveal.js/js/reveal.js
      (if (and in-single-file
-              (file-readable-p local-head-min-js)
               (file-readable-p local-reveal-js))
          ;; Embed scripts into HTML
          (concat "<script>\n"
-                 (org-reveal--read-file local-head-min-js)
-                 "\n"
                  (org-reveal--read-file local-reveal-js)
                  "\n</script>")
        ;; Fall-back to extern script links
@@ -636,10 +630,9 @@ custom variable `org-reveal-root'."
            (error (concat "Cannot read "
                             (mapconcat 'identity
                                        (delq nil (mapcar (lambda (file) (if (not (file-readable-p file)) file))
-                                                         (list local-head-min-js local-reveal-js)))
+                                                         (list local-reveal-js)))
                                        ", "))))
        (concat
-        "<script src=\"" head-min-js "\"></script>\n"
         "<script src=\"" reveal-js "\"></script>\n"))
      ;; plugin headings
      "
