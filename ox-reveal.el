@@ -1053,7 +1053,7 @@ window.klipse_settings = { " langselector  ": \".klipse\" };
                 (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
                         (or (frag-class frag info) "")
                         label lang code-attribs code)
-              (format "\n<pre %s%s>%s</pre>"
+              (format "\n<pre %s%s><code trim>%s</code></pre>"
                       (or (frag-class frag info)
                           (format " class=\"src src-%s\"" lang))
                       label code)
