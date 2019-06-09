@@ -115,7 +115,7 @@
    a CDN instead of downloading a local copy.
 
    #+BEGIN_SRC org
-   ,#+REVEAL_ROOT: http://cdn.jsdelivr.net/reveal.js/3.0.0/
+   ,#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js@3.7.0
    #+END_SRC
 
 
