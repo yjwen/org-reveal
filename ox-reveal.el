@@ -335,10 +335,10 @@ content."
           (const multiplex)))
 
 (defcustom org-reveal-external-plugins nil
-  "Additional third-party Plugins to load with reveal. 
-Each entry should contain a name and an expression of the form 
+  "Additional third-party Plugins to load with reveal.
+Each entry should contain a name and an expression of the form
 \"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
-Note that some plugins have dependencies such as jquery; these must be included here as well, 
+Note that some plugins have dependencies such as jquery; these must be included here as well,
 BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'alist)
@@ -1272,8 +1272,12 @@ Return output file name."
 
 ;; Register auto-completion for speaker notes.
 (when org-reveal-note-key-char
-  (add-to-list 'org-structure-template-alist
-               (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES")))
+  (if (version< org-version "9.2")
+      (add-to-list 'org-structure-template-alist
+                   (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES"))
+    (add-to-list 'org-structure-template-alist
+                 (cons org-reveal-note-key-char "notes"))))
+
 
 (provide 'ox-reveal)
 
