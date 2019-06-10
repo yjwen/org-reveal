@@ -1272,7 +1272,7 @@ Return output file name."
 
 ;; Register auto-completion for speaker notes.
 (when org-reveal-note-key-char
-  (if (version< org-version "9.2")
+  (if (version< (cdr (get 'org-structure-template-alist 'custom-package-version))  "9.2")
       (add-to-list 'org-structure-template-alist
                    (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES"))
     (add-to-list 'org-structure-template-alist
