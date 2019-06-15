@@ -139,7 +139,7 @@ When set to `auto', an automatic title slide is generated. When
 set to a string, use this string as a format string for title
 slide, where the following escaping elements are allowed:
 
-  %s stands for the title
+  %t stands for the title
   %a stands for the author's name.
   %e stands for the author's email.
   %d stands for the date.
