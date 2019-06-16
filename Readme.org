@@ -757,6 +757,44 @@ x
 #+BEGIN_SRC perl
 I don't know perl!
 #+END_SRC
+
+** Properties for Sub-headings
+
+If you want to have multiple reveal presentations in a single Org-mode
+file, you might want to switch from file-based properties like:
+
+#+BEGIN_SRC org
+,#+REVEAL_HLEVEL: 2
+,#+REVEAL_TRANS: cube
+,#+REVEAL_THEME: moon
+#+END_SRC
+
+to properties of sub-headings like:
+
+#+BEGIN_SRC org
+:PROPERTIES:
+:EXPORT_REVEAL_HLEVEL: 2
+:EXPORT_REVEAL_TRANS: cube
+:EXPORT_REVEAL_THEME: moon
+:END:
+#+END_SRC
+
+This way, each org-reveal presentation can have its own settings. An example heading with corresponding settings would look like:
+
+#+BEGIN_SRC org
+* My org-reveal presentation among many within the same Org-mode file
+:PROPERTIES:
+:reveal_overview: t
+:EXPORT_AUTHOR: Test Author
+:EXPORT_DATE: 2018-01-01
+:EXPORT_TITLE: My Title
+:EXPORT_EMAIL: Test@example.com
+:EXPORT_OPTIONS: num:nil toc:nil reveal_keyboard:t reveal_overview:t
+:EXPORT_REVEAL_HLEVEL: 3
+:EXPORT_REVEAL_MARGIN: 200
+:END:
+#+END_SRC
+
 * Thanks
 
   Courtesy to:
