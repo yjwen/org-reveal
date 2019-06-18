@@ -229,7 +229,9 @@
 *** Customize the Title Slide
 
     To customize the title slide, please set ~org-reveal-title-slide~
-    to a string of HTML markups. The following escaping character can
+    to a string of HTML markups. Alternatively, set ~reveal_title_slide~ in 
+    the ~#+OPTIONS:~ line to a string of HTML markups. 
+    The following escaping character can
     be used to retrieve document information:
     | ~%t~ | Title     |
     | ~%a~ | Author    |
