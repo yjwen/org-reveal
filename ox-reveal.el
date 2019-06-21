@@ -456,6 +456,7 @@ holding contextual information."
              (slide-section-tag (format "<section %s%s>\n"
                                         (org-html--make-attribute-string
                                          `(:id ,(format "slide-sec-%s" preferred-id)
+                                           :class ,(org-element-property :HTML_CONTAINER_CLASS headline)
                                            :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
                                            :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
                                            :data-background ,(or (org-element-property :REVEAL_BACKGROUND headline)
@@ -1246,7 +1247,6 @@ transformed fragment attribute to ELEM's attr_html plist."
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
          (clientfile (org-export-output-file-name (concat "_client" extension) subtreep)))
-
     ; export filename_client HTML file if multiplexing
     (setq client-multiplex nil)
     (setq retfile (org-export-to-file 'reveal file
