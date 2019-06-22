@@ -334,6 +334,9 @@
 
    Supported format string can be found in [[https://github.com/hakimel/reveal.js/#slide-number][Reveal.js manual]].
 
+   *NOTE:* ~reveal_sldie_number~ has no effect on the numbering of
+   headings. To disable the heading number, pleass add ~num:nil~ to
+   one ~#+OPTIONS~ line.
 
 ** Slide Header/Footer
    Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
@@ -705,13 +708,6 @@ This feature is turned off by default and needs to be switched on with ~org-reve
   of your current edition.
 
 * Tips
-
-** Disable Heading Numbers
-
-   Add =num:nil= to =#+OPTIONS=
-#+BEGIN_SRC org
-,#+OPTIONS: num:nil
-#+END_SRC
 
 ** Disable Table of Contents
 
