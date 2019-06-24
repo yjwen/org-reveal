@@ -439,8 +439,7 @@ holding contextual information."
 					(org-export-get-headline-number headline info)
 					"-"))
 	     (preferred-id (or (org-element-property :CUSTOM_ID headline)
-			       section-number
-			       (org-element-property :ID headline)))
+			       (org-export-get-reference headline info)))
 	     (hlevel (org-reveal--get-hlevel info))
 	     (header (plist-get info :reveal-slide-header))
 	     (header-div (when header (format "<div class=\"slide-header\">%s</div>\n" header)))
@@ -455,7 +454,7 @@ holding contextual information."
              (default-slide-background-transition (plist-get info :reveal-default-slide-background-transition))
              (slide-section-tag (format "<section %s%s>\n"
                                         (org-html--make-attribute-string
-                                         `(:id ,(format "slide-sec-%s" preferred-id)
+                                         `(:id ,(format "slide-%s" preferred-id)
                                            :class ,(org-element-property :HTML_CONTAINER_CLASS headline)
                                            :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
                                            :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
