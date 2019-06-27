@@ -1010,9 +1010,26 @@ contextual information."
            (caption (org-export-get-caption src-block))
            (code (if (not use-highlight)
                      (org-html-format-code src-block info)
-                   (cl-letf (((symbol-function 'org-html-htmlize-region-for-paste)
-                              #'buffer-substring))
-                     (org-html-format-code src-block info))))
+		   ;; Use our own function for org-export-format-code,
+		   ;; since org-html-format-code will wrap line
+		   ;; numbers with HTML tags that will be display as
+		   ;; part of the code by highlight.js
+		   (let* ((num-start (org-export-get-loc src-block info))
+			  (code (car (org-export-unravel-code src-block)))
+			  (code-length (length (split-string code "\n")))
+			  (num-fmt (and num-start
+					(format "%%%ds: "
+						(length (number-to-string (+ code-length
+									     num-start)))))))
+		     (org-export-format-code
+		      code
+		      (lambda (loc line-num ref)
+			(setq loc
+			      (concat
+			       ;; Add line number, if needed
+			       (when num-start (format num-fmt line-num))
+			       loc)))
+		      num-start))))
            (frag (org-export-read-attribute :attr_reveal src-block :frag))
 	   (code-attribs (or (org-export-read-attribute
 			 :attr_reveal src-block :code_attribs) ""))
