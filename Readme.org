@@ -204,6 +204,9 @@
 
    Now a new slide begins after =#+REVEAL= keyword.
 
+   To repeat the heading title on the split slide, please insert
+   ~#+REVEAL: split:t~ instead.
+
 ** Select Theme and Transition
 
     Themes and transition styles are set globally throughout the whole
@@ -414,7 +417,7 @@
     Custom fragment sequence should also be enumerated for each list
     item.
 
-#+REVEAL: split
+#+REVEAL: split:t
     An example:
 
 #+BEGIN_SRC org
@@ -432,7 +435,7 @@
    * I rolled in.
    * I will fade out.
    * I don't fragment.
-#+REVEAL: split
+#+REVEAL: split:t
    When there is ~:frag_idx~ specified, insufficient fragment style
    list will be extended by its last element. So a ~:frag (appear)~
    assigns each item of a list the ~appear~ fragment style.

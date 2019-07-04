@@ -750,7 +750,7 @@ dependencies: [
                (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
-                (if (string= "" extra-codes) all-plugins (append (list extra-codes) all-plugins))                ))
+                (if (string= "" extra-codes) all-plugins (append (list extra-codes) all-plugins))))
           (mapconcat 'identity total-codes ",\n"))
         "]\n"
          ))
@@ -787,19 +787,47 @@ holding export options."
    ;; Document contents.
    contents))
 
-(defun org-reveal-parse-token (key &optional value)
+(defun org-reveal-parse-token (keyword info key &optional value)
   "Return HTML tags or perform SIDE EFFECT according to key.
 Use the previous section tag as the tag of the split section. "
   (case (intern key)
-    (split (format "</section>\n%s" org-reveal--last-slide-section-tag))))
+    (split (format "</section>%s"
+		   (concat
+		    org-reveal--last-slide-section-tag
+		    (and value
+			 (string= value "t")
+			 ;; Add a title for the split slide
+			 ;; Copy from `org-html-headline' and modified.
+			 (let* ((headline (org-element-property
+					   :parent
+					   (org-element-property
+					    :parent
+					    keyword)))
+				(title (org-export-data
+					(org-element-property :title headline)
+					info))
+				(level (+ (org-export-get-relative-level headline info)
+					  (1- (plist-get info :html-toplevel-hlevel))))
+				(numberedp (org-export-numbered-headline-p headline info))
+				(numbers (org-export-get-headline-number headline info)))
+			   (format "\n<h%d>%s</h%d>"
+				   level
+				   (concat
+				    (and numberedp
+					 (format
+					  "<span class=\"section-number-%d\">%s</span> "
+					  level
+					  (mapconcat #'number-to-string numbers ".")))
+				    title)
+				   level))))))))
 
-(defun org-reveal-parse-keyword-value (value)
+(defun org-reveal-parse-keyword-value (keyward value info)
   "According to the value content, return HTML tags to split slides."
   (let ((tokens (mapcar
                  (lambda (x) (split-string x ":"))
                  (split-string value))))
     (mapconcat
-     (lambda (x) (apply 'org-reveal-parse-token x))
+     (lambda (x) (apply 'org-reveal-parse-token keyward info x))
      tokens
      "")))
 
@@ -867,7 +895,7 @@ CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((key (org-element-property :key keyword))
         (value (org-element-property :value keyword)))
     (case (intern key)
-      (REVEAL (org-reveal-parse-keyword-value value))
+      (REVEAL (org-reveal-parse-keyword-value keyword value info))
       (REVEAL_HTML value)
       (HTML value))))
 (defun org-reveal-embedded-svg (path)
