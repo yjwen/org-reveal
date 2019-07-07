@@ -241,6 +241,7 @@
     The following escaping characters can be used to retrieve document
     information:
     | ~%t~ | Title     |
+    | ~%s~ | Subtitle  |
     | ~%a~ | Author    |
     | ~%e~ | Email     |
     | ~%d~ | Date      |

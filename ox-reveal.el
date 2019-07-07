@@ -1129,13 +1129,15 @@ contextual information."
   "Generate the automatic title slide template."
   (let* ((spec (org-html-format-spec info))
          (title (org-export-data (plist-get info :title) info))
+	 (subtitle (plist-get info :subtitle))
          (author (cdr (assq ?a spec)))
          (email (cdr (assq ?e spec)))
          (date (cdr (assq ?d spec))))
     (concat
      (when (and (plist-get info :with-title)
                 (org-string-nw-p title))
-       (concat "<h1 class=\"title\">" title "</h1>"))
+       (concat "<h1 class=\"title\">" title "</h1>"
+	       (if-format "<p class=\"subtitle\">%s</p>\n" subtitle)))
      (when (and (plist-get info :with-author)
                 (org-string-nw-p author))
        (concat "<h2 class=\"author\">" author "</h2>"))
