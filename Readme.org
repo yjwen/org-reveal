@@ -313,6 +313,18 @@
     * =REVEAL_TITLE_SLIDE_BACKGROUND=: A URL to the background image.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: set to ~repeat~ to repeat the image.
+*** Background for all slides
+
+    You can also configure the background for all slides in the presentation with:
+
+    * =REVEAL_DEFAULT_SLIDE_BACKGROUND=
+    * =REVEAL_DEFAULT_SLIDE_BACKGROUND_SIZE=
+    * =REVEAL_DEFAULT_SLIDE_BACKGROUND_POSITION=
+    * =REVEAL_DEFAULT_SLIDE_BACKGROUND_REPEAT=
+    * =REVEAL_DEFAULT_SLIDE_BACKGROUND_TRANSITION=
+
+    Refer to the [[https://github.com/yjwen/org-reveal#set-slide-background][Set slide background section]] for instructions on how to use each
+    parameter.
 
 ** Slide Size
 
