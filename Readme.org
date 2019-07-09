@@ -362,7 +362,7 @@
    Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
    =#+REVEAL_SLIDE_FOOTER:=. The option content will be put into
    divisions of class =slide-header= and =slide-footer=, so you can
-   control their appearance in custom CSS file(see [[Extra Stylesheets]]).
+   control their appearance in custom CSS file(see [[https://github.com/rafadc/org-reveal#extra-stylesheets][Extra Stylesheets]]).
    By default header/footer content will only display on content
    slides. To show them also on the title and toc slide you can add
    ~reveal_global_header:t~ and ~reveal_global_footer:t~ to
