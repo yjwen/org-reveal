@@ -386,6 +386,11 @@ BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-slide-id-head "slide-"
+  "The heading string for slide ID"
+  :group 'org-export-reveal
+  :type 'string)
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -432,7 +437,8 @@ exporter."
 )
     (format "<section %s%s>\n"
             (org-html--make-attribute-string
-             `(:id ,(format "slide-%s%s" preferred-id
+             `(:id ,(concat org-reveal-slide-id-head
+			    preferred-id
 			    (if for-split "-split" ""))
                    :class ,(org-element-property :HTML_CONTAINER_CLASS headline)
                    :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
