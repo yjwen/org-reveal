@@ -1053,7 +1053,7 @@ contextual information."
 						(length (number-to-string (+ code-length
 									     num-start)))))))
 		     (org-export-format-code
-		      code
+		      (org-html-encode-plain-text code)
 		      (lambda (loc line-num ref)
 			(setq loc
 			      (concat
