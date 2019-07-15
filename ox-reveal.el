@@ -62,6 +62,7 @@
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css newline)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
+    (:reveal-extra-initial-js "REVEAL_EXTRA_INITIAL_JS" nil org-reveal-extra-initial-js newline)
     (:reveal-hlevel "REVEAL_HLEVEL" nil nil t)
     (:reveal-title-slide "REVEAL_TITLE_SLIDE" "reveal_title_slide" org-reveal-title-slide newline)
     (:reveal-slide-global-header nil "reveal_global_header" org-reveal-global-header t)
@@ -170,6 +171,12 @@ slide, where the following escaping elements are allowed:
 (defcustom org-reveal-extra-js
   ""
   "URL to extra JS file."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-extra-initial-js
+  ""
+  "Scripts to be embedded into reveal.js initialization."
   :group 'org-export-reveal
   :type 'string)
 
@@ -709,6 +716,8 @@ transitionSpeed: '%s',\n"
                (format "null"))
              (plist-get info :reveal-multiplex-id)
              (plist-get info :reveal-multiplex-url)))
+
+     (if-format "%s,\n" (plist-get info :reveal-extra-initial-js))
 
      ;; optional JS library heading
      (if in-single-file ""
