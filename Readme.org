@@ -5,7 +5,7 @@
 #+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
 #+OPTIONS: reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
 #+OPTIONS: reveal_width:1200 reveal_height:800
-#+OPTIONS: toc:1
+#+OPTIONS: toc:nil
 #+REVEAL_MARGIN: 0.1
 #+REVEAL_MIN_SCALE: 0.5
 #+REVEAL_MAX_SCALE: 2.5
@@ -20,6 +20,79 @@
 [[http://melpa.org/#/ox-reveal][file:http://melpa.org/packages/ox-reveal-badge.svg]]
 [[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
 
+* Table of Contents
+  - [[Reveal.js and Org-Reveal][Reveal.js and Org-Reveal]]
+  - [[Requirements and Installation][Requirements and Installation]]
+    - [[Install Reveal.js][Install Reveal.js]]
+    - [[Install org-reveal from MELPA][Install org-reveal from MELPA]]
+    - [[Install org-reveal from GitHub][Install org-reveal from GitHub]]
+#+REVEAL: split:t
+  - [[Configuration][Configuration]]
+    - [[Set the location of Reveal.js][Set the location of Reveal.js]]
+      - [[Url form for file location][Url form for file location]]
+    - [[First Try][First Try]]
+    - [[The HLevel][The HLevel]]
+      - [[HLevel's Effects on Slides Layout][HLevel's Effects on Slides Layout]]
+      - [[Configure HLevel's Value][Configure HLevel's Value]]
+    - [[Force Split][Force Split]]
+#+REVEAL: split:t
+  - [[Configuration][Configuration]] (continue)
+    - [[Select Theme and Transition][Select Theme and Transition]]
+    - [[Set The Title Slide][Set The Title Slide]]
+      - [[Customize the Title Slide][Customize the Title Slide]]
+    - [[Set Slide Background][Set Slide Background]]
+      - [[Single Colored Background][Single Colored Background]]
+      - [[Single Image Background][Single Image Background]]
+      - [[Repeating Image Background][Repeating Image Background]]
+      - [[Title Slide Background Image][Title Slide Background Image]]
+      - [[Background for all slides][Background for all slides]]
+#+REVEAL: split:t
+  - [[Configuration][Configuration]] (continue)
+    - [[Slide Size][Slide Size]]
+    - [[Slide Numbering][Slide Numbering]]
+    - [[Slide Header/Footer][Slide Header/Footer]]
+    - [[Fragmented Contents][Fragmented Contents]]
+      - [[Fragment Styles][Fragment Styles]]
+      - [[Fragment Index][Fragment Index]]
+      - [[List Fragments][List Fragments]]
+    - [[Data State][Data State]]
+#+REVEAL: split:t
+  - [[Configuration][Configuration]] (continue)
+    - [[Plug-ins][Plug-ins]]
+      - [[Configure Plug-ins][Configure Plug-ins]]
+    - [[Third-Party Plugins][Third-Party Plugins]]
+    - [[Highlight Source Code][Highlight Source Code]]
+      - [[Using highlight.js][Using highlight.js]]
+    - [[Editable Source Code][Editable Source Code]]
+    - [[MathJax][MathJax]]
+#+REVEAL: split:t
+  - [[Configuration][Configuration]] (continue)
+    - [[Preamble and Postamble][Preamble and Postamble]]
+      - [[Generating Pre/Postamble by Emacs-Lisp Functions][Generating Pre/Postamble by Emacs-Lisp Functions]]
+    - [[Raw HTML in Slides][Raw HTML in Slides]]
+    - [[Speaker Notes][Speaker Notes]]
+      - [[Easy-Template for Speaker Notes][Easy-Template for Speaker Notes]]
+    - [[Multiplexing][Multiplexing]]
+#+REVEAL: split:t
+  - [[Configuration][Configuration]] (continue)
+    - [[Extra Stylesheets][Extra Stylesheets]]
+    - [[Select Built-In Scripts][Select Built-In Scripts]]
+    - [[Extra Dependent Script][Extra Dependent Script]]
+    - [[Extra Slide Attribute][Extra Slide Attribute]]
+    - [[Export into Single File][Export into Single File]]
+    - [[Export Current Subtree][Export Current Subtree]]
+#+REVEAL: split:t
+  - [[Tips][Tips]]
+    - [[Mananging Table of Contents][Mananging Table of Contents]]
+    - [[Internal Links][Internal Links]]
+    - [[Custom JS][Custom JS]]
+    - [[Executable Source Blocks][Executable Source Blocks]]
+      - [[HTML Src Block][HTML Src Block]]
+      - [[Javascript Src Block][Javascript Src Block]]
+      - [[Perl Src Block (not klipsified)][Perl Src Block (not klipsified)]]
+    - [[Properties for Sub-headings][Properties for Sub-headings]]
+  - [[My org-reveal presentation among many within the same Org-mode file][My org-reveal presentation among many within the same Org-mode file]]
+  - [[Thanks][Thanks]]
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
@@ -740,15 +813,20 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 
 * Tips
 
-** Disable Table of Contents
+** Mananging Table of Contents
 
-   Add =toc:nil= to =#+OPTIONS=
+It is well often the automatic "Table of Contents" is too large to fit
+into one slide. One wordaround is to disable the automatic TOC and
+generate one manually, which can be split into multiple
+slides. Org-reveal provides a helper function to insert a TOC to the
+current org buffer. Type ~M-x org-reveal-manual-toc~ to invoke it.
+
+To disable the automatic TOC, add =toc:nil= to =#+OPTIONS=
 #+BEGIN_SRC org
 ,#+OPTIONS: toc:nil
 #+END_SRC
 
-   This is actually an option recognized by =org-export=. It is only mentioned
-   here because slide decks often do not need a TOC.
+
 
 ** Internal Links
 

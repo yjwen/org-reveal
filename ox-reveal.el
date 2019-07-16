@@ -717,7 +717,9 @@ transitionSpeed: '%s',\n"
              (plist-get info :reveal-multiplex-id)
              (plist-get info :reveal-multiplex-url)))
 
-     (if-format "%s,\n" (plist-get info :reveal-extra-initial-js))
+     (let ((extra-initial-js  (plist-get info :reveal-extra-initial-js)))
+       (unless (string= extra-initial-js "")
+	 (format "%s,\n" extra-initial-js)))
 
      ;; optional JS library heading
      (if in-single-file ""
@@ -1333,6 +1335,25 @@ transformed fragment attribute to ELEM's attr_html plist."
     (message "Obsoleting soon. Use the \"Export scope\" switch instead to utilize parent heading properties.")
     ret))
 
+;; Generate a heading of ToC for current buffer and write to current
+;; point
+(defun org-reveal-manual-toc ()
+  (interactive)
+  (insert ;; at current point
+   (mapconcat
+    'identity
+    (org-element-map (org-element-parse-buffer) 'headline
+      (lambda (headline)
+	(let ((title (org-element-property :raw-value headline)))
+	  (concat
+	   ;; Leading spaces by headline level
+	   (make-string (* 2 (org-element-property :level headline)) ?\s)
+	   "- [["
+	   title
+	   "]["
+	   title
+	   "]]"))))
+    "\n")))
 ;;;###autoload
 (defun org-reveal-publish-to-reveal
  (plist filename pub-dir)
@@ -1352,7 +1373,6 @@ Return output file name."
                    (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES"))
     (add-to-list 'org-structure-template-alist
                  (cons org-reveal-note-key-char "notes"))))
-
 
 (provide 'ox-reveal)
 
