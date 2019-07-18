@@ -76,6 +76,7 @@
     (:reveal-default-slide-background-size "REVEAL_DEFAULT_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-default-slide-background-position "REVEAL_DEFAULT_SLIDE_BACKGROUND_POSITION" nil nil t)
     (:reveal-default-slide-background-repeat "REVEAL_DEFAULT_SLIDE_BACKGROUND_REPEAT" nil nil t)
+    (:reveal-default-slide-background-opacity "REVEAL_DEFAULT_SLIDE_BACKGROUND_OPACITY" nil nil t)
     (:reveal-default-slide-background-transition "REVEAL_DEFAULT_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
@@ -459,7 +460,10 @@ exporter."
                    :data-background-repeat ,(or (org-element-property :REVEAL_BACKGROUND_REPEAT headline)
 						default-slide-background-repeat)
                    :data-background-transition ,(or (org-element-property :REVEAL_BACKGROUND_TRANS headline)
-                                                    default-slide-background-transition)))
+                                                    default-slide-background-transition)
+		   :data-background-opacity
+		   ,(or (org-element-property :REVEAL_BACKGROUND_OPACITY headline)
+			(plist-get info :reveal-default-slide-background-opacity))))
             (let ((extra-attrs (org-element-property :REVEAL_EXTRA_ATTR headline)))
               (if-format " %s" extra-attrs)))))
 
