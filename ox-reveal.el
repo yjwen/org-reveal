@@ -1205,6 +1205,7 @@ info is a plist holding export options."
              (title-slide-background-position (plist-get info :reveal-title-slide-background-position))
              (title-slide-background-repeat (plist-get info :reveal-title-slide-background-repeat))
              (title-slide-background-transition (plist-get info :reveal-title-slide-background-transition))
+	     (title-slide-background-opacity (plist-get info :reveal-title-slide-background-opacity))
              (title-slide-with-header (plist-get info :reveal-slide-global-header))
              (title-slide-with-footer (plist-get info :reveal-slide-global-footer)))
          (concat "<section id=\"sec-title-slide\""
