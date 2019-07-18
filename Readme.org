@@ -362,19 +362,22 @@
     :reveal_background: ./images/whale.jpg
     :reveal_background_size: 200px
     :reveal_background_repeat: repeat
+    :reveal_background_opacity: 0.2
     :END:
 
     Resize background image by setting property
     =reveal_background_size= to a number.
 
     Set property =reveal_background_repeat= to =repeat= to repeat
-    image on the background.
+    image on the background, =reveal_background_opacity= for the
+    background opacity, which is a value of 0-1.
 #+BEGIN_SRC org
 ,*** Repeating Image Background
     :PROPERTIES:
     :reveal_background: ./images/whale.jpg
     :reveal_background_size: 200px
     :reveal_background_repeat: repeat
+    :reveal_background_opacity: 0.2
     :END:
 #+END_SRC
 
@@ -385,7 +388,8 @@
 
     * =REVEAL_TITLE_SLIDE_BACKGROUND=: A URL to the background image.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
-    * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: set to ~repeat~ to repeat the image.
+    * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: Set to ~repeat~ to repeat the image.
+    * =REVEAL_TITLE_SLIDE_BACKGROUND_OPACITY=: Set the background opacity.
 *** Background for all slides
 
     You can also configure the background for all slides in the presentation with:
