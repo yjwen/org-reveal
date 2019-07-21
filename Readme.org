@@ -577,19 +577,26 @@
 
 ** Third-Party Plugins
 Reveal.js is also extensible through third-party plugins. Org-reveal
-now includes a mechanism to load these as well. It's a little more
-complicated, because we need to store the specific javascript loading
-code in a defcustom.
+now includes a mechanism to load these as well, either for all org buffers
+by defining variable, or for local org buffer by setting option line.
 
+*** By Defining Variable
 Store the names and loading instructions for each plugin in the
-defcustom ~org-reveal-external-plugins~. This defcustom is an
-associative list. The first element of each Assoc cell is a symbol --
-the name of the plugin -- and the second is a string that will be
-expanded by the ~format~ function when the plugin is loaded. So, this
-second element should have the form ~" {src:
-\"%srelative/path/toplugin/from/reveal/root.js\"}'.  If you need the
+customizable variable ~org-reveal-external-plugins~. This variable is
+an associative list. The first element of each Assoc cell is a symbol
+-- the name of the plugin -- and the second is the string of the code
+for enabling the plugin. The string can have ONE optional ~%s~, which
+will be replaced by `reveal-root`.
+
+So, this second element should have the form ~"{src:
+\"%srelative/path/toplugin/from/reveal/root.js\"}~.  If you need the
 async or callback parameters, include those too.  Ox-reveal will add
 the plugin to the dependencies parameter when Reveal is initialized.
+
+*** By Local Option Line
+Specify the plugin by option line ~#+REVEAL_EXTERNAL_PLUGINS: string
+of code~. Similiar to the global plugin definition, the string of code
+can have one optional ~%s~ to be replaced by ~reveal-root~.
 
 ** Highlight Source Code
 

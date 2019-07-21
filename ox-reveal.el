@@ -90,6 +90,7 @@
     (:reveal-slide-header "REVEAL_SLIDE_HEADER" nil org-reveal-slide-header t)
     (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
+    (:reveal-external-plugins "REVEAL_EXTERNAL_PLUGINS" nil nil newline)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
@@ -763,8 +764,15 @@ dependencies: [
                    (or (and buffer-plugins (listp buffer-plugins) buffer-plugins)
                        org-reveal-plugins))))
                (external-plugins
-                (cl-loop for (key . value) in org-reveal-external-plugins
-                         collect (format  value root-path )) )
+		(append
+		 ;; Global setting
+                 (cl-loop for (key . value) in org-reveal-external-plugins
+                          collect (format  value root-path ))
+		 ;; Local settings
+		 (list (let ((local-plugins (plist-get info :reveal-external-plugins)))
+			 (and local-plugins
+			      (format local-plugins root-path))))))
+
                (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
                (extra-codes (plist-get info :reveal-extra-js))
                (total-codes
