@@ -769,9 +769,9 @@ dependencies: [
                  (cl-loop for (key . value) in org-reveal-external-plugins
                           collect (format  value root-path ))
 		 ;; Local settings
-		 (list (let ((local-plugins (plist-get info :reveal-external-plugins)))
-			 (and local-plugins
-			      (format local-plugins root-path))))))
+		 (let ((local-plugins (plist-get info :reveal-external-plugins)))
+		   (and local-plugins
+			(list (format local-plugins root-path))))))
 
                (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
                (extra-codes (plist-get info :reveal-extra-js))
