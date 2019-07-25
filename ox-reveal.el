@@ -43,22 +43,22 @@
         (?S "Current subtree to file" org-reveal-export-current-subtree)))
 
   :options-alist
-  '((:reveal-control nil "reveal_control" org-reveal-control t)
-    (:reveal-progress nil "reveal_progress" org-reveal-progress t)
-    (:reveal-history nil  "reveal_history" org-reveal-history t)
-    (:reveal-center nil "reveal_center" org-reveal-center t)
-    (:reveal-rolling-links nil "reveal_rolling_links" org-reveal-rolling-links t)
-    (:reveal-slide-number nil "reveal_slide_number" org-reveal-slide-number t)
-    (:reveal-keyboard nil "reveal_keyboard" org-reveal-keyboard t)
-    (:reveal-overview nil "reveal_overview" org-reveal-overview t)
-    (:reveal-width nil "reveal_width" org-reveal-width t)
-    (:reveal-height nil "reveal_height" org-reveal-height)
-    (:reveal-margin "REVEAL_MARGIN" nil org-reveal-margin t)
-    (:reveal-min-scale "REVEAL_MIN_SCALE" nil org-reveal-min-scale t)
+  '((:reveal-control nil "reveal_control" nil t)
+    (:reveal-progress nil "reveal_progress" nil t)
+    (:reveal-history nil  "reveal_history" nil t)
+    (:reveal-center nil "reveal_center" nil t)
+    (:reveal-rolling-links nil "reveal_rolling_links" nil t)
+    (:reveal-slide-number nil "reveal_slide_number" nil t)
+    (:reveal-keyboard nil "reveal_keyboard" nil t)
+    (:reveal-overview nil "reveal_overview" nil t)
+    (:reveal-width nil "reveal_width" nil t)
+    (:reveal-height nil "reveal_height" nil t)
+    (:reveal-margin "REVEAL_MARGIN" nil nil t)
+    (:reveal-min-scale "REVEAL_MIN_SCALE" nil nil t)
     (:reveal-max-scale "REVEAL_MAX_SCALE" nil org-reveal-max-scale t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
-    (:reveal-trans "REVEAL_TRANS" nil org-reveal-transition t)
-    (:reveal-speed "REVEAL_SPEED" nil org-reveal-transition-speed t)
+    (:reveal-trans "REVEAL_TRANS" nil nil t)
+    (:reveal-speed "REVEAL_SPEED" nil nil t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css newline)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
@@ -94,6 +94,7 @@
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
+    (:reveal-init-options "REVEAL_INIT_OPTIONS" nil org-reveal-init-options newline)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     )
 
@@ -152,16 +153,16 @@ slide, where the following escaping elements are allowed:
   :type '(choice (const :tag "No title slide" nil)
                  (const :tag "Auto title slide" 'auto)
                  (string :tag "Custom title slide")))
+(defcustom org-reveal-init-options
+  ""
+  "Reveal.js initialization options, JS code snippet to be
+embedded into Reveal.initilize()."
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-transition
   "default"
   "Reveal transistion style."
-  :group 'org-export-reveal
-  :type 'string)
-
-(defcustom org-reveal-transition-speed
-  "default"
-  "Reveal transistion speed."
   :group 'org-export-reveal
   :type 'string)
 
@@ -210,77 +211,6 @@ slide, where the following escaping elements are allowed:
   "the url of the socketio.js library"
   :group 'org-export-reveal
   :type 'string)
-
-(defcustom org-reveal-control t
-  "Reveal control applet."
-  :group 'org-export-reveal
-  :type 'string)
-
-(defcustom org-reveal-progress t
-  "Reveal progress applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-history nil
-  "Reveal history applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-center t
-  "Reveal center applet."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-rolling-links nil
-  "Reveal use rolling links."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-slide-number "c"
-  "Reveal showing slide numbers."
-  :group 'org-export-reveal
-  :type 'string)
-
-(defcustom org-reveal-keyboard t
-  "Reveal use keyboard navigation."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-overview t
-  "Reveal show overview."
-  :group 'org-export-reveal
-  :type 'boolean)
-
-(defcustom org-reveal-width -1
-  "Slide width"
-  :group 'org-export-reveal
-  :type 'integer)
-
-(defcustom org-reveal-height -1
-  "Slide height"
-  :group 'org-export-reveal
-  :type 'integer)
-
-(defcustom org-reveal-margin "-1"
-  "Slide margin"
-  :group 'org-export-reveal
-  :type 'string)
-
-(defcustom org-reveal-min-scale "-1"
-  "Minimum bound for scaling slide."
-  :group 'org-export-reveal
-  :type 'string)
-
-(defcustom org-reveal-max-scale "-1"
-  "Maximum bound for scaling slide."
-  :group 'org-export-reveal
-  :type 'string)
-
-(defcustom org-reveal-mathjax nil
-  "Obsolete. Org-reveal enable mathjax when it find latex
-content."
-  :group 'org-export-reveal
-  :type 'boolean)
 
 (defcustom org-reveal-mathjax-url
   "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
@@ -656,58 +586,10 @@ custom variable `org-reveal-root'."
 // https://github.com/hakimel/reveal.js#configuration
 Reveal.initialize({
 "
-     (format "
-controls: %s,
-progress: %s,
-history: %s,
-center: %s,
-slideNumber: %s,
-rollingLinks: %s,
-keyboard: %s,
-overview: %s,
-"
-            (if (plist-get info :reveal-control) "true" "false")
-            (if (plist-get info :reveal-progress) "true" "false")
-            (if (plist-get info :reveal-history) "true" "false")
-            (if (plist-get info :reveal-center) "true" "false")
-            (let ((slide-number (plist-get info :reveal-slide-number)))
-              (if slide-number (format "'%s'" slide-number)
-                "false"))
-            (if (plist-get info :reveal-rolling-links) "true" "false")
-            (if (plist-get info :reveal-keyboard) "true" "false")
-            (if (plist-get info :reveal-overview) "true" "false"))
-
-     ;; slide width
-     (let ((width (plist-get info :reveal-width)))
-       (cond ((and (integerp width) (> width 0)) (format "width: %d,\n" width))
-             ((stringp width) (format "width: '%s',\n" width))
-             (t "")))
-
-     ;; slide height
-     (let ((height (plist-get info :reveal-height)))
-       (cond ((and (integerp height) (> height 0)) (format "height: %d,\n" height))
-             ((stringp height) (format "height: '%s',\n" height))
-             (t "")))
-
-     ;; slide margin
-     (let ((margin (string-to-number (plist-get info :reveal-margin))))
-       (if (>= margin 0) (format "margin: %.2f,\n" margin) ""))
-
-     ;; slide minimum scaling factor
-     (let ((min-scale (string-to-number (plist-get info :reveal-min-scale))))
-       (if (> min-scale 0) (format "minScale: %.2f,\n" min-scale) ""))
-
-     ;; slide maximux scaling factor
-     (let ((max-scale (string-to-number (plist-get info :reveal-max-scale))))
-       (if (> max-scale 0) (format "maxScale: %.2f,\n" max-scale) ""))
-
-     ;; thems and transitions
-     (format "
-theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-transition: Reveal.getQueryHash().transition || '%s', // default/cube/page/concave/zoom/linear/fade/none
-transitionSpeed: '%s',\n"
-             (plist-get info :reveal-trans)
-             (plist-get info :reveal-speed))
+ 
+     (let ((options (plist-get info :reveal-init-options)))
+       (and (string< "" options)
+	    (format "%s,\n" options)))
 
      ;; multiplexing - depends on defvar 'client-multiplex'
      (when (plist-get info :reveal-multiplex-id)
@@ -769,9 +651,9 @@ dependencies: [
                  (cl-loop for (key . value) in org-reveal-external-plugins
                           collect (format  value root-path ))
 		 ;; Local settings
-		 (list (let ((local-plugins (plist-get info :reveal-external-plugins)))
-			 (and local-plugins
-			      (format local-plugins root-path))))))
+		 (let ((local-plugins (plist-get info :reveal-external-plugins)))
+		   (and local-plugins
+			(list (format local-plugins root-path))))))
 
                (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
                (extra-codes (plist-get info :reveal-extra-js))
@@ -1264,6 +1146,55 @@ Each `attr_reveal' attribute is mapped to corresponding
   (let ((default-frag-style (plist-get info :reveal-default-frag-style)))
     (org-element-map tree (remq 'item org-element-all-elements)
       (lambda (elem) (org-reveal-append-frag elem default-frag-style))))
+  ;; Hint for obsolete options
+  (when (memq t
+	       (mapcar
+		(lambda (key) (plist-get info key))
+		'(:reveal-control
+		  :reveal-progress
+		  :reveal-history
+		  :reveal-center
+		  :reveal-slide-number
+		  :reveal-rolling-links
+		  :reveal-keyboard
+		  :reveal-overview
+		  :reveal-width
+		  :reveal-height
+		  :reveal-margin
+		  :reveal-min-scale
+		  :reveal-max-scale
+		  :reveal-trans
+		  :reveal-speed)))
+    (with-output-to-temp-buffer
+	"* ox-reveal hints *"
+      (princ " 
+Note: Options and custom variables for initializing reveal.js are
+obsolete. Use '#+REVEAL_INIT_OPTIONS:' instead to give JS code
+snippet for initializing reveal.js. The following is a such
+example:
+
+#+REVEAL_INIT_OPTIONS: width:1200, height:800, controlsLayout: 'edges'
+
+Obsolete options and variables are listed below:
+
+  | Option                | Variable                    |
+  |-----------------------+-----------------------------|
+  | reveal_control       | org-reveal-control          |
+  | reveal_progress      | org-reveal-progress         |
+  | reveal_history       | org-reveal-history          |
+  | reveal_center        | org-reveal-center           |
+  | reveal_slide_number  | org-reveal-slide-number     |
+  | reveal_rolling_links | org-reveal-rolling-links    |
+  | reveal_keyboard      | org-reveal-keyboard         |
+  | reveal_overview      | org-reveal-overview         |
+  | reveal_width         | org-reveal-width            |
+  | reveal_height        | org-reveal-height           |
+  | #+REVEAL_MARGIN      | org-reveal-margin           |
+  | #+REVEAL_MIN_SCALE   | org-reveal-min-scale        |
+  | #+REVEAL_MAX_SCALE   | org-reveal-max-scale        |
+  | #+REVEAL_TRANS       | org-reveal-transition       |
+  | #+REVEAL_SPEED       | org-reveal-transition-speed |
+")))
   ;; Return the updated tree.
   tree)
 
@@ -1333,7 +1264,7 @@ transformed fragment attribute to ELEM's attr_html plist."
     (if (eq client-multiplex t)
         (org-export-to-file 'reveal clientfile
           async subtreep visible-only body-only ext-plist))
-    (cond (t retfile))))
+    retfile))
 
 (defun org-reveal-export-to-html-and-browse
   (&optional async subtreep visible-only body-only ext-plist)

@@ -2,14 +2,8 @@
 #+Author: Yujie Wen
 #+Email: yjwen.ty@gmail.com
 
-#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
-#+OPTIONS: reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
-#+OPTIONS: reveal_width:1200 reveal_height:800
+#+REVEAL_INIT_OPTIONS: width:1200, height:800, margin: 0.1, minScale:0.2, maxScale:2.5, transition:'cube'
 #+OPTIONS: toc:nil
-#+REVEAL_MARGIN: 0.1
-#+REVEAL_MIN_SCALE: 0.5
-#+REVEAL_MAX_SCALE: 2.5
-#+REVEAL_TRANS: cube
 #+REVEAL_THEME: moon
 #+REVEAL_HLEVEL: 2
 #+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
@@ -58,8 +52,7 @@
     - [[Data State][Data State]]
 #+REVEAL: split:t
   - [[Configuration][Configuration]] (continue)
-    - [[Plug-ins][Plug-ins]]
-      - [[Configure Plug-ins][Configure Plug-ins]]
+    - [[Initialization options]]
     - [[Third-Party Plugins][Third-Party Plugins]]
     - [[Highlight Source Code][Highlight Source Code]]
       - [[Using highlight.js][Using highlight.js]]
@@ -551,30 +544,11 @@
 
    Available data states are: alert|blackout|soothe.
 
-** Plug-ins
-
-   Reveal.js provides several plug-in functions.
-
-   - reveal-control : Show/hide browsing control pad.
-   - reveal-progress : Show/hide progress bar.
-   - reveal-history : Enable/disable slide history track.
-   - reveal-center : Enable/disable slide centering.
-   - multiplex : Enable audience to view presentation on secondary devices.
-
-*** Configure Plug-ins
-
-    Each plugin can be toggled on/off by adding =#+OPTIONS= tags or
-    by setting custom variables.
-
-    - =#+OPTIONS= tags:\\
-      =reveal_control=, =reveal_progress=, =reveal_history=,
-      =reveal_center=, =reveal_rolling_links=, =reveal_keyboard=, =reveal_overview=
-    - Custom variables:\\
-      =org-reveal-control=, =org-reveal-progress=,
-      =org-reveal-history=, =org-reveal-center=, =org-reveal-rolling-links=, =org-reveal-keyboard=, =org-reveal-overview=
-
-    For an example, please refer to the heading part of this document.
-
+** Initialization options
+Use ~#+REVEAL_INIT_OPTIONS` to give JS snippet for initialize
+reveal.js with different options. Check [[https://github.com/hakimel/reveal.js/#configuration][reveal.js document]] for
+supported options. Check the head part of this document for an
+example.
 ** Third-Party Plugins
 Reveal.js is also extensible through third-party plugins. Org-reveal
 now includes a mechanism to load these as well, either for all org buffers
@@ -884,7 +858,7 @@ file, you might want to switch from file-based properties like:
 
 #+BEGIN_SRC org
 ,#+REVEAL_HLEVEL: 2
-,#+REVEAL_TRANS: cube
+,#+OPTIONS: transition: 'cube'
 ,#+REVEAL_THEME: moon
 #+END_SRC
 
