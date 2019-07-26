@@ -683,6 +683,9 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 ,#+END_NOTES
 #+END_SRC
 
+   To skip exporting speaker notes, please set variable
+   `org-reveal-ignore-speaker-notes` to `t`.
+
 #+REVEAL: split
    Speaker notes requires the ~notes~ plug-in. If you changed default
    plug-in setting by specifying =#+REVEAL_PLUGINS= or by setting
@@ -706,7 +709,7 @@ This feature is turned off by default and needs to be switched on with ~org-reve
     'n'. set it to nil will forbid the auto-completion for speaker notes.
 
 ** Multiplexing
-   Reveal.js supports multiplexing, which allows allows your audience to view
+   Reveal.js supports multiplexing, which allows your audience to view
    the slides of the presentation you are controlling on their own phone, tablet
    or laptop. As the master presentation navigates the slides, all client
    presentations will update in real time. See a demo at

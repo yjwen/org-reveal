@@ -331,6 +331,11 @@ BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-ignore-speaker-notes nil
+  "Ignore speaker notes."
+  :group 'org-export-reveal
+  :type 'boolean)
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -362,7 +367,9 @@ Reveal.js slide note. Otherwise, export the block as by the HTML
 exporter."
   (let ((block-type (org-element-property :type special-block)))
     (if (string= block-type "NOTES")
-        (format "<aside class=\"notes\">\n%s\n</aside>\n" contents)
+	(if org-reveal-ignore-speaker-notes
+	    ""
+          (format "<aside class=\"notes\">\n%s\n</aside>\n" contents))
       (org-html-special-block special-block contents info))))
 
 (defun org-reveal-slide-section-tag (headline info for-split)
