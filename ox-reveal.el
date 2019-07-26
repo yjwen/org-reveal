@@ -55,7 +55,7 @@
     (:reveal-height nil "reveal_height" nil t)
     (:reveal-margin "REVEAL_MARGIN" nil nil t)
     (:reveal-min-scale "REVEAL_MIN_SCALE" nil nil t)
-    (:reveal-max-scale "REVEAL_MAX_SCALE" nil org-reveal-max-scale t)
+    (:reveal-max-scale "REVEAL_MAX_SCALE" nil nil t)
     (:reveal-root "REVEAL_ROOT" nil org-reveal-root t)
     (:reveal-trans "REVEAL_TRANS" nil nil t)
     (:reveal-speed "REVEAL_SPEED" nil nil t)
