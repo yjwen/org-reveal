@@ -903,17 +903,6 @@ Extract and set `attr_html' to plain-list tag attributes."
             tag
             )))
 
-(defun org-reveal--insert-bibliography (&optional ignore)
-  "Create a slide for the bibliography from org-ref, if it exists"
-  (if (fboundp 'org-ref-get-html-bibliography)
-      (progn 
-        ;; here we could employ other bibliographic engines
-        (fset 'bibliography 'org-ref-get-html-bibliography)
-        (when (funcall 'bibliography)
-            (concat "<section>"
-                    (funcall 'bibliography)
-                    "</section>")))))
-
 (defun org-reveal--build-pre/postamble (type info)
   "Return document preamble or postamble as a string, or nil."
   (let ((section (plist-get info (intern (format ":reveal-%s" type))))
@@ -1132,7 +1121,6 @@ info is a plist holding export options."
                      (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer))))
                  "</section>\n"))))
    contents
-   (org-reveal--insert-bibliography)
    "</div>
 </div>\n"
    (org-reveal--build-pre/postamble 'postamble info)
