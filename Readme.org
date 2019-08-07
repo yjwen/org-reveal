@@ -584,10 +584,13 @@ can have one optional ~%s~ to be replaced by ~reveal-root~.
    To Use your Emacs theme, please make sure ~htmlize.el~ is
    installed. Then no more setup is necessary.
 
-   Below is an example. Codes are copied from [[http://www.haskell.org/haskellwiki/The_Fibonacci_sequence][Haskell Wiki]].
-   #+BEGIN_SRC haskell
-   fibs = 0 : 1 : next fibs
-       where next (a : t@(b:_)) = (a+b) : next t
+   Below is an example of highlighted lisp code from org-reveal. 
+   #+BEGIN_SRC lisp
+     (defun org-reveal--read-file (file)
+       "Return the content of file"
+       (with-temp-buffer
+	 (insert-file-contents-literally file)
+	 (buffer-string)))
    #+END_SRC
 
    If you saw odd indentation, please set variable =org-html-indent=
