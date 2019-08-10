@@ -15,79 +15,77 @@
 [[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
 
 * Table of Contents
-  For viewing in org-mode buffer only. Links are not working on Github
-  pages.
-  - [[Reveal.js and Org-Reveal][Reveal.js and Org-Reveal]]
-  - [[Requirements and Installation][Requirements and Installation]]
-    - [[Install Reveal.js][Install Reveal.js]]
-    - [[Install org-reveal from MELPA][Install org-reveal from MELPA]]
-    - [[Install org-reveal from GitHub][Install org-reveal from GitHub]]
+  Title links are for viewing within org-mode buffer only. *Github
+  viewers please use the =(gh)= links.*
+
+  - [[Table of Contents][Table of Contents]]([[https://github.com/yjwen/org-reveal#table-of-contents][gh]])
+  - [[Reveal.js and Org-Reveal][Reveal.js and Org-Reveal]]([[https://github.com/yjwen/org-reveal#revealjs-and-org-reveal][gh]])
+  - [[Requirements and Installation][Requirements and Installation]]([[https://github.com/yjwen/org-reveal#requirements-and-installation][gh]])
+    - [[Install Reveal.js][Install Reveal.js]]([[https://github.com/yjwen/org-reveal#install-revealjs][gh]])
+    - [[Install org-reveal from MELPA][Install org-reveal from MELPA]]([[https://github.com/yjwen/org-reveal#install-org-reveal-from-melpa][gh]])
+    - [[Install org-reveal from GitHub][Install org-reveal from GitHub]]([[https://github.com/yjwen/org-reveal#install-org-reveal-from-github][gh]])
 #+REVEAL: split:t
-  - [[Configuration][Configuration]]
-    - [[Set the location of Reveal.js][Set the location of Reveal.js]]
-      - [[Url form for file location][Url form for file location]]
-    - [[First Try][First Try]]
-    - [[The HLevel][The HLevel]]
-      - [[HLevel's Effects on Slides Layout][HLevel's Effects on Slides Layout]]
-      - [[Configure HLevel's Value][Configure HLevel's Value]]
-    - [[Force Split][Force Split]]
+  - [[Configuration][Configuration]]([[https://github.com/yjwen/org-reveal#configuration][gh]])
+    - [[Set the location of Reveal.js][Set the location of Reveal.js]]([[https://github.com/yjwen/org-reveal#set-the-location-of-revealjs][gh]])
+      - [[Url form for file location][Url form for file location]]([[https://github.com/yjwen/org-reveal#url-form-for-file-location][gh]])
+    - [[First Try][First Try]]([[https://github.com/yjwen/org-reveal#first-try][gh]])
+    - [[The HLevel][The HLevel]]([[https://github.com/yjwen/org-reveal#the-hlevel][gh]])
+      - [[HLevel's Effects on Slides Layout][HLevel's Effects on Slides Layout]]([[https://github.com/yjwen/org-reveal#hlevels-effects-on-slides-layout][gh]])
+      - [[Configure HLevel's Value][Configure HLevel's Value]]([[https://github.com/yjwen/org-reveal#configure-hlevels-value][gh]])
+    - [[Force Split][Force Split]]([[https://github.com/yjwen/org-reveal#force-split][gh]])
 #+REVEAL: split:t
-  - [[Configuration][Configuration]] (continue)
-    - [[Select Theme and Transition][Select Theme and Transition]]
-    - [[Set The Title Slide][Set The Title Slide]]
-      - [[Customize the Title Slide][Customize the Title Slide]]
-    - [[Set Slide Background][Set Slide Background]]
-      - [[Single Colored Background][Single Colored Background]]
-      - [[Single Image Background][Single Image Background]]
-      - [[Repeating Image Background][Repeating Image Background]]
-      - [[Title Slide Background Image][Title Slide Background Image]]
-      - [[Background for all slides][Background for all slides]]
+    - [[Select Theme and Transition][Select Theme and Transition]]([[https://github.com/yjwen/org-reveal#select-theme-and-transition][gh]])
+    - [[Set The Title Slide][Set The Title Slide]]([[https://github.com/yjwen/org-reveal#set-the-title-slide][gh]])
+      - [[Customize the Title Slide][Customize the Title Slide]]([[https://github.com/yjwen/org-reveal#customize-the-title-slide][gh]])
+    - [[Set Slide Background][Set Slide Background]]([[https://github.com/yjwen/org-reveal#set-slide-background][gh]])
+      - [[Single Colored Background][Single Colored Background]]([[https://github.com/yjwen/org-reveal#single-colored-background][gh]])
+      - [[Single Image Background][Single Image Background]]([[https://github.com/yjwen/org-reveal#single-image-background][gh]])
+      - [[Repeating Image Background][Repeating Image Background]]([[https://github.com/yjwen/org-reveal#repeating-image-background][gh]])
+      - [[Title Slide Background Image][Title Slide Background Image]]([[https://github.com/yjwen/org-reveal#title-slide-background-image][gh]])
+      - [[Background for all slides][Background for all slides]]([[https://github.com/yjwen/org-reveal#background-for-all-slides][gh]])
 #+REVEAL: split:t
-  - [[Configuration][Configuration]] (continue)
-    - [[Slide Size][Slide Size]]
-    - [[Slide Numbering][Slide Numbering]]
-    - [[Slide Header/Footer][Slide Header/Footer]]
-    - [[Fragmented Contents][Fragmented Contents]]
-      - [[Fragment Styles][Fragment Styles]]
-      - [[Fragment Index][Fragment Index]]
-      - [[List Fragments][List Fragments]]
-    - [[Data State][Data State]]
+    - [[Slide Size][Slide Size]]([[https://github.com/yjwen/org-reveal#slide-size][gh]])
+    - [[Slide Numbering][Slide Numbering]]([[https://github.com/yjwen/org-reveal#slide-numbering][gh]])
+    - [[Slide Header/Footer][Slide Header/Footer]]([[https://github.com/yjwen/org-reveal#slide-header/footer][gh]])
+    - [[Fragmented Contents][Fragmented Contents]]([[https://github.com/yjwen/org-reveal#fragmented-contents][gh]])
+      - [[Fragment Styles][Fragment Styles]]([[https://github.com/yjwen/org-reveal#fragment-styles][gh]])
+      - [[Fragment Index][Fragment Index]]([[https://github.com/yjwen/org-reveal#fragment-index][gh]])
+      - [[List Fragments][List Fragments]]([[https://github.com/yjwen/org-reveal#list-fragments][gh]])
+    - [[Data State][Data State]]([[https://github.com/yjwen/org-reveal#data-state][gh]])
 #+REVEAL: split:t
-  - [[Configuration][Configuration]] (continue)
-    - [[Initialization options]]
-    - [[Third-Party Plugins][Third-Party Plugins]]
-    - [[Highlight Source Code][Highlight Source Code]]
-      - [[Using highlight.js][Using highlight.js]]
-    - [[Editable Source Code][Editable Source Code]]
-    - [[MathJax][MathJax]]
+    - [[Initialization options][Initialization options]]([[https://github.com/yjwen/org-reveal#initialization-options][gh]])
+    - [[Third-Party Plugins][Third-Party Plugins]]([[https://github.com/yjwen/org-reveal#third-party-plugins][gh]])
+      - [[By Defining Variable][By Defining Variable]]([[https://github.com/yjwen/org-reveal#by-defining-variable][gh]])
+      - [[By Local Option Line][By Local Option Line]]([[https://github.com/yjwen/org-reveal#by-local-option-line][gh]])
+    - [[Highlight Source Code][Highlight Source Code]]([[https://github.com/yjwen/org-reveal#highlight-source-code][gh]])
+      - [[Using highlight.js][Using highlight.js]]([[https://github.com/yjwen/org-reveal#using-highlightjs][gh]])
+    - [[Editable Source Code][Editable Source Code]]([[https://github.com/yjwen/org-reveal#editable-source-code][gh]])
+    - [[MathJax][MathJax]]([[https://github.com/yjwen/org-reveal#mathjax][gh]])
 #+REVEAL: split:t
-  - [[Configuration][Configuration]] (continue)
-    - [[Preamble and Postamble][Preamble and Postamble]]
-      - [[Generating Pre/Postamble by Emacs-Lisp Functions][Generating Pre/Postamble by Emacs-Lisp Functions]]
-    - [[Raw HTML in Slides][Raw HTML in Slides]]
-    - [[Speaker Notes][Speaker Notes]]
-      - [[Easy-Template for Speaker Notes][Easy-Template for Speaker Notes]]
-    - [[Multiplexing][Multiplexing]]
+    - [[Preamble and Postamble][Preamble and Postamble]]([[https://github.com/yjwen/org-reveal#preamble-and-postamble][gh]])
+      - [[Generating Pre/Postamble by Emacs-Lisp Functions][Generating Pre/Postamble by Emacs-Lisp Functions]]([[https://github.com/yjwen/org-reveal#generating-pre/postamble-by-emacs-lisp-functions][gh]])
+    - [[Raw HTML in Slides][Raw HTML in Slides]]([[https://github.com/yjwen/org-reveal#raw-html-in-slides][gh]])
+    - [[Speaker Notes][Speaker Notes]]([[https://github.com/yjwen/org-reveal#speaker-notes][gh]])
+      - [[Easy-Template for Speaker Notes][Easy-Template for Speaker Notes]]([[https://github.com/yjwen/org-reveal#easy-template-for-speaker-notes][gh]])
+    - [[Multiplexing][Multiplexing]]([[https://github.com/yjwen/org-reveal#multiplexing][gh]])
+    - [[Extra Stylesheets][Extra Stylesheets]]([[https://github.com/yjwen/org-reveal#extra-stylesheets][gh]])
+    - [[Select Built-In Scripts][Select Built-In Scripts]]([[https://github.com/yjwen/org-reveal#select-built-in-scripts][gh]])
+    - [[Extra Dependent Script][Extra Dependent Script]]([[https://github.com/yjwen/org-reveal#extra-dependent-script][gh]])
+    - [[Extra Slide Attribute][Extra Slide Attribute]]([[https://github.com/yjwen/org-reveal#extra-slide-attribute][gh]])
+    - [[Export into Single File][Export into Single File]]([[https://github.com/yjwen/org-reveal#export-into-single-file][gh]])
+    - [[Export Current Subtree][Export Current Subtree]]([[https://github.com/yjwen/org-reveal#export-current-subtree][gh]])
 #+REVEAL: split:t
-  - [[Configuration][Configuration]] (continue)
-    - [[Extra Stylesheets][Extra Stylesheets]]
-    - [[Select Built-In Scripts][Select Built-In Scripts]]
-    - [[Extra Dependent Script][Extra Dependent Script]]
-    - [[Extra Slide Attribute][Extra Slide Attribute]]
-    - [[Export into Single File][Export into Single File]]
-    - [[Export Current Subtree][Export Current Subtree]]
-#+REVEAL: split:t
-  - [[Tips][Tips]]
-    - [[Mananging Table of Contents][Mananging Table of Contents]]
-    - [[Internal Links][Internal Links]]
-    - [[Custom JS][Custom JS]]
-    - [[Executable Source Blocks][Executable Source Blocks]]
-      - [[HTML Src Block][HTML Src Block]]
-      - [[Javascript Src Block][Javascript Src Block]]
-      - [[Perl Src Block (not klipsified)][Perl Src Block (not klipsified)]]
-    - [[Properties for Sub-headings][Properties for Sub-headings]]
-  - [[My org-reveal presentation among many within the same Org-mode file][My org-reveal presentation among many within the same Org-mode file]]
-  - [[Thanks][Thanks]]
+  - [[Tips][Tips]]([[https://github.com/yjwen/org-reveal#tips][gh]])
+    - [[Mananging Table of Contents][Mananging Table of Contents]]([[https://github.com/yjwen/org-reveal#mananging-table-of-contents][gh]])
+    - [[Internal Links][Internal Links]]([[https://github.com/yjwen/org-reveal#internal-links][gh]])
+    - [[Custom JS][Custom JS]]([[https://github.com/yjwen/org-reveal#custom-js][gh]])
+    - [[Executable Source Blocks][Executable Source Blocks]]([[https://github.com/yjwen/org-reveal#executable-source-blocks][gh]])
+      - [[HTML Src Block][HTML Src Block]]([[https://github.com/yjwen/org-reveal#html-src-block][gh]])
+      - [[Javascript Src Block][Javascript Src Block]]([[https://github.com/yjwen/org-reveal#javascript-src-block][gh]])
+      - [[Perl Src Block (not klipsified)][Perl Src Block (not klipsified)]]([[https://github.com/yjwen/org-reveal#perl-src-block-(not-klipsified)][gh]])
+    - [[Properties for Sub-headings][Properties for Sub-headings]]([[https://github.com/yjwen/org-reveal#properties-for-sub-headings][gh]])
+  - [[My org-reveal presentation among many within the same Org-mode file][My org-reveal presentation among many within the same Org-mode file]]([[https://github.com/yjwen/org-reveal#my-org-reveal-presentation-among-many-within-the-same-org-mode-file][gh]])
+  - [[Thanks][Thanks]]([[https://github.com/yjwen/org-reveal#thanks][gh]])
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,

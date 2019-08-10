@@ -1279,8 +1279,8 @@ transformed fragment attribute to ELEM's attr_html plist."
 
 ;; Generate a heading of ToC for current buffer and write to current
 ;; point
-(defun org-reveal-manual-toc ()
-  (interactive)
+(defun org-reveal-manual-toc (gh-links)
+  (interactive "P")
   (insert ;; at current point
    (mapconcat
     'identity
@@ -1294,7 +1294,22 @@ transformed fragment attribute to ELEM's attr_html plist."
 	   title
 	   "]["
 	   title
-	   "]]"))))
+	   "]]"
+	   (when gh-links
+	     ;; Add another link to github readme page
+	     (concat
+	      "([[https://github.com/yjwen/org-reveal#"
+	      ;; Follow the github link-naming convension
+	      (replace-regexp-in-string
+	       ;; remove any  non-alphanum character
+	       "[.,']"
+	       ""
+	       (replace-regexp-in-string
+		;; Any spaces with hyphen
+		" +" "-"
+		(downcase title)))
+	      "][gh]])")
+	     )))))
     "\n")))
 ;;;###autoload
 (defun org-reveal-publish-to-reveal
