@@ -804,10 +804,10 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 
 * Tips
 
-** Mananging Table of Contents
+** Managing Table of Contents
 
 It is well often the automatic "Table of Contents" is too large to fit
-into one slide. One wordaround is to disable the automatic TOC and
+into one slide. One workaround is to disable the automatic TOC and
 generate one manually, which can be split into multiple
 slides. Org-reveal provides a helper function to insert a TOC to the
 current org buffer. Type ~M-x org-reveal-manual-toc~ to invoke it.
