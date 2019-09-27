@@ -424,7 +424,7 @@
 
    Supported format string can be found in [[https://github.com/hakimel/reveal.js/#slide-number][Reveal.js manual]].
 
-   *NOTE:* ~reveal_sldie_number~ has no effect on the numbering of
+   *NOTE:* ~reveal_slide_number~ has no effect on the numbering of
    headings. To disable the heading number, pleass add ~num:nil~ to
    one ~#+OPTIONS~ line.
 
