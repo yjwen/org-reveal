@@ -412,21 +412,17 @@
         ratio.
 
 ** Slide Numbering
+   
+To enable slide numbers, please add the following Reveal.js initial option.
+#+BEGIN_SRC org
+,#+REVEAL_INIT_OPTIONS: slideNumber:true
+#+END_SRC
 
-   By default, a flatten slide number is showed at the lower-right corner of each slide.
-
-   To disable slide numbering, please add ~reveal_slide_number:nil~ to
-   ~#+OPTIONS:~ line.
-
-   From Reveal.js 3.1.0, slide numbering can have several custom
-   formats. To choose one format, please set ~reveal_slide_number~ to
-   its proper string. For example, ~reveal_slide_number:h/v~.
-
-   Supported format string can be found in [[https://github.com/hakimel/reveal.js/#slide-number][Reveal.js manual]].
-
-   *NOTE:* ~reveal_sldie_number~ has no effect on the numbering of
-   headings. To disable the heading number, pleass add ~num:nil~ to
-   one ~#+OPTIONS~ line.
+Other possible choice for slide numbers are:
+| "h.v" | Horizontal . vertical slide number. The same as ~true~ |
+| "h/v" | Horizontal / vertical slide number                     |
+| "c"   | Flatten slide number                                   |
+| "c/t" | Flatten slide number / total slides                    |
 
 ** Slide Header/Footer
    Specify Slide header/footer by =#+REVEAL_SLIDE_HEADER:= and
