@@ -76,7 +76,7 @@
     - [[Export Current Subtree][Export Current Subtree]]([[https://github.com/yjwen/org-reveal#export-current-subtree][gh]])
 #+REVEAL: split:t
   - [[Tips][Tips]]([[https://github.com/yjwen/org-reveal#tips][gh]])
-    - [[Mananging Table of Contents][Mananging Table of Contents]]([[https://github.com/yjwen/org-reveal#mananging-table-of-contents][gh]])
+    - [[Managing Table of Contents][Managing Table of Contents]]([[https://github.com/yjwen/org-reveal#managing-table-of-contents][gh]])
     - [[Internal Links][Internal Links]]([[https://github.com/yjwen/org-reveal#internal-links][gh]])
     - [[Custom JS][Custom JS]]([[https://github.com/yjwen/org-reveal#custom-js][gh]])
     - [[Executable Source Blocks][Executable Source Blocks]]([[https://github.com/yjwen/org-reveal#executable-source-blocks][gh]])
