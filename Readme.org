@@ -145,7 +145,7 @@
    with the GitHub org-reveal. Please get the Org-mode git repository
    by:
    #+BEGIN_SRC sh
-   $ git clone git://orgmode.org/org-mode.git
+   $ git clone https://code.orgmode.org/bzg/org-mode
    #+END_SRC
 
    Follow the [[http://orgmode.org/worg/dev/org-build-system.html][online instruction]] for building and installing Org-mode.
