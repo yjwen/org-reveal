@@ -683,7 +683,7 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 #+END_SRC
 
    To skip exporting speaker notes, please set variable
-   `org-reveal-ignore-speaker-notes` to `t`.
+   ~org-reveal-ignore-speaker-notes~ to ~t~.
 
 #+REVEAL: split
    Speaker notes requires the ~notes~ plug-in. If you changed default
