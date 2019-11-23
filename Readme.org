@@ -541,7 +541,7 @@ Other possible choice for slide numbers are:
    Available data states are: alert|blackout|soothe.
 
 ** Initialization options
-Use ~#+REVEAL_INIT_OPTIONS` to give JS snippet for initialize
+Use ~#+REVEAL_INIT_OPTIONS~ to give JS snippet for initialize
 reveal.js with different options. Check [[https://github.com/hakimel/reveal.js/#configuration][reveal.js document]] for
 supported options. Check the head part of this document for an
 example.
