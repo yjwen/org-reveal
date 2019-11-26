@@ -565,7 +565,7 @@ the plugin to the dependencies parameter when Reveal is initialized.
 
 *** By Local Option Line
 Specify the plugin by option line ~#+REVEAL_EXTERNAL_PLUGINS: string
-of code~. Similiar to the global plugin definition, the string of code
+of code~. Similar to the global plugin definition, the string of code
 can have one optional ~%s~ to be replaced by ~reveal-root~.
 
 ** Highlight Source Code
@@ -610,7 +610,7 @@ It is now possible to embed code blocks in a codemirror instance in order to edi
 - ~org-reveal-klipsify-src~
 - ~org-reveal-klipse-css~
 - ~org-reveal-klipse-js~
-This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javacript, clojure, php, ruby, scheme, and python only.  
+This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javascript, clojure, php, ruby, scheme, and python only.  
 
 ** MathJax
   :PROPERTIES:
