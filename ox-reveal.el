@@ -156,13 +156,13 @@ slide, where the following escaping elements are allowed:
 (defcustom org-reveal-init-options
   ""
   "Reveal.js initialization options, JS code snippet to be
-embedded into Reveal.initilize()."
+embedded into Reveal.initialize()."
   :group 'org-export-reveal
   :type 'string)
 
 (defcustom org-reveal-transition
   "default"
-  "Reveal transistion style."
+  "Reveal transition style."
   :group 'org-export-reveal
   :type 'string)
 
@@ -295,7 +295,7 @@ BEFORE the plugins that depend on them."
   :type 'string)
 
 (defcustom org-reveal-highlight-css "%r/lib/css/zenburn.css"
-  "Hightlight.js CSS file."
+  "Highlight.js CSS file."
   :group 'org-export-reveal
   :type 'string)
 
@@ -430,7 +430,7 @@ holding contextual information."
 	     (last-sibling (org-export-last-sibling-p headline info)))
         (concat
          (if (or (/= level 1) (not first-sibling))
-             ;; Not the first heading. Close previou slide.
+             ;; Not the first heading. Close previous slide.
              (concat
               ;; Slide footer if any
               footer-div
