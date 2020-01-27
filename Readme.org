@@ -860,7 +860,7 @@ file, you might want to switch from file-based properties like:
 
 #+BEGIN_SRC org
 ,#+REVEAL_HLEVEL: 2
-,#+OPTIONS: transition: 'cube'
+,#+REVEAL_INIT_OPTIONS: transition: 'cube'
 ,#+REVEAL_THEME: moon
 #+END_SRC
 
