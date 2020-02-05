@@ -869,7 +869,7 @@ to properties of sub-headings like:
 #+BEGIN_SRC org
 :PROPERTIES:
 :EXPORT_REVEAL_HLEVEL: 2
-:EXPORT_REVEAL_TRANS: cube
+:EXPORT_INIT_OPTIONS: transition: 'cube'
 :EXPORT_REVEAL_THEME: moon
 :END:
 #+END_SRC
