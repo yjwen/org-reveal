@@ -34,7 +34,7 @@
       - [[Configure HLevel's Value][Configure HLevel's Value]]([[https://github.com/yjwen/org-reveal#configure-hlevels-value][gh]])
     - [[Force Split][Force Split]]([[https://github.com/yjwen/org-reveal#force-split][gh]])
 #+REVEAL: split:t
-    - [[Select Theme and Transition][Select Theme and Transition]]([[https://github.com/yjwen/org-reveal#select-theme-and-transition][gh]])
+    - [[Select Theme][Select Theme]]([[https://github.com/yjwen/org-reveal#select-theme][gh]])
     - [[Set The Title Slide][Set The Title Slide]]([[https://github.com/yjwen/org-reveal#set-the-title-slide][gh]])
       - [[Customize the Title Slide][Customize the Title Slide]]([[https://github.com/yjwen/org-reveal#customize-the-title-slide][gh]])
     - [[Set Slide Background][Set Slide Background]]([[https://github.com/yjwen/org-reveal#set-slide-background][gh]])
@@ -273,16 +273,15 @@
    To repeat the heading title on the split slide, please insert
    ~#+REVEAL: split:t~ instead.
 
-** Select Theme and Transition
+** Select Theme
 
-    Themes and transition styles are set globally throughout the whole
-    file by setting options =REVEAL_THEME=, =REVEAL_TRANS=, and =REVEAL_SPEED=.
+    Themes are set globally throughout the whole
+    file by setting =REVEAL_THEME= option.
 
     For an example, please check the heading part of this document.
 
     Available themes can be found in "css/theme/" in the reveal.js directory.
 
-    Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 ** Set The Title Slide
    By default, Org-reveal generates a title slide displaying the
    title, the author, the Email, the date and the time-stamp of the
