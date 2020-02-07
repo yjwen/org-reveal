@@ -34,7 +34,7 @@
       - [[Configure HLevel's Value][Configure HLevel's Value]]([[https://github.com/yjwen/org-reveal#configure-hlevels-value][gh]])
     - [[Force Split][Force Split]]([[https://github.com/yjwen/org-reveal#force-split][gh]])
 #+REVEAL: split:t
-    - [[Select Theme and Transition][Select Theme and Transition]]([[https://github.com/yjwen/org-reveal#select-theme-and-transition][gh]])
+    - [[Select Theme][Select Theme]]([[https://github.com/yjwen/org-reveal#select-theme][gh]])
     - [[Set The Title Slide][Set The Title Slide]]([[https://github.com/yjwen/org-reveal#set-the-title-slide][gh]])
       - [[Customize the Title Slide][Customize the Title Slide]]([[https://github.com/yjwen/org-reveal#customize-the-title-slide][gh]])
     - [[Set Slide Background][Set Slide Background]]([[https://github.com/yjwen/org-reveal#set-slide-background][gh]])
@@ -273,9 +273,9 @@
    To repeat the heading title on the split slide, please insert
    ~#+REVEAL: split:t~ instead.
 
-** Select Theme and Transition
+** Select Theme
 
-Theme is set globally throughout the whole file by setting options
+Theme is set globally throughout the whole file by setting option
 =REVEAL_THEME=.
 
 Slide transition style is set by initialization option ~transition~
