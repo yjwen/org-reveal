@@ -42,6 +42,7 @@
       - [[Single Image Background][Single Image Background]]([[https://github.com/yjwen/org-reveal#single-image-background][gh]])
       - [[Repeating Image Background][Repeating Image Background]]([[https://github.com/yjwen/org-reveal#repeating-image-background][gh]])
       - [[Title Slide Background Image][Title Slide Background Image]]([[https://github.com/yjwen/org-reveal#title-slide-background-image][gh]])
+      - [[Table of Contents Slide Background Image][Table of Contents Slide Background Image]]([[https://github.com/yjwen/org-reveal#table-of-contents-slide-background-image][gh]])
       - [[Background for all slides][Background for all slides]]([[https://github.com/yjwen/org-reveal#background-for-all-slides][gh]])
 #+REVEAL: split:t
     - [[Slide Size][Slide Size]]([[https://github.com/yjwen/org-reveal#slide-size][gh]])
@@ -387,6 +388,15 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: Set to ~repeat~ to repeat the image.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_OPACITY=: Set the background opacity.
+*** Table of Contents Slide Background Image
+
+    To set the (automatically generated) table of contents slide's background
+    image, please specify the following options:
+
+    * =REVEAL_TOC_SLIDE_BACKGROUND=: A URL to the background image.
+    * =REVEAL_TOC_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
+    * =REVEAL_TOC_SLIDE_BACKGROUND_REPEAT=: Set to ~repeat~ to repeat the image.
+    * =REVEAL_TOC_SLIDE_BACKGROUND_OPACITY=: Set the background opacity.
 *** Background for all slides
 
     You can also configure the background for all slides in the presentation with:

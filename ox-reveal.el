@@ -73,6 +73,12 @@
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-title-slide-background-opacity "REVEAL_TITLE_SLIDE_BACKGROUND_OPACITY" nil nil t)
+    (:reveal-toc-slide-background "REVEAL_TOC_SLIDE_BACKGROUND" nil nil t)
+    (:reveal-toc-slide-background-size "REVEAL_TOC_SLIDE_BACKGROUND_SIZE" nil nil t)
+    (:reveal-toc-slide-background-position "REVEAL_TOC_SLIDE_BACKGROUND_POSITION" nil nil t)
+    (:reveal-toc-slide-background-repeat "REVEAL_TOC_SLIDE_BACKGROUND_REPEAT" nil nil t)
+    (:reveal-toc-slide-background-transition "REVEAL_TOC_SLIDE_BACKGROUND_TRANSITION" nil nil t)
+    (:reveal-toc-slide-background-opacity "REVEAL_TOC_SLIDE_BACKGROUND_OPACITY" nil nil t)
     (:reveal-default-slide-background "REVEAL_DEFAULT_SLIDE_BACKGROUND" nil nil t)
     (:reveal-default-slide-background-size "REVEAL_DEFAULT_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-default-slide-background-position "REVEAL_DEFAULT_SLIDE_BACKGROUND_POSITION" nil nil t)
@@ -677,9 +683,28 @@ dependencies: [
   "Build a slide of table of contents."
   (let ((toc (org-html-toc depth info)))
     (when toc
-      (let ((toc-slide-with-header (plist-get info :reveal-slide-global-header))
+      (let ((toc-slide-background (plist-get info :reveal-toc-slide-background))
+            (toc-slide-background-size (plist-get info :reveal-toc-slide-background-size))
+            (toc-slide-background-position (plist-get info :reveal-toc-slide-background-position))
+            (toc-slide-background-repeat (plist-get info :reveal-toc-slide-background-repeat))
+            (toc-slide-background-transition (plist-get info :reveal-toc-slide-background-transition))
+            (toc-slide-background-opacity (plist-get info :reveal-toc-slide-background-opacity))
+            (toc-slide-with-header (plist-get info :reveal-slide-global-header))
             (toc-slide-with-footer (plist-get info :reveal-slide-global-footer)))
-        (concat "<section id=\"table-of-contents\">\n"
+        (concat "<section id=\"table-of-contents\""
+                (when toc-slide-background
+                  (concat " data-background=\"" toc-slide-background "\""))
+                (when toc-slide-background-size
+                  (concat " data-background-size=\"" toc-slide-background-size "\""))
+                (when toc-slide-background-position
+                  (concat " data-background-position=\"" toc-slide-background-position "\""))
+                (when toc-slide-background-repeat
+                  (concat " data-background-repeat=\"" toc-slide-background-repeat "\""))
+                (when toc-slide-background-transition
+                  (concat " data-background-transition=\"" toc-slide-background-transition "\""))
+                (when toc-slide-background-opacity
+                  (concat " data-background-opacity=\"" toc-slide-background-opacity "\""))
+                ">"
                 (when toc-slide-with-header
                    (let ((header (plist-get info :reveal-slide-header)))
                      (when header (format "<div class=\"slide-header\">%s</div>\n" header))))
