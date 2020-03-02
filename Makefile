@@ -12,11 +12,12 @@ default: help all
 
 srcs?=$(wildcard *.org | sort)
 objs?=${srcs:.org=.html}
-target?=$(shell echo ${srcs:.org=} | head -n1)
+target?=$(shell echo ${srcs:.org=} | tr ' ' '\n' | head -n1)
 reveal_url?=https://github.com/hakimel/reveal.js/
 reveal_zip_url?=https://github.com/hakimel/reveal.js/archive/master.zip
 reveal_dir?=./reveal.js
 sudo?=sudo
+deploy_branch?=gh-pages
 
 
 help:
@@ -26,6 +27,7 @@ help:
 	@echo "#  make all # Build html"
 	@echo "#  make start # View HTML in Web browser"
 	@echo "#  make download # Download deps"
+	@echo "#  make upload # to build and publish"
 	@echo "#  make setup/debian setup download start # ..."
 	@echo "# Config:"	
 	@echo "#  srcs=${srcs}"
@@ -36,6 +38,7 @@ all: ${objs}
 	ls $^
 
 download: ${reveal_dir}
+	ls $^
 
 start: ${target}.html
 	x-www-browser $<
@@ -94,8 +97,8 @@ html: ${target}.html
 
 all/%: ${srcs}
 	for src in $^ ; do \
-    dir=$$(dirname -- "$${src}") ; \
-    make target="$${dir}/index" ${@F} \
+    target=$$(echo "$${src}" | sed -e 's|\.org$$||g') ; \
+    make target="$${target}" "${@F}" \
     || exit $$? ; \
   done
 
@@ -104,4 +107,27 @@ ${reveal_dir}:
 	wget -O- ${reveal_zip_url} > reveal.js.zip
 	unzip reveal.js.zip
 	mv reveal.js-master ${@}
-	@rm -f tmp.zip
+	@rm -f reveal.js.zip
+
+deploy:
+	-git commit -sam "WIP: About to deploy ${target}"
+	git checkout ${deploy_branch} \
+  || git checkout -b ${deploy_branch} master
+	make html
+	git add -f ${target}.html
+	-git commit -am "WIP: Generated html ${target}"
+	git checkout master
+
+upload:
+	git checkout master
+	-git branch -D ${deploy_branch}
+	 git checkout -b ${deploy_branch}
+	-git commit -sam "WIP: About to download"
+	make download
+	git add -f "${reveal_dir}"
+	-git commit -sam "WIP: Add ${reveal_dir}"
+	${MAKE} all/deploy
+	git checkout ${deploy_branch}
+	echo "# About to push to origin in 5 secs ?"
+	sleep 5 ; git push -f origin HEAD:gh-pages
+	git checkout master
