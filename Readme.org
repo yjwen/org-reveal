@@ -12,7 +12,7 @@
 #+REVEAL_EXTRA_CSS: ./local.css
 
 [[http://melpa.org/#/ox-reveal][file:http://melpa.org/packages/ox-reveal-badge.svg]]
-[[http://www.gnu.org/licenses/gpl-3.0.html][http://img.shields.io/:license-gpl3-blue.svg]]
+[[http://www.gnu.org/licenses/gpl-3.0.html][file:https://img.shields.io/:license-gpl3-blue.svg]]
 
 * Table of Contents
   Title links are for viewing within org-mode buffer only. *Github
