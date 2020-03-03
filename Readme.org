@@ -619,6 +619,19 @@ can have one optional ~%s~ to be replaced by ~reveal-root~.
     The "%r" in the given CSS file name will be replaced by Reveal.js'
     URL.
 
+    Reveal.js supports to enable line numbers and highlighting on
+    given line numbers. Please use ~:code_attribs~ to pass [[https://github.com/hakimel/reveal.js#line-numbers--highlights][the proper
+    attributes]] to the source code block . Below is an example.
+#+BEGIN_SRC org
+,#+ATTR_REVEAL: :code_attribs data-line-numbers='1|3'
+,#+BEGIN_SRC c++
+int main()
+{
+  cout << "Hello" << endl;
+}
+,#+END_SRC
+#+END_SRC
+
 ** Editable Source Code
 It is now possible to embed code blocks in a codemirror instance in order to edit code during a presentation.  At present, this capacity is turned on or off at time export using these defcustoms:
 - ~org-reveal-klipsify-src~
