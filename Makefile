@@ -66,7 +66,7 @@ setup: /etc/os-release
 	@echo "# Please install tools, On debian: make setup/debian"
 	emacs \
  --no-init-file  \
- --user ${USER} \
+ --user="${USER}" \
  --batch \
  --eval="(require 'package)" \
  --eval="(add-to-list 'package-archives \
@@ -86,13 +86,13 @@ setup: /etc/os-release
 && \
  emacs \
  --no-init-file\
- --user ${USER} \
+ --user="${USER}" \
  --batch \
  --eval="(require 'org)" \
  --eval="(require 'org-gnus)" \
  --eval="(require 'ox-reveal)" \
- --find-file "${<F}" \
- --funcall org-reveal-export-to-html \
+ --find-file="${<F}" \
+ --funcall="org-reveal-export-to-html" \
  # EOL
 
 html: ${target}.html
