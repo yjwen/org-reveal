@@ -350,12 +350,18 @@ holding contextual information."
         "fragment")))
    (t (format "fragment %s" frag))))
 
-(defun frag-class (frag info)
+(defun frag-class (elem info)
   "Return proper HTML string description of fragment style.
-FRAG is the fragment style set on element, INFO is a plist
-holding contextual information."
-  (and frag
-       (format " class=\"%s\"" (frag-style frag info))))
+BLOCK is the element, INFO is a plist holding contextual
+information."
+  (let ((frag (org-export-read-attribute :attr_reveal elem :frag)))
+    (and frag
+	 (format " class=\"%s\"%s"
+		 (frag-style frag info)
+		 (let ((frag-index (org-export-read-attribute :attr_reveal elem :frag_idx)))
+		   (if frag-index
+		       (format " data-fragment-index=\"%s\"" frag-index)
+		     ""))))))
 
 (defun org-reveal-special-block (special-block contents info)
   "Transcode a SPECIAL-BLOCK element from Org to Reveal.
@@ -963,7 +969,6 @@ contextual information."
 			       (when num-start (format num-fmt line-num))
 			       loc)))
 		      num-start))))
-           (frag (org-export-read-attribute :attr_reveal src-block :frag))
 	   (code-attribs (or (org-export-read-attribute
 			 :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
@@ -980,8 +985,8 @@ contextual information."
                          )
 )
       (if (not lang)
-          (format "<pre %s%s>\n%s</pre>"
-                  (or (frag-class frag info) " class=\"example\"")
+          (format "<pre %s%s%s>\n%s</pre>"
+                  (or (frag-class src-block info) " class=\"example\""))
                   label
                   code)
         (if klipsify
@@ -1016,20 +1021,20 @@ window.klipse_settings = { " langselector  ": \".klipse\" };
                       (org-export-data caption info)))
             (if use-highlight
                 (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
-                        (or (frag-class frag info) "")
+                        (or (frag-class src-block info) "")
                         label lang code-attribs code)
               (format "\n<pre %s%s><code trim>%s</code></pre>"
-                      (or (frag-class frag info)
+                      (or (frag-class src-block info)
                           (format " class=\"src src-%s\"" lang))
-                      label code)
-              )))))))
+                      label code)))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
 CONTENTS holds the contents of the block INFO is a plist holding
 contextual information."
   (format "<blockquote %s>\n%s</blockquote>"
-          (frag-class (org-export-read-attribute :attr_reveal quote-block :frag) info)
+          (or (frag-class quote-block info)
+	      "")
           contents))
 
 
