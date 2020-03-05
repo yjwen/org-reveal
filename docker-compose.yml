@@ -1,0 +1,12 @@
+#!/bin/echo docker-compose up --build
+# -*- coding: utf-8 -*-
+#
+# SPDX-License: ISC
+# SPDX-License-URL: https://spdx.org/licenses/ISC.txt
+
+version: "2"
+
+services:
+  default:
+    build: .
+    network_mode: "host"
