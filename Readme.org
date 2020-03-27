@@ -825,6 +825,10 @@ This feature is turned off by default and needs to be switched on with ~org-reve
   without the title slide and the table of content, for a quick preview
   of your current edition.
 
+** Skip headings
+Any heading with tag ~:noexport:~ will be discarded when exporting to
+all backends. If you want a heading being discard when exporting to
+Reveal.js only, please use tag ~:noexport_reveal:~.
 * Tips
 
 ** Managing Table of Contents

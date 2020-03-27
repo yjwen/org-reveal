@@ -1281,8 +1281,9 @@ transformed fragment attribute to ELEM's attr_html plist."
          (clientfile (org-export-output-file-name (concat "_client" extension) subtreep)))
     ; export filename_client HTML file if multiplexing
     (setq client-multiplex nil)
-    (setq retfile (org-export-to-file 'reveal file
-                    async subtreep visible-only body-only ext-plist))
+    (let ((org-export-exclude-tags (cons "noexport_reveal" org-export-exclude-tags)))
+      (setq retfile (org-export-to-file 'reveal file
+		      async subtreep visible-only body-only ext-plist)))
 
     ; export the client HTML file if client-multiplex is set true
     ; by previous call to org-export-to-file
