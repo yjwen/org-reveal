@@ -1,0 +1,6 @@
+# .dockerignore
+.git/
+# .gitignore
+*~
+*.html
+*.elc
