@@ -85,8 +85,9 @@
       - [[Javascript Src Block][Javascript Src Block]]([[https://github.com/yjwen/org-reveal#javascript-src-block][gh]])
       - [[Perl Src Block (not klipsified)][Perl Src Block (not klipsified)]]([[https://github.com/yjwen/org-reveal#perl-src-block-(not-klipsified)][gh]])
     - [[Properties for Sub-headings][Properties for Sub-headings]]([[https://github.com/yjwen/org-reveal#properties-for-sub-headings][gh]])
-  - [[My org-reveal presentation among many within the same Org-mode file][My org-reveal presentation among many within the same Org-mode file]]([[https://github.com/yjwen/org-reveal#my-org-reveal-presentation-among-many-within-the-same-org-mode-file][gh]])
+    - [[Customize iframe background slide][Customize iframe background slide]]([[https://github.com/yjwen/org-reveal#customize-iframe-background-slide][gh]])
   - [[Thanks][Thanks]]([[https://github.com/yjwen/org-reveal#thanks][gh]])
+
 * Reveal.js and Org-Reveal
 
   - *Reveal.js* is a tool for creating good-looking HTML presentations,
@@ -320,8 +321,8 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
 ** Set Slide Background
 
-   Slide background can be set to a color, an image or a repeating image
-   array by setting heading properties.
+   Slide background can be set to a color, an image, a repeating image
+   array or an iframe by setting heading properties.
 
 *** Single Colored Background
    :PROPERTIES:
@@ -376,6 +377,25 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
     :reveal_background_size: 200px
     :reveal_background_repeat: repeat
     :reveal_background_opacity: 0.2
+    :END:
+#+END_SRC
+
+*** Iframe background
+    :PROPERTIES:
+    :reveal_background_iframe: https://hakim.se
+    :reveal_background: rgb(0,0,0)
+    :reveal_background_opacity: 0.8
+    :END:
+
+    When =iframe= is being used as slide background, the content of the slide will
+    be put inside a dedicated division. The other background options can be used to
+    configure this new division. The =reveal_background= supports both color and
+    image as a normal slide.
+#+BEGIN_SRC org
+    :PROPERTIES:
+    :reveal_background_iframe: https://hakim.se
+    :reveal_background: rgb(0,0,0)
+    :reveal_background_opacity: 0.8
     :END:
 #+END_SRC
 
@@ -908,18 +928,33 @@ to properties of sub-headings like:
 This way, each org-reveal presentation can have its own settings. An example heading with corresponding settings would look like:
 
 #+BEGIN_SRC org
-* My org-reveal presentation among many within the same Org-mode file
-:PROPERTIES:
-:reveal_overview: t
-:EXPORT_AUTHOR: Test Author
-:EXPORT_DATE: 2018-01-01
-:EXPORT_TITLE: My Title
-:EXPORT_EMAIL: Test@example.com
-:EXPORT_OPTIONS: num:nil toc:nil reveal_keyboard:t reveal_overview:t
-:EXPORT_REVEAL_HLEVEL: 3
-:EXPORT_REVEAL_MARGIN: 200
-:END:
+   ,* My org-reveal presentation among many within the same Org-mode file
+  :PROPERTIES:
+  :reveal_overview: t
+  :EXPORT_AUTHOR: Test Author
+  :EXPORT_DATE: 2018-01-01
+  :EXPORT_TITLE: My Title
+  :EXPORT_EMAIL: Test@example.com
+  :EXPORT_OPTIONS: num:nil toc:nil reveal_keyboard:t reveal_overview:t
+  :EXPORT_REVEAL_HLEVEL: 3
+  :EXPORT_REVEAL_MARGIN: 200
+  :END:
 #+END_SRC
+
+** Customize iframe background slide
+:PROPERTIES:
+:reveal_background_iframe: https://hakim.se
+:reveal_background: rgb(0,0,0)
+:reveal_background_opacity: 0.8
+:reveal_background_position: absolute
+:reveal_extra_attr: height: 200px; bottom: -700px; border-radius: 10px; padding: 20px
+:END:
+#+REVEAL_HTML: <smaller>
+#+BEGIN_SRC org
+  :reveal_background_position: absolute
+  :reveal_extra_attr: height: 200px; bottom: -700px; border-radius: 10px; padding: 20px
+#+END_SRC
+#+REVEAL_HTML: </smaller>
 
 * Thanks
 
