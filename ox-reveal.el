@@ -1007,11 +1007,10 @@ contextual information."
                                ((string= lang "scheme") "selector_eval_scheme")
                                ((string= lang "ruby") "selector_eval_ruby")
                                ((string= lang "html") "selector_eval_html"))
-                         )
-)
+                         ))
       (if (not lang)
-          (format "<pre %s%s%s>\n%s</pre>"
-                  (or (frag-class src-block info) " class=\"example\""))
+          (format "<pre %s%s>\n%s</pre>"
+                  (or (frag-class src-block info) " class=\"example\"")
                   label
                   code)
         (if klipsify
@@ -1040,18 +1039,18 @@ window.klipse_settings = { " langselector  ": \".klipse\" };
 '>
 </iframe>")
           (format
-            "<div class=\"org-src-container\">\n%s%s\n</div>"
-            (if (not caption) ""
-              (format "<label class=\"org-src-name\">%s</label>"
-                      (org-export-data caption info)))
-            (if use-highlight
-                (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
-                        (or (frag-class src-block info) "")
-                        label lang code-attribs code)
-              (format "\n<pre %s%s><code trim>%s</code></pre>"
-                      (or (frag-class src-block info)
-                          (format " class=\"src src-%s\"" lang))
-                      label code)))))))
+	   "<div class=\"org-src-container\">\n%s%s\n</div>"
+	   (if (not caption) ""
+	     (format "<label class=\"org-src-name\">%s</label>"
+		     (org-export-data caption info)))
+	   (if use-highlight
+	       (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
+		       (or (frag-class src-block info) "")
+		       label lang code-attribs code)
+	     (format "\n<pre %s%s><code trim>%s</code></pre>"
+		     (or (frag-class src-block info)
+			 (format " class=\"src src-%s\"" lang))
+		     label code))))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
