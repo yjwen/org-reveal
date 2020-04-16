@@ -1279,7 +1279,8 @@ transformed fragment attribute to ELEM's attr_html plist."
   (interactive)
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
-         (clientfile (org-export-output-file-name (concat "_client" extension) subtreep)))
+         (clientfile (org-export-output-file-name (concat "_client" extension) subtreep))
+         (retfile))
     ; export filename_client HTML file if multiplexing
     (setq client-multiplex nil)
     (let ((org-export-exclude-tags (cons "noexport_reveal" org-export-exclude-tags)))
