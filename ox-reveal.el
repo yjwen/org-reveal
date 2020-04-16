@@ -127,7 +127,8 @@
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
   within which js/reveal.js is."
-  :group 'org-export-reveal)
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-hlevel 1
   "The minimum level of headings that should be grouped into
