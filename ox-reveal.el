@@ -127,7 +127,8 @@
 (defcustom org-reveal-root "./reveal.js"
   "The root directory of reveal.js packages. It is the directory
   within which js/reveal.js is."
-  :group 'org-export-reveal)
+  :group 'org-export-reveal
+  :type 'string)
 
 (defcustom org-reveal-hlevel 1
   "The minimum level of headings that should be grouped into
@@ -1278,7 +1279,8 @@ transformed fragment attribute to ELEM's attr_html plist."
   (interactive)
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
-         (clientfile (org-export-output-file-name (concat "_client" extension) subtreep)))
+         (clientfile (org-export-output-file-name (concat "_client" extension) subtreep))
+         (retfile))
     ; export filename_client HTML file if multiplexing
     (setq client-multiplex nil)
     (let ((org-export-exclude-tags (cons "noexport_reveal" org-export-exclude-tags)))
