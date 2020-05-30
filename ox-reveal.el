@@ -343,6 +343,13 @@ BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'boolean)
 
+(defcustom org-reveal-reveal-js-version nil
+  "Reveal.js version. Determine the locations of reveal.js scripts, CSS and the"
+  :group 'org-export-reveal
+  :type '(radio (const :tag "Reveal.js 4.0 and later" 4)
+                (const :tag "Reveal.js 3.x and before" 3)
+                (const :tag "Automatic" nil)))
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -567,22 +574,36 @@ holding contextual information."
               (if style-id  (format " id=\"%s\"" style-id))
               "/>\n"))))
 
-(defun org-reveal--choose-existing (root-path file-path-0 file-path-1)
-  (let ((full-path-0 (concat root-path file-path-0))
-        (full-path-1 (concat root-path file-path-1)))
-    (if (file-exists-p full-path-0)
-        full-path-0
-      full-path-1)))
+(defun org-reveal--choose-path (root-path file-path-0 file-path-1)
+  (if (or (eq org-reveal-reveal-js-version 4) ;; Explict reveal.js 4.0
+          (and (not org-reveal-reveal-js-version)
+               ;; Automatic location. Choose an existing path
+                (let ((root-file-path
+                       ;; root-path could be a local file path or a URL. Try to
+                       ;; extract the local root path from root-path
+                       (cond ((string-prefix-p "file://" root-path)
+                              ;; A local file URL
+                              (substring root-path 7))
+                             ((or (string-prefix-p "http://" root-path)
+                                  (string-prefix-p "https://" root-path))
+                              ;; A remote URL
+                              nil)
+                             ;; Otherwise, assuming it is a local file path
+                             (t root-path))))
+                  (or (not root-file-path) ;; Not a local URL, assuming file-path-0 exists
+                      (file-exists-p (concat root-file-path file-path-0))))))
+      (concat root-path file-path-0)
+    (concat root-path file-path-1)))
 
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
-         (reveal-css (org-reveal--choose-existing root-path "dist/reveal.css" "css/reveal.css"))
+         (reveal-css (org-reveal--choose-path root-path "dist/reveal.css" "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
-         (theme-css (org-reveal--choose-existing root-path
-                                                 (concat "dist/theme/" theme ".css")
-                                                 (concat "css/theme/" theme ".css")))
+         (theme-css (org-reveal--choose-path root-path
+                                             (concat "dist/theme/" theme ".css")
+                                             (concat "css/theme/" theme ".css")))
          (extra-css (plist-get info :reveal-extra-css))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
@@ -631,10 +652,10 @@ using custom variable `org-reveal-root'."
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
-         (reveal-js (org-reveal--choose-existing root-path  "dist/reveal.js" "js/reveal.js"))
+         (reveal-js (org-reveal--choose-path root-path  "dist/reveal.js" "js/reveal.js"))
          ;; Local files
          (local-root-path (org-reveal--file-url-to-path root-path))
-         (local-reveal-js (org-reveal--choose-existing local-root-path "dist/reveal.js" "js/reveal.js"))
+         (local-reveal-js (org-reveal--choose-path local-root-path "dist/reveal.js" "js/reveal.js"))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; reveal.js/js/reveal.js
