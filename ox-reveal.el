@@ -102,6 +102,7 @@
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
     (:reveal-init-options "REVEAL_INIT_OPTIONS" nil org-reveal-init-options newline)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
+    (:reveal-reveal-js-version "REVEAL_REVEAL_JS_VERSION" nil nil t)
     )
 
   :translate-alist
@@ -350,6 +351,15 @@ BEFORE the plugins that depend on them."
                 (const :tag "Reveal.js 3.x and before" 3)
                 (const :tag "Automatic" nil)))
 
+(defun org-reveal--get-reveal-js-version (info)
+  "Get reveal.js version value safely.
+If option \"REVEAL_REVEAL_JS_VERSION\" is set, retrieve integer
+value from it, else get value from custom variable
+`org-reveal-reveal-js-version'."
+  (let ((version-str (plist-get info :reveal-reveal-js-version)))
+    (if version-str (string-to-number version-str)
+      org-reveal-reveal-js-version)))
+
 (defun if-format (fmt val)
   (if val (format fmt val) ""))
 
@@ -574,9 +584,9 @@ holding contextual information."
               (if style-id  (format " id=\"%s\"" style-id))
               "/>\n"))))
 
-(defun org-reveal--choose-path (root-path file-path-0 file-path-1)
-  (if (or (eq org-reveal-reveal-js-version 4) ;; Explict reveal.js 4.0
-          (and (not org-reveal-reveal-js-version)
+(defun org-reveal--choose-path (root-path version file-path-0 file-path-1)
+  (if (or (eq version 4) ;; Explict reveal.js 4.0
+          (and (not version)
                ;; Automatic location. Choose an existing path
                 (let ((root-file-path
                        ;; root-path could be a local file path or a URL. Try to
@@ -599,9 +609,11 @@ holding contextual information."
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
-         (reveal-css (org-reveal--choose-path root-path "dist/reveal.css" "css/reveal.css"))
+         (version (org-reveal--get-reveal-js-version info))
+         (reveal-css (org-reveal--choose-path root-path version "dist/reveal.css" "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
          (theme-css (org-reveal--choose-path root-path
+                                             version
                                              (concat "dist/theme/" theme ".css")
                                              (concat "css/theme/" theme ".css")))
          (extra-css (plist-get info :reveal-extra-css))
@@ -652,10 +664,11 @@ using custom variable `org-reveal-root'."
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
   (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
-         (reveal-js (org-reveal--choose-path root-path  "dist/reveal.js" "js/reveal.js"))
+         (version (org-reveal--get-reveal-js-version info))
+         (reveal-js (org-reveal--choose-path root-path version "dist/reveal.js" "js/reveal.js"))
          ;; Local files
          (local-root-path (org-reveal--file-url-to-path root-path))
-         (local-reveal-js (org-reveal--choose-path local-root-path "dist/reveal.js" "js/reveal.js"))
+         (local-reveal-js (org-reveal--choose-path local-root-path version "dist/reveal.js" "js/reveal.js"))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; reveal.js/js/reveal.js
