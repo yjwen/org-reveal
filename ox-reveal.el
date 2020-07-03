@@ -685,7 +685,7 @@ custom variable `org-reveal-root'."
          (local-reveal-js (org-reveal--choose-path local-root-path version "dist/reveal.js" "js/reveal.js"))
          (reveal-4-plugin (if (eq 4 (org-reveal--get-reveal-js-version info))
                               (org-reveal-plugin-scripts-4 info)
-                            (cons "" "")))
+                            (cons nil nil)))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
      ;; reveal.js/js/reveal.js
