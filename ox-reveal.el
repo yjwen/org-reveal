@@ -430,7 +430,7 @@ exporter."
 				(if for-split "-split" ""))
 		       :class ,(org-element-property :HTML_CONTAINER_CLASS headline)
 		       :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
-		       :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
+		       :data-state ,(org-element-property :REVEAL_DATA_STATE headline) ;; 3.9 legacy
 		       :data-background-iframe ,slide-background-iframe))
 		(concat
 		 "style=\""
@@ -461,7 +461,7 @@ exporter."
 			      (if for-split "-split" ""))
 		     :class ,(org-element-property :HTML_CONTAINER_CLASS headline)
 		     :data-transition ,(org-element-property :REVEAL_DATA_TRANSITION headline)
-		     :data-state ,(org-element-property :REVEAL_DATA_STATE headline)
+		     :data-state ,(org-element-property :REVEAL_DATA_STATE headline) ;; 3.9 legacy
 		     :data-background ,(or (org-element-property :REVEAL_BACKGROUND headline)
 					   default-slide-background)
 		     :data-background-size ,(or (org-element-property :REVEAL_BACKGROUND_SIZE headline)

@@ -52,7 +52,6 @@
       - [[Fragment Styles][Fragment Styles]]([[https://github.com/yjwen/org-reveal#fragment-styles][gh]])
       - [[Fragment Index][Fragment Index]]([[https://github.com/yjwen/org-reveal#fragment-index][gh]])
       - [[List Fragments][List Fragments]]([[https://github.com/yjwen/org-reveal#list-fragments][gh]])
-    - [[Data State][Data State]]([[https://github.com/yjwen/org-reveal#data-state][gh]])
 #+REVEAL: split:t
     - [[Initialization options][Initialization options]]([[https://github.com/yjwen/org-reveal#initialization-options][gh]])
     - [[Third-Party Plugins][Third-Party Plugins]]([[https://github.com/yjwen/org-reveal#third-party-plugins][gh]])
@@ -562,17 +561,6 @@ Other possible choice for slide numbers are:
    * I appear.
    * I appear.
    * I appear.
-
-
-** Data State
-   :PROPERTIES:
-   :reveal_data_state: alert
-   :END:
-
-   Set property =reveal_data_state= to headings to change this slide's
-   display style, as illustrated above.
-
-   Available data states are: alert|blackout|soothe.
 
 ** Initialization options
 Use ~#+REVEAL_INIT_OPTIONS~ to give JS snippet for initialize
