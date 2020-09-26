@@ -754,6 +754,7 @@ dependencies: [
                   notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
                   search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
                   remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                  ;; multiplex setup for reveal.js 3.x
                   multiplex (format " { src: '%s', async: true },\n%s"
                                     (plist-get info :reveal-multiplex-socketio-url)
                                         ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
@@ -764,15 +765,24 @@ dependencies: [
                                           (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
                                       (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
                (builtin-codes
-                (if (eq version 4)
-                    '() ;; For reveal.js 4.x, skip the builtin plug-in
-                        ;; codes as they are for 3.x. The 4.x builtin
-                        ;; plug-ins are specified by separate <script>
-                        ;; blocks
-                  (mapcar
-                   (lambda (p)
-                     (eval (plist-get builtins p)))
-                   (org-reveal--get-plugins info))))
+                (let ((plugins (org-reveal--get-plugins info)))
+                  (if (eq version 4)
+                      ;; For reveal.js 4.x, skip the builtin plug-in
+                      ;; codes except multiplex as all other plug-ins
+                      ;; in 4.x are specified by separate <script>
+                      ;; blocks
+                      (let ((url (plist-get info :reveal-multiplex-url)))
+                        (if (memq 'multiplex plugins)
+                            (list (format " { src: '%s/socket.io/socket.io.js', async: true }, { src: '%s/%s', async: true } "
+                                          url url
+                                          (if client-multiplex "client.js"
+                                            (progn
+                                              (setq client-multiplex t)
+                                              "master.js"))))
+                          '()))
+                    (mapcar (lambda (p)
+                              (eval (plist-get builtins p)))
+                            plugins))))
                (external-plugins
 		(append
 		 ;; Global setting
@@ -1410,9 +1420,6 @@ transformed fragment attribute to ELEM's attr_html plist."
               (t (org-reveal--update-attr-html elem frag default-style frag-index)))
       elem)))
 
-(defvar client-multiplex nil
-  "used to cause generation of client html file for multiplex")
-
 (defun org-reveal-export-to-html
   (&optional async subtreep visible-only body-only ext-plist)
   "Export current buffer to a reveal.js HTML file."
@@ -1420,19 +1427,18 @@ transformed fragment attribute to ELEM's attr_html plist."
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
          (clientfile (org-export-output-file-name (concat "_client" extension) subtreep))
-         (retfile))
+         (org-export-exclude-tags (cons "noexport_reveal" org-export-exclude-tags))
+         (client-multiplex nil))
     ; export filename_client HTML file if multiplexing
-    (setq client-multiplex nil)
-    (let ((org-export-exclude-tags (cons "noexport_reveal" org-export-exclude-tags)))
-      (setq retfile (org-export-to-file 'reveal file
-		      async subtreep visible-only body-only ext-plist)))
+    (let ((retfile (org-export-to-file 'reveal file
+                     async subtreep visible-only body-only ext-plist)))
 
-    ; export the client HTML file if client-multiplex is set true
-    ; by previous call to org-export-to-file
-    (if (eq client-multiplex t)
+       ; export the client HTML file if client-multiplex is set true
+       ; by previous call to org-export-to-file
+      (when client-multiplex
         (org-export-to-file 'reveal clientfile
           async subtreep visible-only body-only ext-plist))
-    retfile))
+      retfile)))
 
 (defun org-reveal-export-to-html-and-browse
   (&optional async subtreep visible-only body-only ext-plist)

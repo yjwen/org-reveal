@@ -743,20 +743,27 @@ This feature is turned off by default and needs to be switched on with ~org-reve
     'n'. set it to nil will forbid the auto-completion for speaker notes.
 
 ** Multiplexing
-   Reveal.js supports multiplexing, which allows your audience to view
-   the slides of the presentation you are controlling on their own phone, tablet
-   or laptop. As the master presentation navigates the slides, all client
-   presentations will update in real time. See a demo at
-   http://revealjs.jit.su/.
+   Reveal.js supports a [[https://github.com/reveal/multiplex#multiplex-plugin][multiplexing plugin]], which allows your
+   audience to view the slides of the presentation you are controlling
+   on their own phone, tablet or laptop. As the master presentation
+   navigates the slides, all client presentations will update in real
+   time. See a demo at [[https://reveal-multiplex.glitch.me/]].
 
-   You can enable multiplexing for your slide generation by including the
-   following options:
+   To use multiplexing, first prepare a Socket.io server by the
+   instruction [[https://github.com/reveal/multiplex#socketio-server][here]]. Then include the following options in the org
+   file. Contents in ~[]~ are commentary notes, not part of the
+   options.
 #+BEGIN_SRC org
-#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. ]
-#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server. Gives the master control of the presentation.]
-#+REVEAL_MULTIPLEX_URL: http://revealjs.jit.su:80 [Location of socket.io server]
-#+REVEAL_MULTIPLEX_SOCKETIO_URL: http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js
-#+REVEAL_PLUGINS: ([any other plugins you are using] multiplex)
+,#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. ]
+,#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server. Gives the master control of the presentation.]
+,#+REVEAL_MULTIPLEX_URL:  https://reveal-multiplex.glitch.me [Location of socket.io server]
+,#+REVEAL_PLUGINS: ([any other plugins you are using] multiplex)
+#+END_SRC
+
+   If your are using Reveal.js 3.x, an extra option is necessary for
+   Socket.io scripts.
+#+BEGIN_SRC org
+,#+REVEAL_MULTIPLEX_SOCKETIO_URL: http://cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.10/socket.io.min.js
 #+END_SRC
 
    You must generate unique values for the =REVEAL_MULTIPLEX_ID= and
