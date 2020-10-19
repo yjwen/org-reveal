@@ -32,7 +32,7 @@
 ;;; Code:
 
 (require 'ox-html)
-(require 'cl)
+(require 'cl-lib)
 
 (org-export-define-derived-backend 'reveal 'html
 
@@ -888,7 +888,7 @@ holding export options."
 (defun org-reveal-parse-token (keyword info key &optional value)
   "Return HTML tags or perform SIDE EFFECT according to key.
 Use the previous section tag as the tag of the split section. "
-  (case (intern key)
+  (cl-case (intern key)
     (split
      (let ((headline (org-element-property
 		      :parent
@@ -943,7 +943,7 @@ Use the previous section tag as the tag of the split section. "
 			  (and checkbox " ")))
 	(br (org-html-close-tag "br" nil info)))
     (concat
-     (case type
+     (cl-case type
        (ordered
 	(let* ((counter term-counter-id)
 	       (extra (if counter (format " value=\"%s\"" counter) "")))
@@ -962,10 +962,10 @@ Use the previous section tag as the tag of the split section. "
 	  ;; Check-boxes in descriptive lists are associated to tag.
 	  (concat (format "<dt%s>%s</dt>"
 			  attr-html (concat checkbox term))
-		 (format "<dd%s>" attr-html)))))
+		  (format "<dd%s>" attr-html)))))
      (unless (eq type 'descriptive) checkbox)
      (and contents (org-trim contents))
-     (case type
+     (cl-case type
        (ordered "</li>")
        (unordered "</li>")
        (descriptive "</dd>")))))
@@ -993,7 +993,7 @@ and may change custom variables as SIDE EFFECT.
 CONTENTS is nil. INFO is a plist holding contextual information."
   (let ((key (org-element-property :key keyword))
         (value (org-element-property :value keyword)))
-    (case (intern key)
+    (cl-case (intern key)
       (REVEAL (org-reveal-parse-keyword-value keyword value info))
       (REVEAL_HTML value)
       (HTML value))))
@@ -1074,7 +1074,7 @@ CONTENTS is the contents of the list. INFO is a plist holding
 contextual information.
 
 Extract and set `attr_html' to plain-list tag attributes."
-  (let ((tag (case (org-element-property :type plain-list)
+  (let ((tag (cl-case (org-element-property :type plain-list)
                (ordered "ol")
                (unordered "ul")
                (descriptive "dl")))
@@ -1406,17 +1406,17 @@ transformed fragment attribute to ELEM's attr_html plist."
                                    frag-list))
                       (items (org-element-contents elem))
 		      (default-style-list
-                            (mapcar (lambda (a) default-style)
-                                    (number-sequence 1 (length items)))))
+                        (mapcar (lambda (a) default-style)
+                                (number-sequence 1 (length items)))))
                  (if frag-index
-                     (mapcar* 'org-reveal--update-attr-html
-                              items frag-list default-style-list (car (read-from-string frag-index)))
+                     (cl-mapcar 'org-reveal--update-attr-html
+                                items frag-list default-style-list (car (read-from-string frag-index)))
                    (let* ((last-frag (car (last frag-list)))
                           (tail-list (mapcar (lambda (a) last-frag)
                                              (number-sequence (+ (length frag-list) 1)
                                                               (length items)))))
                      (nconc frag-list tail-list)
-                     (mapcar* 'org-reveal--update-attr-html items frag-list default-style-list)))))
+                     (cl-mapcar 'org-reveal--update-attr-html items frag-list default-style-list)))))
               (t (org-reveal--update-attr-html elem frag default-style frag-index)))
       elem)))
 
