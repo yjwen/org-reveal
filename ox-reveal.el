@@ -1499,7 +1499,10 @@ is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'reveal filename ".html" plist pub-dir))
+  (let ((client-multiplex nil))
+    (org-publish-org-to 'reveal filename ".html" plist pub-dir)
+    (when client-multiplex
+      (org-publish-org-to 'reveal filename "_client.html" plist pub-dir))))
 
 ;; Register auto-completion for speaker notes.
 (when org-reveal-note-key-char
