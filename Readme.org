@@ -302,7 +302,7 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
 *** Customize the Title Slide
 
-    There are 3 ways t ocustomize the title slide.
+    There are 3 ways to customize the title slide.
 
     1. Set variable ~org-reveal-title-slide~ to a string of HTML markups. 
     2. Set ~reveal_title_slide~ in the ~#+OPTIONS:~ line to a string of HTML markups.
