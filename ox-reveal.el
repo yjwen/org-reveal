@@ -100,6 +100,7 @@
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
+    (:reveal-extra-script "REVEAL_EXTRA_SCRIPT" nil org-reveal-extra-script space)
     (:reveal-init-options "REVEAL_INIT_OPTIONS" nil org-reveal-init-options newline)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     (:reveal-reveal-js-version "REVEAL_REVEAL_JS_VERSION" nil nil t)
@@ -299,6 +300,11 @@ BEFORE the plugins that depend on them."
 
 (defcustom org-reveal-init-script nil
   "Custom script that will be passed to Reveal.initialize."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-extra-script nil
+  "Custom script that will be passed added to the script block, after Reveal.initialize."
   :group 'org-export-reveal
   :type 'string)
 
@@ -802,7 +808,11 @@ dependencies: [
          ))
         (let ((init-script (plist-get info :reveal-init-script)))
           (if init-script (concat (if in-single-file "" ",") init-script)))
-     "});\n</script>\n")))
+        "});\n"
+        (let ((extra-script (plist-get info :reveal-extra-script)))
+          (if extra-script extra-script))
+     "
+\n</script>\n")))
 
 (defun org-reveal-plugin-scripts-4 (info)
   "Return scripts for initializing reveal.js 4.x builtin scripts"

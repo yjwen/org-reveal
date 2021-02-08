@@ -879,6 +879,11 @@ To disable the automatic TOC, add =toc:nil= to =#+OPTIONS=
    ~#+REVEAL_INIT_SCRIPT~ (multiple statements are concatenated) or by
    custom variable ~org-reveal-init-script~.
 
+   If you want to add extra code outside of the ~Reveal.initialize~
+   block, then ~#+REVEAL_EXTRA_SCRIPT~ can be used. The code will be
+   inserted after closing the ~Reveal.initialize~ statement, but before
+   the closing ~</script>~ tag.
+
 ** Executable Source Blocks
 To allow live execution of code in some languages, enable the klipse plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.  
 
