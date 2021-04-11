@@ -1157,7 +1157,7 @@ contextual information."
 			       loc)))
 		      num-start))))
 	   (code-attribs (or (org-export-read-attribute
-			 :attr_reveal src-block :code_attribs) ""))
+			      :attr_reveal src-block :code_attribs) ""))
            (label (let ((lbl (org-element-property :name src-block)))
                     (if (not lbl) ""
                       (format " id=\"%s\"" lbl))))
@@ -1209,10 +1209,10 @@ window.klipse_settings = { " langselector  ": \".klipse\" };
 	       (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
 		       (or (frag-class src-block info) "")
 		       label lang code-attribs code)
-	     (format "\n<pre %s%s><code trim>%s</code></pre>"
+	     (format "\n<pre %s%s %s><code trim>%s</code></pre>"
 		     (or (frag-class src-block info)
 			 (format " class=\"src src-%s\"" lang))
-		     label code))))))))
+		     label code-attribs code))))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
