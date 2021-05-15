@@ -650,7 +650,7 @@ using custom variable `org-reveal-root'."
                  (format-spec (plist-get info :reveal-highlight-css)
                               `((?r . ,(directory-file-name root-path))))))
      ;; print-pdf
-     (if in-single-file ""
+     (if (or in-single-file (eq version 4)) ""
        (format "
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
