@@ -313,18 +313,6 @@ BEFORE the plugins that depend on them."
   :group 'org-export-reveal
   :type 'string)
 
-(defcustom org-reveal-note-key-char "n"
-  "If not nil, org-reveal-note-key-char's value is registered as
-  the key character to Org-mode's structure completion for
-  Reveal.js notes. When `<' followed by the key character are
-  typed and then the completion key is pressed, which is usually
-  `TAB', \"#+BEGIN_NOTES\" and \"#+END_NOTES\" is inserted.
-
-  The default value is \"n\". Set the variable to nil to disable
-  registering the completion"
-  :group 'org-export-reveal
-  :type 'string)
-
 (defcustom org-reveal-klipsify-src nil
   "Set to non-nil if you would like to make source code blocks editable in exported presentation."
   :group 'org-export-reveal
@@ -1513,14 +1501,6 @@ Return output file name."
     (org-publish-org-to 'reveal filename ".html" plist pub-dir)
     (when client-multiplex
       (org-publish-org-to 'reveal filename "_client.html" plist pub-dir))))
-
-;; Register auto-completion for speaker notes.
-(when org-reveal-note-key-char
-  (if (version< (cdr (get 'org-structure-template-alist 'custom-package-version))  "9.2")
-      (add-to-list 'org-structure-template-alist
-                   (list org-reveal-note-key-char "#+BEGIN_NOTES\n\?\n#+END_NOTES"))
-    (add-to-list 'org-structure-template-alist
-                 (cons org-reveal-note-key-char "notes"))))
 
 (provide 'ox-reveal)
 
