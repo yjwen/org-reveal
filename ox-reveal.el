@@ -270,11 +270,10 @@ embedded into Reveal.initialize()."
   :type 'string)
 
 (defcustom org-reveal-plugins
-  '(classList markdown zoom notes)
+  '(markdown zoom notes)
   "Default builtin plugins"
   :group 'org-export-reveal
   :type '(set
-          (const classList)
           (const markdown)
           (const highlight)
           (const zoom)
@@ -668,6 +667,53 @@ using custom variable `org-reveal-root'."
     (or (and buffer-plugins (listp buffer-plugins) buffer-plugins)
         org-reveal-plugins)))
 
+(defun org-reveal--legacy-dependency (root-path plugins info)
+  (concat
+      "
+// Optional libraries used to extend on reveal.js
+dependencies: [
+"
+      ;; JS libraries
+      (let* ((builtins
+              (list
+               classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+               markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
+               highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
+               zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+               ;; multiplex setup for reveal.js 3.x
+               multiplex (format " { src: '%s', async: true },\n%s"
+                                 (plist-get info :reveal-multiplex-socketio-url)
+                                        ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
+                                 (if (not client-multiplex)
+                                     (progn
+                                       (if (plist-get info :reveal-multiplex-secret)
+                                           (setq client-multiplex t))
+                                       (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
+                                   (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
+             (builtin-codes
+              (mapcar (lambda (p)
+                        (eval (plist-get builtins p)))
+                      plugins))
+             (external-plugins
+	      (append
+	       ;; Global setting
+               (cl-loop for (key . value) in org-reveal-external-plugins
+                        collect (format  value root-path ))
+	       ;; Local settings
+	       (let ((local-plugins (plist-get info :reveal-external-plugins)))
+	         (and local-plugins
+		      (list (format local-plugins root-path))))))
+
+             (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
+             (extra-codes (plist-get info :reveal-extra-js))
+             (total-codes
+              (if (string= "" extra-codes) all-plugins (append (list extra-codes) all-plugins))))
+        (mapconcat 'identity total-codes ",\n"))
+      "]\n"))
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
@@ -677,8 +723,9 @@ custom variable `org-reveal-root'."
          ;; Local files
          (local-root-path (org-reveal--file-url-to-path root-path))
          (local-reveal-js (org-reveal--choose-path local-root-path version "dist/reveal.js" "js/reveal.js"))
-         (reveal-4-plugin (if (eq 4 (org-reveal--get-reveal-js-version info))
-                              (org-reveal-plugin-scripts-4 info)
+         (plugins (org-reveal--get-plugins info))
+         (reveal-4-plugin (if (eq 4 version)
+                              (org-reveal-plugin-scripts-4 plugins info)
                             (cons nil nil)))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
@@ -701,140 +748,108 @@ custom variable `org-reveal-root'."
         "<script src=\"" reveal-js "\"></script>\n"))
      ;; plugin headings
      (if-format "%s\n" (car reveal-4-plugin))
-     "
-<script>
-// Full list of configuration options available here:
-// https://github.com/hakimel/reveal.js#configuration
-Reveal.initialize({
-"
-     (if-format "%s,\n" (cdr reveal-4-plugin))
- 
-     (let ((options (plist-get info :reveal-init-options)))
-       (and (string< "" options)
-	    (format "%s,\n" options)))
 
-     ;; multiplexing - depends on defvar 'client-multiplex'
-     (when (plist-get info :reveal-multiplex-id)
-       (format
-"multiplex: {
+     ;; Reveal.initialize
+     (let ((reveal-4-plugin-statement (cdr reveal-4-plugin))
+           (init-options (plist-get info :reveal-init-options))
+           (multiplex-statement
+            ;; multiplexing - depends on defvar 'client-multiplex'
+            (when (memq 'multiplex plugins)
+              (concat
+               (format "multiplex: {
     secret: %s, // null if client
     id: '%s', // id, obtained from socket.io server
     url: '%s' // Location of socket.io server
 },\n"
-             (if (eq client-multiplex nil)
-                 (format "'%s'" (plist-get info :reveal-multiplex-secret))
-               (format "null"))
-             (plist-get info :reveal-multiplex-id)
-             (plist-get info :reveal-multiplex-url)))
-
-     (let ((extra-initial-js  (plist-get info :reveal-extra-initial-js)))
-       (unless (string= extra-initial-js "")
-	 (format "%s,\n" extra-initial-js)))
-
-     ;; optional JS library heading
-     (if in-single-file ""
-       (concat
-        "
-// Optional libraries used to extend on reveal.js
-dependencies: [
+                       (if (eq client-multiplex nil)
+                           (format "'%s'" (plist-get info :reveal-multiplex-secret))
+                         (format "null"))
+                       (plist-get info :reveal-multiplex-id)
+                       (plist-get info :reveal-multiplex-url))
+               (let ((url (plist-get info :reveal-multiplex-url)))
+                 (format "dependencies: [ { src: '%s/socket.io/socket.io.js', async: true }, { src: '%s/%s', async: true } ]"
+                         url url
+                         (if client-multiplex "client.js"
+                           (progn
+                             (setq client-multiplex t)
+                             "master.js")))))
+))
+           (extra-initial-js-statement (plist-get info :reveal-extra-initial-js))
+           (legacy-dependency-statement
+            (unless (or in-single-file (eq version 4))
+              (org-reveal--legacy-dependency root-path plugins info)))
+           (init-script-statement (plist-get info :reveal-init-script)))
+       (format "
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+%s
+});
+%s
+</script>
 "
-        ;; JS libraries
-        (let* ((builtins
-                '(classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
-                  markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
-                  highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
-                  zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                  notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                  search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                  remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-                  ;; multiplex setup for reveal.js 3.x
-                  multiplex (format " { src: '%s', async: true },\n%s"
-                                    (plist-get info :reveal-multiplex-socketio-url)
-                                        ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
-                                    (if (not client-multiplex)
-                                        (progn
-                                          (if (plist-get info :reveal-multiplex-secret)
-                                              (setq client-multiplex t))
-                                          (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
-                                      (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
-               (builtin-codes
-                (let ((plugins (org-reveal--get-plugins info)))
-                  (if (eq version 4)
-                      ;; For reveal.js 4.x, skip the builtin plug-in
-                      ;; codes except multiplex as all other plug-ins
-                      ;; in 4.x are specified by separate <script>
-                      ;; blocks
-                      (let ((url (plist-get info :reveal-multiplex-url)))
-                        (if (memq 'multiplex plugins)
-                            (list (format " { src: '%s/socket.io/socket.io.js', async: true }, { src: '%s/%s', async: true } "
-                                          url url
-                                          (if client-multiplex "client.js"
-                                            (progn
-                                              (setq client-multiplex t)
-                                              "master.js"))))
-                          '()))
-                    (mapcar (lambda (p)
-                              (eval (plist-get builtins p)))
-                            plugins))))
-               (external-plugins
-		(append
-		 ;; Global setting
-                 (cl-loop for (key . value) in org-reveal-external-plugins
-                          collect (format  value root-path ))
-		 ;; Local settings
-		 (let ((local-plugins (plist-get info :reveal-external-plugins)))
-		   (and local-plugins
-			(list (format local-plugins root-path))))))
+               (mapconcat 'identity
+                          (seq-filter (lambda (x) ;; Remove nil and ""
+                                        (and x (not (string= x ""))))
+                                      (list reveal-4-plugin-statement
+                                            init-options
+                                            multiplex-statement
+                                            extra-initial-js-statement
+                                            legacy-dependency-statement))
+                          ",\n")
+               ;; Extra initialization scripts
+               (or (plist-get info :reveal-extra-script) "")))
+)))
 
-               (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
-               (extra-codes (plist-get info :reveal-extra-js))
-               (total-codes
-                (if (string= "" extra-codes) all-plugins (append (list extra-codes) all-plugins))))
-          (mapconcat 'identity total-codes ",\n"))
-        "]\n"
-         ))
-        (let ((init-script (plist-get info :reveal-init-script)))
-          (if init-script (concat (if in-single-file "" ",") init-script)))
-        "});\n"
-        (let ((extra-script (plist-get info :reveal-extra-script)))
-          (if extra-script extra-script))
-     "
-\n</script>\n")))
-
-(defun org-reveal-plugin-scripts-4 (info)
+(defun org-reveal-plugin-scripts-4 (plugins info)
   "Return scripts for initializing reveal.js 4.x builtin scripts"
-  (let ((plugins (org-reveal--get-plugins info)))
-    (if (not (null plugins))
-        ;; Generate plugin scripts
-        (let* ((available-plugins
-                '(highlight ("RevealHighlight" . "highlight/highlight.js")
-                  markdown ("RevealMarkdown" . "markdown/markdown.js")
-                  search ("RevealSearch" . "search/search.js")
-                  notes ("RevealNotes" . "notes/notes.js")
-                  math ("RevealMath" . "math/math.js")
-                  zoom ("RevealZoom" . "zoom/zoom.js")))
-               (plugin-info (seq-filter 'identity
-                                        (seq-map (lambda (p)
-                                                   (plist-get available-plugins p))
-                                                 plugins))))
-          (if (not (null plugin-info))
-              (cons
-               ;; Plugin initialization script
-               (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
-                 (mapconcat
-                  (lambda (p)
-                    (format "<script src=\"%splugin/%s\"></script>\n" root-path (cdr p)))
-                  plugin-info
-                  ""))
-               ;; Reveal initialization for plugins
-               (format "plugins: [%s]"
-                       (mapconcat #'car plugin-info ",")))
-            ;; No available plugin info found. Perhaps wrong plugin
-            ;; names are given
-            (cons nil nil)))
-        ;; No plugins, return empty string
-      (cons nil nil))))
+  (if (not (null plugins))
+      ;; Generate plugin scripts
+      (let* ((plugins (mapcar
+                       (lambda (p)
+                         ;; Convert legacy
+                         ;; plugin names into
+                         ;; reveal.js 4.0 ones
+                         (cond
+                          ((eq p 'highlight) 'RevealHighlight)
+                          ((eq p 'markdown) 'RevealMarkdown)
+                          ((eq p 'search) 'RevealSearch)
+                          ((eq p 'notes) 'RevealNotes)
+                          ((eq p 'math) 'RevealMath)
+                          ((eq p 'zoom) 'RevealZoom)
+                          (t p)))
+                       plugins))
+             (available-plugins
+              (append '((RevealHighlight . "%splugin/highlight/highlight.js")
+                        (RevealMarkdown . "%splugin/markdown/markdown.js")
+                        (RevealSearch . "%splugin/search/search.js")
+                        (RevealNotes . "%splugin/notes/notes.js")
+                        (RevealMath . "%splugin/math/math.js")
+                        (RevealZoom . "%splugin/zoom/zoom.js"))
+                      org-reveal-external-plugins))
+             (plugin-js (seq-filter 'identity ;; Filter out nil
+                                    (mapcar (lambda (p)
+                                              (cdr (assoc p available-plugins)))
+                                            plugins))))
+        (if (not (null plugin-js))
+            (cons
+             ;; Plugin initialization script
+             (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
+               (mapconcat
+                (lambda (p)
+                  (format "<script src=\"%s\"></script>\n"
+                          (format p root-path)))
+                plugin-js
+                ""))
+             ;; Reveal initialization for plugins
+             (format "plugins: [%s]"
+                     (mapconcat 'symbol-name plugins ", ")))
+          ;; No available plugin info found. Perhaps wrong plugin
+          ;; names are given
+          (cons nil nil)))
+    ;; No plugins, return empty string
+    (cons nil nil)))
 (defun org-reveal-toc (depth info)
   "Build a slide of table of contents."
   (let ((toc (org-html-toc depth info)))

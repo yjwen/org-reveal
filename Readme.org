@@ -569,26 +569,16 @@ supported options. Check the head part of this document for an
 example.
 ** Third-Party Plugins
 Reveal.js is also extensible through third-party plugins. Org-reveal
-now includes a mechanism to load these as well, either for all org buffers
-by defining variable, or for local org buffer by setting option line.
-
-*** By Defining Variable
-Store the names and loading instructions for each plugin in the
-customizable variable ~org-reveal-external-plugins~. This variable is
-an associative list. The first element of each Assoc cell is a symbol
--- the name of the plugin -- and the second is the string of the code
-for enabling the plugin. The string can have ONE optional ~%s~, which
-will be replaced by `reveal-root`.
-
-So, this second element should have the form ~"{src:
-\"%srelative/path/toplugin/from/reveal/root.js\"}~.  If you need the
-async or callback parameters, include those too.  Ox-reveal will add
-the plugin to the dependencies parameter when Reveal is initialized.
-
-*** By Local Option Line
-Specify the plugin by option line ~#+REVEAL_EXTERNAL_PLUGINS: string
-of code~. Similar to the global plugin definition, the string of code
-can have one optional ~%s~ to be replaced by ~reveal-root~.
+provides a customizable variable ~org-reveal-external-plugins~ for
+defining available third-party plugins. This variable is an
+associative list. The first element of each Assoc cell is a symbol
+same as the name of the plugin and the second is a string specifying
+the location of the plugin script. The string can have ONE optional
+~%s~, which will be replaced by `reveal-root`. Code below is an
+example.
+#+begin_src lisp
+(setq org-reveal-external-plugins '((menu . "path/to/reveal.js-menu/menu.js"))
+#+end_src
 
 ** Highlight Source Code
 
