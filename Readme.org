@@ -577,7 +577,7 @@ the location of the plugin script. The string can have ONE optional
 ~%s~, which will be replaced by `reveal-root`. Code below is an
 example.
 #+begin_src lisp
-(setq org-reveal-external-plugins '((menu . "path/to/reveal.js-menu/menu.js"))
+(setq org-reveal-external-plugins '((RevealMenu . "path/to/reveal.js-menu/menu.js"))
 #+end_src
 
 ** Highlight Source Code
