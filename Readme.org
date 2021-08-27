@@ -59,7 +59,7 @@
       - [[By Local Option Line][By Local Option Line]]([[https://github.com/yjwen/org-reveal#by-local-option-line][gh]])
     - [[Highlight Source Code][Highlight Source Code]]([[https://github.com/yjwen/org-reveal#highlight-source-code][gh]])
       - [[Using highlight.js][Using highlight.js]]([[https://github.com/yjwen/org-reveal#using-highlightjs][gh]])
-    - [[Auto-Animate]]
+    - [[Auto-Animate]] ([[https://github.com/yjwen/org-reveal#auto-animate][gh]])
     - [[Editable Source Code][Editable Source Code]]([[https://github.com/yjwen/org-reveal#editable-source-code][gh]])
     - [[MathJax][MathJax]]([[https://github.com/yjwen/org-reveal#mathjax][gh]])
 #+REVEAL: split:t
