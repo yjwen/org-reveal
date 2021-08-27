@@ -59,6 +59,7 @@
       - [[By Local Option Line][By Local Option Line]]([[https://github.com/yjwen/org-reveal#by-local-option-line][gh]])
     - [[Highlight Source Code][Highlight Source Code]]([[https://github.com/yjwen/org-reveal#highlight-source-code][gh]])
       - [[Using highlight.js][Using highlight.js]]([[https://github.com/yjwen/org-reveal#using-highlightjs][gh]])
+    - [[Auto-Animate]]
     - [[Editable Source Code][Editable Source Code]]([[https://github.com/yjwen/org-reveal#editable-source-code][gh]])
     - [[MathJax][MathJax]]([[https://github.com/yjwen/org-reveal#mathjax][gh]])
 #+REVEAL: split:t
@@ -629,6 +630,38 @@ int main()
 }
 ,#+END_SRC
 #+END_SRC
+
+** Auto-Animate
+   To enable [[https://revealjs.com/auto-animate/][auto-animate]], please add ~data-auto-animate~ to heading's
+   ~REVEAL_EXTRA_ATTR~ property. To force Reveal.js to match source
+   codes across slides, please add the same ~:data_id foo~ to the
+   ~#+ADDR_REVEAL:~ tag of the source code blocks. Example as below.
+   #+begin_src org
+          ,* Heading 1
+            :PROPERTIES:
+            :REVEAL_EXTRA_ATTR: data-auto-animate
+            :END:
+
+            ,#+ATTR_REVEAL: :data_id foo
+            ,#+begin_src js
+              let index = 1
+            ,#+end_src
+
+
+     ,* Heading 2
+       :PROPERTIES:
+       :REVEAL_EXTRA_ATTR: data-auto-animate
+       :END:
+
+
+       ,#+ATTR_REVEAL: :data_id foo
+       ,#+begin_src js
+         let index = 1
+         let value = 2
+       ,#+end_src
+
+   #+end_src
+   
 
 ** Editable Source Code
 It is now possible to embed code blocks in a codemirror instance in order to edit code during a presentation.  At present, this capacity is turned on or off at time export using these defcustoms:

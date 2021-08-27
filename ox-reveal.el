@@ -1161,9 +1161,9 @@ contextual information."
 		      num-start))))
 	   (code-attribs (or (org-export-read-attribute
 			      :attr_reveal src-block :code_attribs) ""))
-           (label (let ((lbl (org-element-property :name src-block)))
-                    (if (not lbl) ""
-                      (format " id=\"%s\"" lbl))))
+           (data-id (if-format " data-id=\"%s\"" (org-export-read-attribute
+                                                 :attr_reveal src-block :data_id)))
+           (label (if-format "id=\"%s\"" (org-element-property :name src-block)))
            (klipsify  (and  org-reveal-klipsify-src 
                            (member lang '("javascript" "js" "ruby" "scheme" "clojure" "php" "html"))))
            (langselector (cond ((or (string= lang "js") (string= lang "javascript")) "selector_eval_js")
@@ -1174,9 +1174,11 @@ contextual information."
                                ((string= lang "html") "selector_eval_html"))
                          ))
       (if (not lang)
-          (format "<pre %s%s>\n%s</pre>"
-                  (or (frag-class src-block info) " class=\"example\"")
-                  label
+          (format "<pre %s>\n%s</pre>"
+                  (string-join (list (or (frag-class src-block info) " class=\"example\"")
+                                     label)
+                               " ")
+
                   code)
         (if klipsify
             (concat
@@ -1209,13 +1211,21 @@ window.klipse_settings = { " langselector  ": \".klipse\" };
 	     (format "<label class=\"org-src-name\">%s</label>"
 		     (org-export-data caption info)))
 	   (if use-highlight
-	       (format "\n<pre%s%s><code class=\"%s\" %s>%s</code></pre>"
-		       (or (frag-class src-block info) "")
-		       label lang code-attribs code)
-	     (format "\n<pre %s%s %s><code trim>%s</code></pre>"
-		     (or (frag-class src-block info)
-			 (format " class=\"src src-%s\"" lang))
-		     label code-attribs code))))))))
+	       (format "\n<pre %s><code class=\"%s\" %s>%s</code></pre>"
+                       (string-join (list (or (frag-class src-block info) "")
+                                          label
+                                          data-id)
+                                    " ")
+		        lang code-attribs code)
+	     (format "\n<pre %s><code trim>%s</code></pre>"
+                     (string-join (list (or (frag-class src-block info)
+			                    (format " class=\"src src-%s\"" lang))
+		                        label
+                                        data-id
+                                        code-attribs)
+                                  " ")
+
+                     code))))))))
 
 (defun org-reveal-quote-block (quote-block contents info)
   "Transcode a QUOTE-BLOCK element from Org to Reveal.
