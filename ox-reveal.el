@@ -675,38 +675,38 @@ dependencies: [
 "
       ;; JS libraries
       (let* ((builtins
-              (list
-               classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
-               markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+              '(
+                classList (format " { src: '%slib/js/classList.js', condition: function() { return !document.body.classList; } }" root-path)
+                markdown (format " { src: '%splugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: '%splugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }" root-path root-path)
-               highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
-               zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
-               ;; multiplex setup for reveal.js 3.x
-               multiplex (format " { src: '%s', async: true },\n%s"
-                                 (plist-get info :reveal-multiplex-socketio-url)
+                highlight (format " { src: '%splugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }" root-path)
+                zoom (format " { src: '%splugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                notes (format " { src: '%splugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                search (format " { src: '%splugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                remotes (format " { src: '%splugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }" root-path)
+                ;; multiplex setup for reveal.js 3.x
+                multiplex (format " { src: '%s', async: true },\n%s"
+                                  (plist-get info :reveal-multiplex-socketio-url)
                                         ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
-                                 (if (not client-multiplex)
-                                     (progn
-                                       (if (plist-get info :reveal-multiplex-secret)
-                                           (setq client-multiplex t))
-                                       (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
-                                   (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
+                                  (if (not client-multiplex)
+                                      (progn
+                                        (if (plist-get info :reveal-multiplex-secret)
+                                            (setq client-multiplex t))
+                                        (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
+                                    (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
              (builtin-codes
               (mapcar (lambda (p)
                         (eval (plist-get builtins p)))
                       plugins))
              (external-plugins
-	      (append
-	       ;; Global setting
+              (append
+               ;; Global setting
                (cl-loop for (key . value) in org-reveal-external-plugins
                         collect (format  value root-path ))
-	       ;; Local settings
-	       (let ((local-plugins (plist-get info :reveal-external-plugins)))
-	         (and local-plugins
-		      (list (format local-plugins root-path))))))
+               ;; Local settings
+               (let ((local-plugins (plist-get info :reveal-external-plugins)))
+                 (and local-plugins
+                      (list (format local-plugins root-path))))))
 
              (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
              (extra-codes (plist-get info :reveal-extra-js))
@@ -1164,7 +1164,7 @@ contextual information."
            (data-id (if-format " data-id=\"%s\"" (org-export-read-attribute
                                                  :attr_reveal src-block :data_id)))
            (label (if-format "id=\"%s\"" (org-element-property :name src-block)))
-           (klipsify  (and  org-reveal-klipsify-src 
+           (klipsify  (and  org-reveal-klipsify-src
                            (member lang '("javascript" "js" "ruby" "scheme" "clojure" "php" "html"))))
            (langselector (cond ((or (string= lang "js") (string= lang "javascript")) "selector_eval_js")
                                ((string= lang "clojure") "selector")
@@ -1366,7 +1366,7 @@ Each `attr_reveal' attribute is mapped to corresponding
 		  :reveal-speed)))
     (with-output-to-temp-buffer
 	"* ox-reveal hints *"
-      (princ " 
+      (princ "
 Note: Options and custom variables for initializing reveal.js are
 obsolete. Use '#+REVEAL_INIT_OPTIONS:' instead to give JS code
 snippet for initializing reveal.js. The following is a such
