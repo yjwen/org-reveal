@@ -756,15 +756,6 @@ This feature is turned off by default and needs to be switched on with ~org-reve
    the presentation HTML file into the Reveal.js root directory and
    reopen it in the browser.
 
-*** Easy-Template for Speaker Notes
-
-    Org-reveal registers 'n' as the key for speaker notes easy-template.
-    So you can press '<' followed by 'n' and then press TAB, the ~#+BEGIN_NOTES~
-    and ~#+END_NOTES~ pair is inserted automatically.
-
-    Customize ~org-reveal-note-key-char~ to change the default key
-    'n'. set it to nil will forbid the auto-completion for speaker notes.
-
 ** Multiplexing
    Reveal.js supports a [[https://github.com/reveal/multiplex#multiplex-plugin][multiplexing plugin]], which allows your
    audience to view the slides of the presentation you are controlling
