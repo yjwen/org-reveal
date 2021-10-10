@@ -284,10 +284,28 @@ embedded into Reveal.initialize()."
 
 (defcustom org-reveal-external-plugins nil
   "Additional third-party Plugins to load with reveal.
+
+* When \"REVEAL_REVEAL_JS_VERSION\" is lower than 4
+
 Each entry should contain a name and an expression of the form
 \"{src: '%srelative/path/from/reveal/root', async:true/false,condition: jscallbackfunction(){}}\"
 Note that some plugins have dependencies such as jquery; these must be included here as well,
-BEFORE the plugins that depend on them."
+BEFORE the plugins that depend on them.
+
+* When \"REVEAL_REVEAL_JS_VERSION\" is 4 or higher
+
+The value should be an association list where the key of an entry
+is the name of the RevealJS plugin (e.g. RevealHighlight), and
+the value is either a string or a list of strings. Each string is
+going to be translated to an <script> tag in the output HTML.
+
+Example:
+
+(setq org-reveal-external-plugins
+      '((CopyCode .
+                  (\"https://cdn.jsdelivr.net/npm/reveal.js-copycode@1.0.2/plugin/copycode/copycode.js\"
+                   \"https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js\"))))
+"
   :group 'org-export-reveal
   :type 'alist)
 
@@ -804,6 +822,10 @@ Reveal.initialize({
 
 (defun org-reveal-plugin-scripts-4 (plugins info)
   "Return scripts for initializing reveal.js 4.x builtin scripts"
+  ;; Return a tuple (represented as a list), the first value is a list of script
+  ;; tags that are going to be inlined to the final HTML output, the second
+  ;; value is a list of import statements that are going to be embedded in the
+  ;; Reveal.initialize call
   (if (not (null plugins))
       ;; Generate plugin scripts
       (let* ((plugins (mapcar
@@ -834,15 +856,26 @@ Reveal.initialize({
                                             plugins))))
         (if (not (null plugin-js))
             (cons
-             ;; Plugin initialization script
+             ;; First value of the tuple, a list of scripts HTML tags
              (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
                (mapconcat
                 (lambda (p)
-                  (format "<script src=\"%s\"></script>\n"
-                          (format p root-path)))
+                  (lambda (p)
+                    ;; when it is a list, create a script tag for every entry
+                    (cond
+                     ((listp p)
+                      (mapconcat (lambda (pi)
+                                   (format "<script src=\"%s\"></script>"
+                                           (format pi root-path)))
+                                 p
+                                 "\n"))
+                     ;; when it is a single string, create a single script tag
+                     (t (format "<script src=\"%s\"></script>\n"
+                                (format p root-path))))))
                 plugin-js
                 ""))
-             ;; Reveal initialization for plugins
+             ;; Second value of the tuple, a list of Reveal plugin
+             ;; initialization statements
              (format "plugins: [%s]"
                      (mapconcat 'symbol-name plugins ", ")))
           ;; No available plugin info found. Perhaps wrong plugin
