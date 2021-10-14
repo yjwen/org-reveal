@@ -860,18 +860,17 @@ Reveal.initialize({
              (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
                (mapconcat
                 (lambda (p)
-                  (lambda (p)
-                    ;; when it is a list, create a script tag for every entry
-                    (cond
-                     ((listp p)
-                      (mapconcat (lambda (pi)
-                                   (format "<script src=\"%s\"></script>"
-                                           (format pi root-path)))
-                                 p
-                                 "\n"))
-                     ;; when it is a single string, create a single script tag
-                     (t (format "<script src=\"%s\"></script>\n"
-                                (format p root-path))))))
+                  ;; when it is a list, create a script tag for every entry
+                  (cond
+                   ((listp p)
+                    (mapconcat (lambda (pi)
+                                 (format "<script src=\"%s\"></script>"
+                                         (format pi root-path)))
+                               p
+                               "\n"))
+                   ;; when it is a single string, create a single script tag
+                   (t (format "<script src=\"%s\"></script>\n"
+                              (format p root-path)))))
                 plugin-js
                 ""))
              ;; Second value of the tuple, a list of Reveal plugin
