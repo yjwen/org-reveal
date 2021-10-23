@@ -96,7 +96,7 @@
     (:reveal-slide-header "REVEAL_SLIDE_HEADER" nil org-reveal-slide-header t)
     (:reveal-slide-footer "REVEAL_SLIDE_FOOTER" nil org-reveal-slide-footer t)
     (:reveal-plugins "REVEAL_PLUGINS" nil nil t)
-    (:reveal-external-plugins "REVEAL_EXTERNAL_PLUGINS" nil nil newline)
+    (:reveal-external-plugins "REVEAL_EXTERNAL_PLUGINS" nil nil space)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
@@ -820,6 +820,15 @@ Reveal.initialize({
                (or (plist-get info :reveal-extra-script) "")))
 )))
 
+(defun org-reveal--read-sexps-from-string (s)
+  (let ((s (string-trim s)))
+    (and (not (string-empty-p s))
+      (let ((r (read-from-string s)))
+        (let ((obj (car r))
+              (remain-index (cdr r)))
+          (and obj
+               (cons obj (read-sexps-from-string (substring s remain-index)))))))))
+
 (defun org-reveal-plugin-scripts-4 (plugins info)
   "Return scripts for initializing reveal.js 4.x builtin scripts"
   ;; Return a tuple (represented as a list), the first value is a list of script
@@ -849,7 +858,11 @@ Reveal.initialize({
                         (RevealNotes . "%splugin/notes/notes.js")
                         (RevealMath . "%splugin/math/math.js")
                         (RevealZoom . "%splugin/zoom/zoom.js"))
-                      org-reveal-external-plugins))
+                      org-reveal-external-plugins
+                      ;; Buffer local plugins
+                      (let ((local-plugins (plist-get info :reveal-external-plugins)))
+                        (and local-plugins
+                             (org-reveal--read-sexps-from-string local-plugins)))))
              (plugin-js (seq-filter 'identity ;; Filter out nil
                                     (mapcar (lambda (p)
                                               (cdr (assoc p available-plugins)))
@@ -864,10 +877,10 @@ Reveal.initialize({
                   (cond
                    ((listp p)
                     (mapconcat (lambda (pi)
-                                 (format "<script src=\"%s\"></script>"
+                                 (format "<script src=\"%s\"></script>\n"
                                          (format pi root-path)))
                                p
-                               "\n"))
+                               ""))
                    ;; when it is a single string, create a single script tag
                    (t (format "<script src=\"%s\"></script>\n"
                               (format p root-path)))))

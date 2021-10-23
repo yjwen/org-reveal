@@ -55,8 +55,6 @@
 #+REVEAL: split:t
     - [[Initialization options][Initialization options]]([[https://github.com/yjwen/org-reveal#initialization-options][gh]])
     - [[Third-Party Plugins][Third-Party Plugins]]([[https://github.com/yjwen/org-reveal#third-party-plugins][gh]])
-      - [[By Defining Variable][By Defining Variable]]([[https://github.com/yjwen/org-reveal#by-defining-variable][gh]])
-      - [[By Local Option Line][By Local Option Line]]([[https://github.com/yjwen/org-reveal#by-local-option-line][gh]])
     - [[Highlight Source Code][Highlight Source Code]]([[https://github.com/yjwen/org-reveal#highlight-source-code][gh]])
       - [[Using highlight.js][Using highlight.js]]([[https://github.com/yjwen/org-reveal#using-highlightjs][gh]])
     - [[Auto-Animate]] ([[https://github.com/yjwen/org-reveal#auto-animate][gh]])
@@ -67,7 +65,6 @@
       - [[Generating Pre/Postamble by Emacs-Lisp Functions][Generating Pre/Postamble by Emacs-Lisp Functions]]([[https://github.com/yjwen/org-reveal#generating-pre/postamble-by-emacs-lisp-functions][gh]])
     - [[Raw HTML in Slides][Raw HTML in Slides]]([[https://github.com/yjwen/org-reveal#raw-html-in-slides][gh]])
     - [[Speaker Notes][Speaker Notes]]([[https://github.com/yjwen/org-reveal#speaker-notes][gh]])
-      - [[Easy-Template for Speaker Notes][Easy-Template for Speaker Notes]]([[https://github.com/yjwen/org-reveal#easy-template-for-speaker-notes][gh]])
     - [[Multiplexing][Multiplexing]]([[https://github.com/yjwen/org-reveal#multiplexing][gh]])
     - [[Extra Stylesheets][Extra Stylesheets]]([[https://github.com/yjwen/org-reveal#extra-stylesheets][gh]])
     - [[Select Built-In Scripts][Select Built-In Scripts]]([[https://github.com/yjwen/org-reveal#select-built-in-scripts][gh]])
@@ -573,12 +570,25 @@ Reveal.js is also extensible through third-party plugins. Org-reveal
 provides a customizable variable ~org-reveal-external-plugins~ for
 defining available third-party plugins. This variable is an
 associative list. The first element of each Assoc cell is a symbol
-same as the name of the plugin and the second is a string specifying
-the location of the plugin script. The string can have ONE optional
+same as the name of the plugin and the second is either a string
+specifying the location of the plugin script or a list of string in
+case of multiple scripts. Each script string can have ONE optional
 ~%s~, which will be replaced by `reveal-root`. Code below is an
 example.
 #+begin_src lisp
 (setq org-reveal-external-plugins '((RevealMenu . "path/to/reveal.js-menu/menu.js"))
+#+end_src
+
+#+REVEAL: split:t
+
+Plugins can be specified in buffer by one or more
+~#+REVEAL_EXTERNAL_PLUGINS~ options. Each option can have one or more
+plugin specifications of the same format as in
+~org-reveal-external-plugins~. Below is an example.
+
+#+begin_src org
+  ,#+REVEAL_EXTERNAL_PLUGINS: (plugin1 . "ex/plugin1.js") (plugin2 . "ex/plugin2.js")
+  ,#+REVEAL_EXTERNAL_PLUGINS: (plugin3 "ex/plugin3-1.js" "ex/plugin3-2.js")
 #+end_src
 
 ** Highlight Source Code
