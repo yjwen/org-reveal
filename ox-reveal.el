@@ -827,7 +827,7 @@ Reveal.initialize({
         (let ((obj (car r))
               (remain-index (cdr r)))
           (and obj
-               (cons obj (read-sexps-from-string (substring s remain-index)))))))))
+               (cons obj (org-reveal--read-sexps-from-string (substring s remain-index)))))))))
 
 (defun org-reveal-plugin-scripts-4 (plugins info)
   "Return scripts for initializing reveal.js 4.x builtin scripts"
