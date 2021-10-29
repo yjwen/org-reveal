@@ -99,7 +99,6 @@
     (:reveal-external-plugins "REVEAL_EXTERNAL_PLUGINS" nil nil space)
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
-    (:reveal-init-script "REVEAL_INIT_SCRIPT" nil org-reveal-init-script space)
     (:reveal-extra-script "REVEAL_EXTRA_SCRIPT" nil org-reveal-extra-script space)
     (:reveal-init-options "REVEAL_INIT_OPTIONS" nil org-reveal-init-options newline)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
@@ -314,11 +313,6 @@ Example:
   JS scripts and pictures."
   :group 'org-export-reveal
   :type 'boolean)
-
-(defcustom org-reveal-init-script nil
-  "Custom script that will be passed to Reveal.initialize."
-  :group 'org-export-reveal
-  :type 'string)
 
 (defcustom org-reveal-extra-script nil
   "Custom script that will be passed added to the script block, after Reveal.initialize."
@@ -795,8 +789,7 @@ custom variable `org-reveal-root'."
            (extra-initial-js-statement (plist-get info :reveal-extra-initial-js))
            (legacy-dependency-statement
             (unless (or in-single-file (eq version 4))
-              (org-reveal--legacy-dependency root-path plugins info)))
-           (init-script-statement (plist-get info :reveal-init-script)))
+              (org-reveal--legacy-dependency root-path plugins info))))
        (format "
 <script>
 // Full list of configuration options available here:

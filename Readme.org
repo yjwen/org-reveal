@@ -900,8 +900,8 @@ To disable the automatic TOC, add =toc:nil= to =#+OPTIONS=
 ** Custom JS
 
    To pass custom JS code to ~Reveal.initialize~, state the code by
-   ~#+REVEAL_INIT_SCRIPT~ (multiple statements are concatenated) or by
-   custom variable ~org-reveal-init-script~.
+   ~#+REVEAL_EXTRA_INITIAL_JS~ (multiple statements are concatenated) or by
+   custom variable ~org-reveal-extra-initial-js~.
 
    If you want to add extra code outside of the ~Reveal.initialize~
    block, then ~#+REVEAL_EXTRA_SCRIPT~ can be used. The code will be
