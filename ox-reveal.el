@@ -806,7 +806,7 @@ Reveal.initialize({
                                       (list reveal-4-plugin-statement
                                             init-options
                                             multiplex-statement
-                                            extra-initial-js-statement
+                                            (format extra-initial-js-statement root-path)
                                             legacy-dependency-statement))
                           ",\n")
                ;; Extra initialization scripts
