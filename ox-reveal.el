@@ -900,7 +900,7 @@ Reveal.initialize({
             (toc-slide-background-opacity (plist-get info :reveal-toc-slide-background-opacity))
             (toc-slide-with-header (plist-get info :reveal-slide-global-header))
             (toc-slide-with-footer (plist-get info :reveal-slide-global-footer)))
-        (concat "<section id=\"table-of-contents\""
+        (concat "<section id=\"sec-table-of-contents\""
                 (when toc-slide-background
                   (concat " data-background=\"" toc-slide-background "\""))
                 (when toc-slide-background-size
