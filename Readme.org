@@ -591,6 +591,9 @@ plugin specifications of the same format as in
   ,#+REVEAL_EXTERNAL_PLUGINS: (plugin3 "ex/plugin3-1.js" "ex/plugin3-2.js")
 #+end_src
 
+At most one ~%s~ can be inserted into each plugin string, which will
+be replaced by Reveal.js root path.
+
 ** Highlight Source Code
 
    There are two ways to highlight source code.
@@ -900,8 +903,9 @@ To disable the automatic TOC, add =toc:nil= to =#+OPTIONS=
 ** Custom JS
 
    To pass custom JS code to ~Reveal.initialize~, state the code by
-   ~#+REVEAL_EXTRA_INITIAL_JS~ (multiple statements are concatenated) or by
-   custom variable ~org-reveal-extra-initial-js~.
+   ~#+REVEAL_EXTRA_INITIAL_JS~ (multiple statements are concatenated)
+   or by custom variable ~org-reveal-extra-initial-js~. The first
+   appearance of ~%s~ in the script will be replaced by Reveal.js root path.
 
    If you want to add extra code outside of the ~Reveal.initialize~
    block, then ~#+REVEAL_EXTRA_SCRIPT~ can be used. The code will be

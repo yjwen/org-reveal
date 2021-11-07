@@ -616,10 +616,12 @@ holding contextual information."
       (concat root-path file-path-0)
     (concat root-path file-path-1)))
 
+(defun org-reveal-root-path (info)
+  (file-name-as-directory (plist-get info :reveal-root)))
 (defun org-reveal-stylesheets (info)
   "Return the HTML contents for declaring reveal stylesheets
 using custom variable `org-reveal-root'."
-  (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
+  (let* ((root-path (org-reveal-root-path info))
          (version (org-reveal--get-reveal-js-version info))
          (reveal-css (org-reveal--choose-path root-path version "dist/reveal.css" "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
@@ -714,11 +716,11 @@ dependencies: [
               (append
                ;; Global setting
                (cl-loop for (key . value) in org-reveal-external-plugins
-                        collect (format  value root-path ))
+                        collect (org-reveal--replace-first-%s value root-path ))
                ;; Local settings
                (let ((local-plugins (plist-get info :reveal-external-plugins)))
                  (and local-plugins
-                      (list (format local-plugins root-path))))))
+                      (list (org-reveal--replace-first-%s local-plugins root-path))))))
 
              (all-plugins (if external-plugins (append external-plugins builtin-codes) builtin-codes))
              (extra-codes (plist-get info :reveal-extra-js))
@@ -729,7 +731,7 @@ dependencies: [
 (defun org-reveal-scripts (info)
   "Return the necessary scripts for initializing reveal.js using
 custom variable `org-reveal-root'."
-  (let* ((root-path (file-name-as-directory (plist-get info :reveal-root)))
+  (let* ((root-path (org-reveal-root-path info))
          (version (org-reveal--get-reveal-js-version info))
          (reveal-js (org-reveal--choose-path root-path version "dist/reveal.js" "js/reveal.js"))
          ;; Local files
@@ -806,7 +808,7 @@ Reveal.initialize({
                                       (list reveal-4-plugin-statement
                                             init-options
                                             multiplex-statement
-                                            (format extra-initial-js-statement root-path)
+                                            (org-reveal--replace-first-%s extra-initial-js-statement root-path)
                                             legacy-dependency-statement))
                           ",\n")
                ;; Extra initialization scripts
@@ -821,6 +823,40 @@ Reveal.initialize({
               (remain-index (cdr r)))
           (and obj
                (cons obj (org-reveal--read-sexps-from-string (substring s remain-index)))))))))
+
+(defun org-reveal--search-first-%s-or-%% (s start)
+  "Search the first appearance of '%s' or '%%' in fmt from
+  start. Return the location (of the '%') if found, nil
+  otherwise"
+  (when (< start (length s))
+    (if (eq (aref s start) ?%)
+        (let ((next (1+ start)))
+          (when (< next (length s))
+            ;; Only when % is not the last character
+            (let ((next-c (aref s next)))
+              (if (or (eq next-c ?s) (eq next-c ?%))
+                  ;; ^ Found the first %s or %%. Return the index
+                  start
+                ;; Not a %s or %%. Keep searching
+                (org-reveal--search-first-%s-or-%% s (1+ next))))))
+      ;; Not a %. Keep search
+      (org-reveal--search-first-%s-or-%% s (1+ start)))))
+
+(defun org-reveal--replace-first-%s (fmt str)
+  (let ((idx (org-reveal--search-first-%s-or-%% fmt 0)))
+    (if idx
+        (concat
+         ;; Pre
+         (substring fmt 0 idx)
+         ;; To be replaced
+         (if (eq ?% (aref fmt (1+ idx)))
+             "%" ;; %% -> %
+           str ;; %s -> str
+           )
+         ;; Post
+         (substring fmt (+ 2 idx) nil))
+      ;; nil, no %s or %% found
+      fmt)))
 
 (defun org-reveal-plugin-scripts-4 (plugins info)
   "Return scripts for initializing reveal.js 4.x builtin scripts"
@@ -863,7 +899,7 @@ Reveal.initialize({
         (if (not (null plugin-js))
             (cons
              ;; First value of the tuple, a list of scripts HTML tags
-             (let ((root-path (file-name-as-directory (plist-get info :reveal-root))))
+             (let ((root-path (org-reveal-root-path info)))
                (mapconcat
                 (lambda (p)
                   ;; when it is a list, create a script tag for every entry
@@ -871,12 +907,12 @@ Reveal.initialize({
                    ((listp p)
                     (mapconcat (lambda (pi)
                                  (format "<script src=\"%s\"></script>\n"
-                                         (format pi root-path)))
+                                         (org-reveal--replace-first-%s pi root-path)))
                                p
                                ""))
                    ;; when it is a single string, create a single script tag
                    (t (format "<script src=\"%s\"></script>\n"
-                              (format p root-path)))))
+                              (org-reveal--replace-first-%s p root-path)))))
                 plugin-js
                 ""))
              ;; Second value of the tuple, a list of Reveal plugin
