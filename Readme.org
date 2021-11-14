@@ -803,14 +803,21 @@ This feature is turned off by default and needs to be switched on with ~org-reve
    .html file. Provide your audience with a link to the client file to allow
    them to track your presentation on their own device.
 
-** Extra Stylesheets
+** Extra Stylesheets and Script Sources
 
-   Set =REVEAL_EXTRA_CSS= to a stylesheet file path in order to load extra custom
+   Set =REVEAL_EXTRA_CSS= to a stylesheet file path to load extra custom
    styles after loading a theme.
 
+   Set =REVEAL_EXTRA_SCRIPT_SRC` to script file path to load extra
+   script sources.
+
 #+BEGIN_SRC org
-,#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
+  ,#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
+  ,#+REVEAL_EXTRA_SCRIPT_SRC: url-to-custom-script
 #+END_SRC
+
+   Same setup can be done globally by customize variables
+   ~org-reveal-extra-css~ and ~org-reveal-extra-script-src~.
 
 ** Select Built-In Scripts
 

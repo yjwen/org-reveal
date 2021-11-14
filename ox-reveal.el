@@ -100,6 +100,7 @@
     (:reveal-default-frag-style "REVEAL_DEFAULT_FRAG_STYLE" nil org-reveal-default-frag-style t)
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-extra-script "REVEAL_EXTRA_SCRIPT" nil org-reveal-extra-script space)
+    (:reveal-extra-script-src "REVEAL_EXTRA_SCRIPT_SRC" nil org-reveal-extra-script-src split)
     (:reveal-init-options "REVEAL_INIT_OPTIONS" nil org-reveal-init-options newline)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     (:reveal-reveal-js-version "REVEAL_REVEAL_JS_VERSION" nil nil t)
@@ -318,6 +319,11 @@ Example:
   "Custom script that will be passed added to the script block, after Reveal.initialize."
   :group 'org-export-reveal
   :type 'string)
+
+(defcustom org-reveal-extra-script-src '()
+  "Custom script source that will be embedded in a <script src> tag."
+  :group 'org-export-reveal
+  :type 'list)
 
 (defcustom org-reveal-highlight-css "%r/lib/css/zenburn.css"
   "Highlight.js CSS file."
@@ -813,7 +819,12 @@ Reveal.initialize({
                           ",\n")
                ;; Extra initialization scripts
                (or (plist-get info :reveal-extra-script) "")))
-)))
+     ;; Extra <script src="..."></script> tags
+     (let ((src-list (plist-get info :reveal-extra-script-src)))
+       (and src-list
+            (mapconcat (lambda (src) (format "<script src=\"%s\"></script>" src))
+                       src-list
+                       "\n"))))))
 
 (defun org-reveal--read-sexps-from-string (s)
   (let ((s (string-trim s)))
