@@ -820,7 +820,11 @@ Reveal.initialize({
                ;; Extra initialization scripts
                (or (plist-get info :reveal-extra-script) "")))
      ;; Extra <script src="..."></script> tags
-     (let ((src-list (plist-get info :reveal-extra-script-src)))
+     (let ((src-list (let ((l (plist-get info :reveal-extra-script-src)))
+                       ;; map to a single string to a list.
+                       (if (stringp l)
+                           (list l)
+                         l))))
        (and src-list
             (mapconcat (lambda (src) (format "<script src=\"%s\"></script>" src))
                        src-list

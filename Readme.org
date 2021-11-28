@@ -805,11 +805,12 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 
 ** Extra Stylesheets and Script Sources
 
-   Set =REVEAL_EXTRA_CSS= to a stylesheet file path to load extra custom
-   styles after loading a theme.
+   Set =REVEAL_EXTRA_CSS= to a stylesheet file path to load extra
+   custom styles after loading a theme.
 
-   Set =REVEAL_EXTRA_SCRIPT_SRC` to script file path to load extra
-   script sources.
+   Set =REVEAL_EXTRA_SCRIPT_SRC= to script file path to load extra
+   script sources. In case of multiple script files, specify each of
+   them by one =REVEAL_EXTRA_SCRIPT_SRC= line.
 
 #+BEGIN_SRC org
   ,#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
@@ -817,7 +818,10 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 #+END_SRC
 
    Same setup can be done globally by customize variables
-   ~org-reveal-extra-css~ and ~org-reveal-extra-script-src~.
+   ~org-reveal-extra-css~ and ~org-reveal-extra-script-src~. In case
+   of multiple script files, organize the script file names as a list
+   and set ~org-reveal-extra-script-src~ to the list.
+
 
 ** Select Built-In Scripts
 
