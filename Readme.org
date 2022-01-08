@@ -66,7 +66,7 @@
     - [[Raw HTML in Slides][Raw HTML in Slides]]([[https://github.com/yjwen/org-reveal#raw-html-in-slides][gh]])
     - [[Speaker Notes][Speaker Notes]]([[https://github.com/yjwen/org-reveal#speaker-notes][gh]])
     - [[Multiplexing][Multiplexing]]([[https://github.com/yjwen/org-reveal#multiplexing][gh]])
-    - [[Extra Stylesheets][Extra Stylesheets]]([[https://github.com/yjwen/org-reveal#extra-stylesheets][gh]])
+    - [[Extra Stylesheets and Script Sources][Extra Stylesheets and Script Sources]]([[https://github.com/yjwen/org-reveal#extra-stylesheets-and-script-sources][gh]])
     - [[Select Built-In Scripts][Select Built-In Scripts]]([[https://github.com/yjwen/org-reveal#select-built-in-scripts][gh]])
     - [[Extra Dependent Script][Extra Dependent Script]]([[https://github.com/yjwen/org-reveal#extra-dependent-script][gh]])
     - [[Extra Slide Attribute][Extra Slide Attribute]]([[https://github.com/yjwen/org-reveal#extra-slide-attribute][gh]])
