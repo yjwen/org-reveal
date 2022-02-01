@@ -769,6 +769,17 @@ custom variable `org-reveal-root'."
      ;; plugin headings
      (if-format "%s\n" (car reveal-4-plugin))
 
+     ;; Extra <script src="..."></script> tags
+     (let ((src-list (let ((l (plist-get info :reveal-extra-script-src)))
+                       ;; map to a single string to a list.
+                       (if (stringp l)
+                           (list l)
+                         l))))
+       (and src-list
+            (mapconcat (lambda (src) (format "<script src=\"%s\"></script>" src))
+                       src-list
+                       "\n")))
+
      ;; Reveal.initialize
      (let ((reveal-4-plugin-statement (cdr reveal-4-plugin))
            (init-options (plist-get info :reveal-init-options))
@@ -818,17 +829,7 @@ Reveal.initialize({
                                             legacy-dependency-statement))
                           ",\n")
                ;; Extra initialization scripts
-               (or (plist-get info :reveal-extra-script) "")))
-     ;; Extra <script src="..."></script> tags
-     (let ((src-list (let ((l (plist-get info :reveal-extra-script-src)))
-                       ;; map to a single string to a list.
-                       (if (stringp l)
-                           (list l)
-                         l))))
-       (and src-list
-            (mapconcat (lambda (src) (format "<script src=\"%s\"></script>" src))
-                       src-list
-                       "\n"))))))
+               (or (plist-get info :reveal-extra-script) ""))))))
 
 (defun org-reveal--read-sexps-from-string (s)
   (let ((s (string-trim s)))
