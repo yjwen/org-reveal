@@ -101,6 +101,7 @@
     (:reveal-single-file nil "reveal_single_file" org-reveal-single-file t)
     (:reveal-extra-script "REVEAL_EXTRA_SCRIPT" nil org-reveal-extra-script space)
     (:reveal-extra-script-src "REVEAL_EXTRA_SCRIPT_SRC" nil org-reveal-extra-script-src split)
+    (:reveal-extra-script-before-src "REVEAL_EXTRA_SCRIPT_BEFORE_SRC" nil org-reveal-extra-script-before-src split)
     (:reveal-init-options "REVEAL_INIT_OPTIONS" nil org-reveal-init-options newline)
     (:reveal-highlight-css "REVEAL_HIGHLIGHT_CSS" nil org-reveal-highlight-css nil)
     (:reveal-reveal-js-version "REVEAL_REVEAL_JS_VERSION" nil nil t)
@@ -321,7 +322,12 @@ Example:
   :type 'string)
 
 (defcustom org-reveal-extra-script-src '()
-  "Custom script source that will be embedded in a <script src> tag."
+  "Custom script source that will be embedded in a <script src> tag, after the call to Reveal.initialize()."
+  :group 'org-export-reveal
+  :type 'list)
+
+(defcustom org-reveal-extra-script-before-src '()
+  "Custom script source that will be embedded in a <script src> tag, before the call to Reveal.initialize()."
   :group 'org-export-reveal
   :type 'list)
 
@@ -769,16 +775,17 @@ custom variable `org-reveal-root'."
      ;; plugin headings
      (if-format "%s\n" (car reveal-4-plugin))
 
-     ;; Extra <script src="..."></script> tags
-     (let ((src-list (let ((l (plist-get info :reveal-extra-script-src)))
-                       ;; map to a single string to a list.
-                       (if (stringp l)
-                           (list l)
-                         l))))
-       (and src-list
+     ;; Extra <script src="..."></script> tags before the call to Reveal.initialize()
+     (let ((before-src-list (let ((l (plist-get info :reveal-extra-script-before-src)))
+                              ;; map to a single string to a list.
+                              (if (stringp l)
+                                  (list l)
+                                l))))
+       (and before-src-list
             (mapconcat (lambda (src) (format "<script src=\"%s\"></script>" src))
-                       src-list
+                       before-src-list
                        "\n")))
+
 
      ;; Reveal.initialize
      (let ((reveal-4-plugin-statement (cdr reveal-4-plugin))
@@ -829,7 +836,17 @@ Reveal.initialize({
                                             legacy-dependency-statement))
                           ",\n")
                ;; Extra initialization scripts
-               (or (plist-get info :reveal-extra-script) ""))))))
+               (or (plist-get info :reveal-extra-script) "")))
+     ;; Extra <script src="..."></script> tags
+     (let ((src-list (let ((l (plist-get info :reveal-extra-script-src)))
+                       ;; map to a single string to a list.
+                       (if (stringp l)
+                           (list l)
+                         l))))
+       (and src-list
+            (mapconcat (lambda (src) (format "<script src=\"%s\"></script>" src))
+                       src-list
+                       "\n"))))))
 
 (defun org-reveal--read-sexps-from-string (s)
   (let ((s (string-trim s)))
