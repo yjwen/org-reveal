@@ -810,7 +810,11 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 
    Set =REVEAL_EXTRA_SCRIPT_SRC= to script file path to load extra
    script sources. In case of multiple script files, specify each of
-   them by one =REVEAL_EXTRA_SCRIPT_SRC= line.
+   them by one =REVEAL_EXTRA_SCRIPT_SRC= line. The specified scripts
+   is loaded after Reveal.js initialization.
+
+   Scripts that must be loaded before Reveal.js initialization can be
+   set by one or more =REVEAL_EXTRA_SCRIPT_BEFORE_SRC= lines.
 
 #+BEGIN_SRC org
   ,#+REVEAL_EXTRA_CSS: url-to-custom-stylesheet.css
@@ -818,10 +822,9 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 #+END_SRC
 
    Same setup can be done globally by customize variables
-   ~org-reveal-extra-css~ and ~org-reveal-extra-script-src~. In case
-   of multiple script files, organize the script file names as a list
-   and set ~org-reveal-extra-script-src~ to the list.
-
+   ~org-reveal-extra-css~, ~org-reveal-extra-script-src~ and
+   ~org-reveal-extra-script-before-src~. In case of multiple script
+   files, organize the script file names as a list.
 
 ** Select Built-In Scripts
 
