@@ -89,7 +89,6 @@ setup: /etc/os-release
  --user="${USER}" \
  --batch \
  --eval="(require 'org)" \
- --eval="(require 'org-gnus)" \
  --eval="(require 'ox-reveal)" \
  --find-file="${<F}" \
  --funcall="org-reveal-export-to-html" \
