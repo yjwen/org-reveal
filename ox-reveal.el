@@ -746,15 +746,16 @@ dependencies: [
 file name. If in single file mode, the <script> tag encloses the
 contents of the file, otherwise it is a tag pointing to the file"
   (if in-single-file
-      (if (file-readable-p fname)
-          ;; Embed script into HTML
-          (concat "<script>\n"
-                  (org-reveal--read-file fname)
-                  "\n</script>\n")
-        ;; Cannot read fname, just error out
-        (error (concat "Cannot generate single file presentation due to "
-                       fname
-                       " is not readable")))
+      (let ((local-fname (org-reveal--file-url-to-path fname)))
+        (if (file-readable-p local-fname)
+            ;; Embed script into HTML
+            (concat "<script>\n"
+                    (org-reveal--read-file local-fname)
+                    "\n</script>\n")
+          ;; Cannot read fname, just error out
+          (error (concat "Cannot generate single file presentation due to "
+                         local-fname
+                         " is not readable"))))
     (format "<script src=\"%s\"></script>\n" fname)))
 
 (defun org-reveal--script-tags-by-auto-file-names (fnames in-single-file)
