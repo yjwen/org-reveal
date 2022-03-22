@@ -1345,7 +1345,7 @@ contextual information."
   "Generate the automatic title slide template."
   (let* ((spec (org-html-format-spec info))
          (title (org-export-data (plist-get info :title) info))
-	 (subtitle (plist-get info :subtitle))
+	 (subtitle (cdr (assq ?s spec)))
          (author (cdr (assq ?a spec)))
          (email (cdr (assq ?e spec)))
          (date (cdr (assq ?d spec))))
@@ -1379,9 +1379,9 @@ info is a plist holding export options."
            (if-format " lang=\"%s\"" (plist-get info :language)))
    "<meta charset=\"utf-8\"/>\n"
    (if-format "<title>%s</title>\n" (org-export-data (plist-get info :title) info))
-   (if-format "<meta name=\"author\" content=\"%s\"/>\n" (plist-get info :author))
-   (if-format "<meta name=\"description\" content=\"%s\"/>\n" (plist-get info :description))
-   (if-format "<meta name=\"keywords\" content=\"%s\"/>\n" (plist-get info :keywords))
+   (if-format "<meta name=\"author\" content=\"%s\"/>\n" (org-export-data (plist-get info :author) info))
+   (if-format "<meta name=\"description\" content=\"%s\"/>\n" (org-export-data (plist-get info :description) info))
+   (if-format "<meta name=\"keywords\" content=\"%s\"/>\n" (org-export-data (plist-get info :keywords) info))
    (org-reveal-stylesheets info)
    (org-reveal-mathjax-scripts info)
    (org-reveal--build-pre/postamble 'head-preamble info)
