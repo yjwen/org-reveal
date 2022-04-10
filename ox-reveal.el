@@ -73,6 +73,7 @@
     (:reveal-title-slide-background-repeat "REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT" nil nil t)
     (:reveal-title-slide-background-transition "REVEAL_TITLE_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-title-slide-background-opacity "REVEAL_TITLE_SLIDE_BACKGROUND_OPACITY" nil nil t)
+    (:reveal-title-slide-state "REVEAL_TITLE_SLIDE_STATE" nil nil t)
     (:reveal-toc-slide-background "REVEAL_TOC_SLIDE_BACKGROUND" nil nil t)
     (:reveal-toc-slide-background-size "REVEAL_TOC_SLIDE_BACKGROUND_SIZE" nil nil t)
     (:reveal-toc-slide-background-position "REVEAL_TOC_SLIDE_BACKGROUND_POSITION" nil nil t)
@@ -1401,6 +1402,7 @@ info is a plist holding export options."
              (title-slide-background-repeat (plist-get info :reveal-title-slide-background-repeat))
              (title-slide-background-transition (plist-get info :reveal-title-slide-background-transition))
 	     (title-slide-background-opacity (plist-get info :reveal-title-slide-background-opacity))
+             (title-slide-state (plist-get info :reveal-title-slide-state))
              (title-slide-with-header (plist-get info :reveal-slide-global-header))
              (title-slide-with-footer (plist-get info :reveal-slide-global-footer)))
          (concat "<section id=\"sec-title-slide\""
@@ -1416,6 +1418,8 @@ info is a plist holding export options."
                    (concat " data-background-transition=\"" title-slide-background-transition "\""))
 		 (when title-slide-background-opacity
 		   (concat " data-background-opacity=\"" title-slide-background-opacity "\""))
+                 (when title-slide-state
+		   (concat " data-state=\"" title-slide-state "\""))
                  ">"
                  (when title-slide-with-header
                    (let ((header (plist-get info :reveal-slide-header)))

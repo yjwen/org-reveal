@@ -37,6 +37,7 @@
     - [[Select Theme][Select Theme]]([[https://github.com/yjwen/org-reveal#select-theme][gh]])
     - [[Set The Title Slide][Set The Title Slide]]([[https://github.com/yjwen/org-reveal#set-the-title-slide][gh]])
       - [[Customize the Title Slide][Customize the Title Slide]]([[https://github.com/yjwen/org-reveal#customize-the-title-slide][gh]])
+      - [[Title Slide State][Title Slide State]]([[https://github.com/yjwen/org-reveal#title-slide-state][gh]])
     - [[Set Slide Background][Set Slide Background]]([[https://github.com/yjwen/org-reveal#set-slide-background][gh]])
       - [[Single Colored Background][Single Colored Background]]([[https://github.com/yjwen/org-reveal#single-colored-background][gh]])
       - [[Single Image Background][Single Image Background]]([[https://github.com/yjwen/org-reveal#single-image-background][gh]])
@@ -316,6 +317,14 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
     | ~%d~ | Date      |
     | ~%%~ | Literal % |
 
+*** Title Slide State
+
+    Using this option allows to thoroughly change the style of the title slide:
+
+    * =REVEAL_TITLE_SLIDE_STATE=: Style applied to the [[https://revealjs.com/markup/#viewport][viewport]] of title slide.
+      See the [[https://revealjs.com/markup/#slide-states][reveal.js documentation]]
+      for details.
+
 ** Set Slide Background
 
    Slide background can be set to a color, an image, a repeating image
@@ -405,6 +414,7 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_SIZE=: HTML size specification, e.g. ~200px~.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_REPEAT=: Set to ~repeat~ to repeat the image.
     * =REVEAL_TITLE_SLIDE_BACKGROUND_OPACITY=: Set the background opacity.
+
 *** Table of Contents Slide Background Image
 
     To set the (automatically generated) table of contents slide's background
