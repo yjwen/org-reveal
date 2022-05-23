@@ -808,26 +808,27 @@ custom variable `org-reveal-root'."
            (init-options (plist-get info :reveal-init-options))
            (multiplex-statement
             ;; multiplexing - depends on defvar 'client-multiplex'
-            (when (memq 'multiplex plugins)
-              (concat
-               (format "multiplex: {
+            (let ((multiplex-id (plist-get info :reveal-multiplex-id)))
+              (when multiplex-id        ;Multiplex setup found
+                (concat
+                 (format "multiplex: {
     secret: %s, // null if client
     id: '%s', // id, obtained from socket.io server
     url: '%s' // Location of socket.io server
 },\n"
-                       (if (eq client-multiplex nil)
-                           (format "'%s'" (plist-get info :reveal-multiplex-secret))
-                         (format "null"))
-                       (plist-get info :reveal-multiplex-id)
-                       (plist-get info :reveal-multiplex-url))
-               (let ((url (plist-get info :reveal-multiplex-url)))
-                 (format "dependencies: [ { src: '%s/socket.io/socket.io.js', async: true }, { src: '%s/%s', async: true } ]"
-                         url url
-                         (if client-multiplex "client.js"
-                           (progn
-                             (setq client-multiplex t)
-                             "master.js")))))
-))
+                         (if (eq client-multiplex nil)
+                             (format "'%s'" (plist-get info :reveal-multiplex-secret))
+                           (format "null"))
+                         multiplex-id
+                         (plist-get info :reveal-multiplex-url))
+                 (let ((url (plist-get info :reveal-multiplex-url)))
+                   (format "dependencies: [ { src: '%s/socket.io/socket.io.js', async: true }, { src: '%s/%s', async: true } ]"
+                           url url
+                           (if client-multiplex "client.js"
+                             (progn
+                               (setq client-multiplex t)
+                               "master.js")))))
+                )))
            (extra-initial-js-statement (plist-get info :reveal-extra-initial-js))
            (legacy-dependency-statement
             (unless (or in-single-file (eq version 4))
@@ -949,7 +950,11 @@ Reveal.initialize({
              ;; Second value of the tuple, a list of Reveal plugin
              ;; initialization statements
              (format "plugins: [%s]"
-                     (mapconcat 'symbol-name plugins ", ")))
+                     (mapconcat 'symbol-name
+                                ;; Remove multiplex from plugins, as
+                                ;; the multiplex plugin has been moved
+                                ;; out of reveal.js.
+                                (seq-filter (lambda (p) (not (eq p 'multiplex))) plugins) ", ")))
           ;; No available plugin info found. Perhaps wrong plugin
           ;; names are given
           (cons nil nil)))

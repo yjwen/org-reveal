@@ -794,7 +794,6 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 ,#+REVEAL_MULTIPLEX_ID: [Obtained from the socket.io server. ]
 ,#+REVEAL_MULTIPLEX_SECRET: [Obtained from socket.io server. Gives the master control of the presentation.]
 ,#+REVEAL_MULTIPLEX_URL:  https://reveal-multiplex.glitch.me [Location of socket.io server]
-,#+REVEAL_PLUGINS: ([any other plugins you are using] multiplex)
 #+END_SRC
 
    If your are using Reveal.js 3.x, an extra option is necessary for
