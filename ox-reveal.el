@@ -809,7 +809,7 @@ custom variable `org-reveal-root'."
            (multiplex-statement
             ;; multiplexing - depends on defvar 'client-multiplex'
             (let ((multiplex-id (plist-get info :reveal-multiplex-id)))
-              (when multiplex-id        ;Multiplex setup found
+              (when (not (string-empty-p multiplex-id))        ;Multiplex setup found
                 (concat
                  (format "multiplex: {
     secret: %s, // null if client
