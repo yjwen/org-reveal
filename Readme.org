@@ -278,15 +278,18 @@
 Theme is set globally throughout the whole file by setting option
 =REVEAL_THEME=.
 
+Available themes can be found in "css/theme/" in the reveal.js directory.
+
+Custom themes can be implemented by setting =REVEAL_THEME= to =custom= and
+then setting =REVEAL_THEME_CUSTOM= to the path for a theme CSS file.
+
 Slide transition style is set by initialization option ~transition~
 and the transition speed is set by ~transitionSpeed~ . Please refer to
 section [[Initialization options]] for details.
 
-For an example, please check the heading part of this document.
-
-Available themes can be found in "css/theme/" in the reveal.js directory.
-
 Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
+
+For an example of these settings, please check the heading part of this document.
 ** Set The Title Slide
    By default, Org-reveal generates a title slide displaying the
    title, the author, the Email, the date and the time-stamp of the
