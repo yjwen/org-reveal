@@ -64,6 +64,7 @@
 #+REVEAL: split:t
     - [[Preamble and Postamble][Preamble and Postamble]]([[https://github.com/yjwen/org-reveal#preamble-and-postamble][gh]])
       - [[Generating Pre/Postamble by Emacs-Lisp Functions][Generating Pre/Postamble by Emacs-Lisp Functions]]([[https://github.com/yjwen/org-reveal#generating-pre/postamble-by-emacs-lisp-functions][gh]])
+    - [[Prologue and Epilogue]]([[https://github.com/yjwen/org-reveal#prologue-and-epilogue][gh]])
     - [[Raw HTML in Slides][Raw HTML in Slides]]([[https://github.com/yjwen/org-reveal#raw-html-in-slides][gh]])
     - [[Speaker Notes][Speaker Notes]]([[https://github.com/yjwen/org-reveal#speaker-notes][gh]])
     - [[Multiplexing][Multiplexing]]([[https://github.com/yjwen/org-reveal#multiplexing][gh]])
@@ -738,6 +739,16 @@ This feature is turned off by default and needs to be switched on with ~org-reve
 
     So you can embed the Emacs-Lisp function as an Org-Babel source
     block and mark it to be evaluated when exporting the document.
+
+** Prologue and Epilogue
+
+Similar to preamble and postamble, arbitrary HTML contents can be
+inserted between the opening ~<div reveal>~ and ~<div slides>~ tags,
+called prologue, and their closing counterparts, called epilogue.
+
+Specify those contents by options ~REVEAL_PROLOGUE~ and
+~REVEAL_EPILOGUE~ for one buffer, or by variable ~org-reveal-prologue~
+and ~org-reveal-epilogue~ for global setup.
 
 ** Raw HTML in Slides
 

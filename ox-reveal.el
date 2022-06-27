@@ -90,6 +90,8 @@
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble newline)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
+    (:reveal-prologue "REVEAL_PROLOGUE" nil org-reveal-prologue t)
+    (:reveal-epilogue "REVEAL_EPILOGUE" nil org-reveal-epilogue t)
     (:reveal-multiplex-id "REVEAL_MULTIPLEX_ID" nil org-reveal-multiplex-id nil)
     (:reveal-multiplex-secret "REVEAL_MULTIPLEX_SECRET" nil org-reveal-multiplex-secret nil)
     (:reveal-multiplex-url "REVEAL_MULTIPLEX_URL" nil org-reveal-multiplex-url nil)
@@ -241,6 +243,16 @@ embedded into Reveal.initialize()."
 
 (defcustom org-reveal-postamble nil
   "Postamble contents."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-prologue nil
+  "Prologue contents to be inserted between opening <div reveal> and <div slides>."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-epilogue nil
+  "Prologue contents to be inserted between closing <div reveal> and <div slides>."
   :group 'org-export-reveal
   :type 'string)
 
@@ -1396,8 +1408,9 @@ info is a plist holding export options."
    "</head>
 <body>\n"
    (org-reveal--build-pre/postamble 'preamble info)
-   "<div class=\"reveal\">
-<div class=\"slides\">\n"
+   "<div class=\"reveal\">\n"
+   (org-reveal--build-pre/postamble 'prologue info)
+   "<div class=\"slides\">\n"
    ;; Title slides
    (let ((title-slide (plist-get info :reveal-title-slide)))
      (when (and title-slide (not (plist-get info :reveal-subtree)))
@@ -1438,8 +1451,9 @@ info is a plist holding export options."
                      (when footer (format "<div class=\"slide-footer\">%s</div>\n" footer))))
                  "</section>\n"))))
    contents
-   "</div>
-</div>\n"
+   "</div>\n"
+   (org-reveal--build-pre/postamble 'epilogue info)
+   "</div>\n"
    (org-reveal--build-pre/postamble 'postamble info)
    (org-reveal-scripts info)
    "</body>
