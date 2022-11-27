@@ -279,15 +279,18 @@
 Theme is set globally throughout the whole file by setting option
 =REVEAL_THEME=.
 
+Available themes can be found in "css/theme/" in the reveal.js directory.
+
+Custom themes can be implemented by setting =REVEAL_THEME= to =custom= and
+then setting =REVEAL_THEME_CUSTOM= to the path for a theme CSS file.
+
 Slide transition style is set by initialization option ~transition~
 and the transition speed is set by ~transitionSpeed~ . Please refer to
 section [[Initialization options]] for details.
 
-For an example, please check the heading part of this document.
-
-Available themes can be found in "css/theme/" in the reveal.js directory.
-
 Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
+
+For an example of these settings, please check the heading part of this document.
 ** Set The Title Slide
    By default, Org-reveal generates a title slide displaying the
    title, the author, the Email, the date and the time-stamp of the
@@ -304,11 +307,11 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
 
     There are 3 ways to customize the title slide.
 
-    1. Set variable ~org-reveal-title-slide~ to a string of HTML markups. 
+    1. Set variable ~org-reveal-title-slide~ to a string of HTML markups.
     2. Set ~reveal_title_slide~ in the ~#+OPTIONS:~ line to a string of HTML markups.
     3. Use one or more option lines ~#+REVEAL_TITLE_SLIDE:~ to specify
        the HTML of the title slide.
-       
+
     The following escaping characters can be used to retrieve document
     information:
     | ~%t~ | Title     |
@@ -454,7 +457,7 @@ Available transitions are: default|cube|page|concave|zoom|linear|fade|none.
         ratio.
 
 ** Slide Numbering
-   
+
 To enable slide numbers, please add the following Reveal.js initial option.
 #+BEGIN_SRC org
 ,#+REVEAL_INIT_OPTIONS: slideNumber:true
@@ -615,7 +618,7 @@ be replaced by Reveal.js root path.
    To Use your Emacs theme, please make sure ~htmlize.el~ is
    installed. Then no more setup is necessary.
 
-   Below is an example of highlighted lisp code from org-reveal. 
+   Below is an example of highlighted lisp code from org-reveal.
    #+BEGIN_SRC lisp
      (defun org-reveal--read-file (file)
        "Return the content of file"
@@ -685,14 +688,14 @@ int main()
        ,#+end_src
 
    #+end_src
-   
+
 
 ** Editable Source Code
 It is now possible to embed code blocks in a codemirror instance in order to edit code during a presentation.  At present, this capacity is turned on or off at time export using these defcustoms:
 - ~org-reveal-klipsify-src~
 - ~org-reveal-klipse-css~
 - ~org-reveal-klipse-js~
-This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javascript, clojure, php, ruby, scheme, and python only.  
+This feature is turned off by default and needs to be switched on with ~org-reveal-klipsify-src~.  At present code editing is supported in javascript, clojure, php, ruby, scheme, and python only.
 
 ** MathJax
   :PROPERTIES:
@@ -947,7 +950,7 @@ To disable the automatic TOC, add =toc:nil= to =#+OPTIONS=
    the closing ~</script>~ tag.
 
 ** Executable Source Blocks
-To allow live execution of code in some languages, enable the klipse plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.  
+To allow live execution of code in some languages, enable the klipse plugin by setting ~org-reveal-klipsify-src~ to non-nil.  Src blocks with the languages ~js~, ~clojure~, ~html~, ~python~, ~ruby~, ~scheme~, ~php~ will be executed with output shown in a console-like environment.  See the source code of ~org-reveal-src-block~ for more details.
 
 *** HTML Src Block
 #+BEGIN_SRC html
