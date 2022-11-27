@@ -344,7 +344,7 @@ Example:
   :group 'org-export-reveal
   :type 'list)
 
-(defcustom org-reveal-highlight-css "%r/lib/css/zenburn.css"
+(defcustom org-reveal-highlight-css "%r/plugin/highlight/zenburn.css"
   "Highlight.js CSS file."
   :group 'org-export-reveal
   :type 'string)
