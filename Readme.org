@@ -279,10 +279,12 @@
 Theme is set globally throughout the whole file by setting option
 =REVEAL_THEME=.
 
-Available themes can be found in "css/theme/" in the reveal.js directory.
+Available themes can be found in ~dist/theme~ in the reveal.js
+directory and can be select by giving the CSS file base name (without
+.css extension) to =REVEAL_THEME=.
 
-Custom themes can be implemented by setting =REVEAL_THEME= to =custom= and
-then setting =REVEAL_THEME_CUSTOM= to the path for a theme CSS file.
+A custom theme CSS can be also set by giving its URL to
+~REVEAL_THEME~.
 
 Slide transition style is set by initialization option ~transition~
 and the transition speed is set by ~transitionSpeed~ . Please refer to

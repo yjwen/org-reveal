@@ -60,7 +60,6 @@
     (:reveal-trans "REVEAL_TRANS" nil nil t)
     (:reveal-speed "REVEAL_SPEED" nil nil t)
     (:reveal-theme "REVEAL_THEME" nil org-reveal-theme t)
-    (:reveal-theme-custom "REVEAL_THEME_CUSTOM" nil nil nil)
     (:reveal-extra-css "REVEAL_EXTRA_CSS" nil org-reveal-extra-css newline)
     (:reveal-extra-js "REVEAL_EXTRA_JS" nil org-reveal-extra-js nil)
     (:reveal-extra-initial-js "REVEAL_EXTRA_INITIAL_JS" nil org-reveal-extra-initial-js newline)
@@ -651,8 +650,11 @@ using custom variable `org-reveal-root'."
          (version (org-reveal--get-reveal-js-version info))
          (reveal-css (org-reveal--choose-path root-path version "dist/reveal.css" "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
-         (theme-css (if (string-equal "custom" (downcase theme))
-                        (plist-get info :reveal-theme-custom)
+         (theme-css (if (or (string-prefix-p "http://" theme)
+                            (string-prefix-p "https://" theme)
+                            (string-prefix-p "file://" theme))
+                        ;; theme is just the URL to a custom theme CSS
+                        theme
                       (org-reveal--choose-path root-path
                                                version
                                                (concat "dist/theme/" theme ".css")
