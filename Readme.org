@@ -490,7 +490,7 @@ Other possible choice for slide numbers are:
 #+ATTR_REVEAL: :frag roll-in
     Paragraphs can be fragmented.
 
-#+ATTR_REVEAL: :frag roll-in
+#+ATTR_REVEAL: :frag (roll-in roll-in)
     - Lists can
     - be fragmented.
 
