@@ -209,6 +209,17 @@ embedded into Reveal.initialize()."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-multiplex-client-filename "%n_client%e"
+  "The format-spec string used when generating the multiplex client filename.
+You are free to use the placeholders as many times as needed, or not at all.
+Eg. setting it to \"index%e\" without using the filename, just the extension.
+
+The substitution format replacement strings are:
+  %n will be replaced by the export file name, without extension.
+  %e will be replaced by the export file extension (with preceding dot)."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-multiplex-secret ""
   "The secret to use for master slide."
   :group 'org-export-reveal
@@ -1581,7 +1592,9 @@ transformed fragment attribute to ELEM's attr_html plist."
   (interactive)
   (let* ((extension (concat "." org-html-extension))
          (file (org-export-output-file-name extension subtreep))
-         (clientfile (org-export-output-file-name (concat "_client" extension) subtreep))
+         (fs (format-spec-make ?n (org-export-output-file-name nil subtreep)
+                               ?e extension))
+         (clientfile (format-spec org-reveal-multiplex-client-filename fs))
          (org-export-exclude-tags (cons "noexport_reveal" org-export-exclude-tags))
          (client-multiplex nil))
     ; export filename_client HTML file if multiplexing
