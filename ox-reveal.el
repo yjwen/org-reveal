@@ -33,6 +33,7 @@
 
 (require 'ox-html)
 (require 'cl-lib)
+(require 'request)
 
 (org-export-define-derived-backend 'reveal 'html
 
@@ -585,9 +586,17 @@ holding contextual information."
 
 (defun org-reveal--read-file (file)
   "Return the content of file"
-  (with-temp-buffer
-    (insert-file-contents-literally file)
-    (buffer-string)))
+  ;; Check readability of local files
+  (when (string-match (if (string-equal system-type "windows-nt") "^file:///" "^file://") file)
+    (unless (file-readable-p (substring file (match-end 0)))
+      (error "Cannot read %s" file)))
+
+  ;; Use request to download contents
+  (let* ((response (request file :sync t))
+         (status-code (request-response-status-code response)))
+    (pcase status-code
+      ((or 200 'nil) (request-response-data response))
+      (_ (error "Failed request with %s: %s" status-code file)))))
 
 (defun org-reveal--file-url-to-path (url)
   "Convert URL that points to local files to file path."
@@ -603,12 +612,10 @@ holding contextual information."
     (if in-single-file
         ;; Single-file
         (let ((local-file-name (org-reveal--file-url-to-path file-name)))
-          (if (file-readable-p local-file-name)
-              (concat "<style type=\"text/css\">\n"
-                      (org-reveal--read-file local-file-name)
-                      "\n</style>\n")
-            ;; But file is not readable.
-            (error "Cannot read %s" file-name)))
+          (concat "<style type=\"text/css\">\n"
+                  (org-reveal--read-file local-file-name)
+                  "\n</style>\n")
+              )
       ;; Not in-single-file
       (concat "<link rel=\"stylesheet\" href=\"" file-name "\""
               (if style-id  (format " id=\"%s\"" style-id))
@@ -765,15 +772,11 @@ file name. If in single file mode, the <script> tag encloses the
 contents of the file, otherwise it is a tag pointing to the file"
   (if in-single-file
       (let ((local-fname (org-reveal--file-url-to-path fname)))
-        (if (file-readable-p local-fname)
-            ;; Embed script into HTML
-            (concat "<script>\n"
-                    (org-reveal--read-file local-fname)
-                    "\n</script>\n")
-          ;; Cannot read fname, just error out
-          (error (concat "Cannot generate single file presentation due to "
-                         local-fname
-                         " is not readable"))))
+        ;; Embed script into HTML
+        (concat "<script>\n"
+                (org-reveal--read-file local-fname)
+                "\n</script>\n"))
+
     (format "<script src=\"%s\"></script>\n" fname)))
 
 (defun org-reveal--script-tags-by-auto-file-names (fnames in-single-file)
