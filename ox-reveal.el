@@ -269,6 +269,12 @@ If specified, this overrides `org-reveal-mathjax2-url' and
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-extract-mathjax-version-from-url
+  nil
+  "Non-nil means extract MathJax version from URL."
+  :group 'org-export-reveal
+  :type 'boolean)
+
 (defvar org-reveal-mathjax-config
   nil
   "Default MathJax config.")
@@ -767,13 +773,13 @@ Expects VERSION-STRING to be of the form X.Y.Z."
 The precedence is as follows:
 1. If `:reveal-mathjax-version' is specified, use it.
 2. If `:reveal-mathjax-url' is specified, try to extract the version
-   number from it.
+   number from it if `org-reveal-extract-mathjax-version-from-url' is non-nil.
 3. Otherwise, assume MathJax 2."
   (let ((version-string (plist-get info :reveal-mathjax-version)))
     (if version-string
         version-string
       (let ((url (plist-get info :reveal-mathjax-url)))
-        (if url
+        (if (and url org-reveal-extract-mathjax-version-from-url)
             ;; Try too match a version number of the form X.Y.Z in the URL.
             (save-match-data
               (if (string-match "\\([0-9]+\\.[0-9]+\\.[0-9]+\\)" url)
