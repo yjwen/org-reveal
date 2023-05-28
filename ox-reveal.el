@@ -394,7 +394,7 @@ Example:
   :group 'org-export-reveal
   :type 'list)
 
-(defcustom org-reveal-highlight-css "%r/lib/css/zenburn.css"
+(defcustom org-reveal-highlight-css "%r/plugin/highlight/zenburn.css"
   "Highlight.js CSS file."
   :group 'org-export-reveal
   :type 'string)
@@ -700,10 +700,15 @@ using custom variable `org-reveal-root'."
          (version (org-reveal--get-reveal-js-version info))
          (reveal-css (org-reveal--choose-path root-path version "dist/reveal.css" "css/reveal.css"))
          (theme (plist-get info :reveal-theme))
-         (theme-css (org-reveal--choose-path root-path
-                                             version
-                                             (concat "dist/theme/" theme ".css")
-                                             (concat "css/theme/" theme ".css")))
+         (theme-css (if (or (string-prefix-p "http://" theme)
+                            (string-prefix-p "https://" theme)
+                            (string-prefix-p "file://" theme))
+                        ;; theme is just the URL to a custom theme CSS
+                        theme
+                      (org-reveal--choose-path root-path
+                                               version
+                                               (concat "dist/theme/" theme ".css")
+                                               (concat "css/theme/" theme ".css"))))
          (extra-css (plist-get info :reveal-extra-css))
          (in-single-file (plist-get info :reveal-single-file)))
     (concat
