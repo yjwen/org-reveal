@@ -834,8 +834,7 @@ The precedence is as follows:
              ((= mathjax-major-version 3)
               (concat (org-reveal--mathjax3-make-config-script mathjax-config) "\n" load-script))
              ((= mathjax-major-version 2)
-              ;; Here we put the MathJax config after the load-script.
-              (concat load-script "\n" (org-reveal--mathjax2-make-config-script mathjax-config))))
+              (concat (org-reveal--mathjax2-make-config-script mathjax-config) "\n" load-script)))
           ;; No MathJax config file specified
           load-script
           ))))
