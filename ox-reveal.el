@@ -810,7 +810,7 @@ The precedence is as follows:
 
 (defun org-reveal--mathjax2-make-config-script (config)
   "Return the MathJax configuration string from CONFIG."
-  (format "<script type=\"text/x-mathjax-config\">\nMathJax.Hub.Config(%s);</script>" config))
+  (format "<script type=\"text/x-mathjax-config\">\nMathJax.Hub.Config(%s);\n</script>" config))
 
 (defun org-reveal--mathjax3-make-config-script (config)
     "Return the MathJax configuration string from CONFIG."
