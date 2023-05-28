@@ -768,7 +768,7 @@ The precedence is as follows:
 1. If `:reveal-mathjax-version' is specified, use it.
 2. If `:reveal-mathjax-url' is specified, try to extract the version
    number from it.
-3. Otherwise, assume MathJax 2. Warn the user about this."
+3. Otherwise, assume MathJax 2."
   (let ((version-string (plist-get info :reveal-mathjax-version)))
     (if version-string
         version-string
@@ -778,9 +778,9 @@ The precedence is as follows:
             (save-match-data
               (if (string-match "\\([0-9]+\\.[0-9]+\\.[0-9]+\\)" url)
                   (match-string 1 mathjax-url)
-                ;; Otherwise, assume MathJax 2. Warn the user about this.
+                ;; Otherwise, assume MathJax 2.
                 org-reveal-mathjax2-version))
-          ;; Otherwise, assume MathJax 2. Warn the user about this.
+          ;; Otherwise, assume MathJax 2.
           org-reveal-mathjax2-version)))))
 
 (defun org-reveal--mathjax-url-from-info (info version)
