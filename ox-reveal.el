@@ -87,6 +87,8 @@
     (:reveal-default-slide-background-opacity "REVEAL_DEFAULT_SLIDE_BACKGROUND_OPACITY" nil nil t)
     (:reveal-default-slide-background-transition "REVEAL_DEFAULT_SLIDE_BACKGROUND_TRANSITION" nil nil t)
     (:reveal-mathjax-url "REVEAL_MATHJAX_URL" nil org-reveal-mathjax-url t)
+    (:reveal-mathjax-version "REVEAL_MATHJAX_VERSION" nil org-reveal-mathjax-version t)
+    (:reveal-mathjax-config "REVEAL_MATHJAX_CONFIG" nil org-reveal-mathjax-config t)
     (:reveal-preamble "REVEAL_PREAMBLE" nil org-reveal-preamble t)
     (:reveal-head-preamble "REVEAL_HEAD_PREAMBLE" nil org-reveal-head-preamble newline)
     (:reveal-postamble "REVEAL_POSTAMBLE" nil org-reveal-postamble t)
@@ -225,9 +227,67 @@ embedded into Reveal.initialize()."
   :group 'org-export-reveal
   :type 'string)
 
+(defcustom org-reveal-mathjax-version
+  nil
+  "Default MathJax version.
+
+If not specified, the version is automatically detected from
+the url (determined by `org-reveal-mathjax-url' or the buffer `REVEAL_MATHJAX_URL')."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-mathjax2-version
+  "2.7.5"
+  "Default MathJax v2 version."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-mathjax3-version
+  "3.0.0"
+  "Default MathJax v3 version."
+  :group 'org-export-reveal
+  :type 'string)
+
 (defcustom org-reveal-mathjax-url
-  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-  "Default MathJax URL."
+  nil
+  "Default MathJax URL.
+
+If specified, this overrides `org-reveal-mathjax2-url' and
+`org-reveal-mathjax3-url'."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-mathjax2-url
+  "https://cdnjs.cloudflare.com/ajax/libs/mathjax/%version/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  "Default MathJax v2 URL."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-mathjax3-url
+  "https://cdn.jsdelivr.net/npm/mathjax@%version/es5/tex-svg.js"
+  "Default MathJax v3 URL."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-extract-mathjax-version-from-url
+  nil
+  "Non-nil means extract MathJax version from URL."
+  :group 'org-export-reveal
+  :type 'boolean)
+
+(defvar org-reveal-mathjax-config
+  nil
+  "Default MathJax config.")
+
+(defcustom org-reveal-mathjax2-config
+  nil
+  "Default MathJax v2 config."
+  :group 'org-export-reveal
+  :type 'string)
+
+(defcustom org-reveal-mathjax3-config
+  nil
+  "Default MathJax v3 config."
   :group 'org-export-reveal
   :type 'string)
 
@@ -696,12 +756,88 @@ using custom variable `org-reveal-root'."
 "
                root-path)))))
 
+(defun org-reveal--mathjax-major-version (version-string)
+  "Return the major version number of MathJax from VERSION-STRING.
+
+Expects VERSION-STRING to be of the form X.Y.Z."
+  ;; Ensure that the version string is of the form X.Y.Z.
+  ;; Otherwise, throw an error.
+  (save-match-data
+    (unless (string-match "\\([0-9]+\\.[0-9]+\\.[0-9]+\\)" version-string)
+      (error "MathJax version is not of the form X.Y.Z: %s" version-string)))
+  (string-to-number (car (split-string version-string "\\."))))
+
+(defun org-reveal--mathjax-determine-version (info)
+  "Determine the MathJax version from INFO.
+
+The precedence is as follows:
+1. If `:reveal-mathjax-version' is specified, use it.
+2. If `:reveal-mathjax-url' is specified, try to extract the version
+   number from it if `org-reveal-extract-mathjax-version-from-url' is non-nil.
+3. Otherwise, assume MathJax 2."
+  (let ((version-string (plist-get info :reveal-mathjax-version)))
+    (if version-string
+        version-string
+      (let ((url (plist-get info :reveal-mathjax-url)))
+        (if (and url org-reveal-extract-mathjax-version-from-url)
+            ;; Try too match a version number of the form X.Y.Z in the URL.
+            (save-match-data
+              (if (string-match "\\([0-9]+\\.[0-9]+\\.[0-9]+\\)" url)
+                  (match-string 1 mathjax-url)
+                ;; Otherwise, assume MathJax 2.
+                org-reveal-mathjax2-version))
+          ;; Otherwise, assume MathJax 2.
+          org-reveal-mathjax2-version)))))
+
+(defun org-reveal--mathjax-url-from-info (info version)
+  "Return the MathJax URL from INFO and VERSION.
+
+The precedence is as follows:
+1. If the user has specified a MathJax URL (key `:reveal-mathjax-url' in INFO),
+   use that.
+2. Otherwise, if VERSION is ≥3, use the URL specified by `org-reveal-mathjax3-url'.
+3. Otherwise, if VERSION is ≥2, use the URL specified by `org-reveal-mathjax2-url'."
+  (let ((url (plist-get :reveal-mathjax-url info))
+        (major-version (org-reveal--mathjax-major-version version)))
+    (if url
+        ;; If the user has specified a MathJax URL, use that.
+        url
+      ;; Otherwise, we determine the MathJax version from the URL.
+      (cond
+       ((eq major-version 3) (org-fill-template org-reveal-mathjax3-url  `(("version" . ,version))))
+       ((eq major-version 2) (org-fill-template org-reveal-mathjax2-url `(("version" . ,version))))
+       (t (error "Unable to resolve URL for MathJax version: %s" version))))))
+
+(defun org-reveal--mathjax2-make-config-script (config)
+  "Return the MathJax configuration string from CONFIG."
+  (format "<script type=\"text/x-mathjax-config\">\nMathJax.Hub.Config(%s);\n</script>" config))
+
+(defun org-reveal--mathjax3-make-config-script (config)
+    "Return the MathJax configuration string from CONFIG."
+    (format "<script>\nwindow.MathJax = %s;\n</script>" config))
+
 (defun org-reveal-mathjax-scripts (info)
   "Return the HTML contents for declaring MathJax scripts"
   (if (plist-get info :reveal-mathjax)
       ;; MathJax enabled.
-      (format "<script type=\"text/javascript\" src=\"%s\"></script>\n"
-              (plist-get info :reveal-mathjax-url))))
+      (let* ((mathjax-version (org-reveal--mathjax-determine-version info))
+             (mathjax-major-version (org-reveal--mathjax-major-version mathjax-version))
+             (mathjax-config (cond
+                              ((plist-get info :reveal-mathjax-config) (plist-get info :reveal-mathjax-config))
+                              ((= mathjax-major-version 3) org-reveal-mathjax3-config)
+                              ((= mathjax-major-version 2) org-reveal-mathjax2-config)
+                              (t (error "Unsupported MathJax version: %s" mathjax-version))))
+             (load-script (format "<script type=\"text/javascript\" src=\"%s\"></script>\n"
+                                  (org-reveal--mathjax-url-from-info info mathjax-version))))
+        (if mathjax-config
+            (cond
+             ((= mathjax-major-version 3)
+              (concat (org-reveal--mathjax3-make-config-script mathjax-config) "\n" load-script))
+             ((= mathjax-major-version 2)
+              (concat (org-reveal--mathjax2-make-config-script mathjax-config) "\n" load-script)))
+          ;; No MathJax config file specified
+          load-script
+          ))))
 
 (defun org-reveal--get-plugins (info)
   (let ((buffer-plugins (condition-case e
