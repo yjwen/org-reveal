@@ -210,7 +210,7 @@ embedded into Reveal.initialize()."
   :type 'string)
 
 (defcustom org-reveal-multiplex-secret ""
-  "The secret to use for master slide."
+  "The secret to use for controller slide."
   :group 'org-export-reveal
   :type 'string)
 
@@ -731,12 +731,12 @@ dependencies: [
                 ;; multiplex setup for reveal.js 3.x
                 multiplex (format " { src: '%s', async: true },\n%s"
                                   (plist-get info :reveal-multiplex-socketio-url)
-                                        ; following ensures that either client.js or master.js is included depending on defva client-multiplex value state
+                                        ; following ensures that either client.js or controller.js is included depending on defva client-multiplex value state
                                   (if (not client-multiplex)
                                       (progn
                                         (if (plist-get info :reveal-multiplex-secret)
                                             (setq client-multiplex t))
-                                        (format " { src: '%splugin/multiplex/master.js', async: true }" root-path))
+                                        (format " { src: '%splugin/multiplex/controller.js', async: true }" root-path))
                                     (format " { src: '%splugin/multiplex/client.js', async: true }" root-path)))))
              (builtin-codes
               (mapcar (lambda (p)
@@ -844,7 +844,7 @@ custom variable `org-reveal-root'."
                            (if client-multiplex "client.js"
                              (progn
                                (setq client-multiplex t)
-                               "master.js")))))
+                               "controller.js")))))
                 )))
            (extra-initial-js-statement (plist-get info :reveal-extra-initial-js))
            (legacy-dependency-statement
